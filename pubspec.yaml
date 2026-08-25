@@ -1,0 +1,23 @@
+name: shelf
+description: Shelf — a calm, notebook-inspired study notes app (MVP).
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # Design calls for Inter specifically. This is the one dependency added
+  # beyond the SDK — everything else (navigation, state, layout) uses
+  # plain Flutter with no extra packages.
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
