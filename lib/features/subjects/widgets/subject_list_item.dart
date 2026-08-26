@@ -51,7 +51,7 @@ class SubjectListItem extends StatelessWidget {
                     Text(subject.name, style: AppTextStyles.sectionTitle),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
-                      '${subject.chapters.length} chapter${subject.chapters.length == 1 ? '' : 's'}',
+                      '${subject.chapterCount ?? 0} chapter${subject.chapterCount == 1 ? '' : 's'}',
                       style: AppTextStyles.metadata,
                     ),
                   ],

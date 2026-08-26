@@ -31,7 +31,7 @@ class _GridPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       // Extremely low opacity charcoal — texture, not a visible line.
-      ..color = AppColors.textPrimary.withOpacity(0.035)
+      ..color = AppColors.textPrimary.withValues(alpha: 0.035)
       ..strokeWidth = 1;
 
     for (double y = 0; y < size.height; y += _spacing) {

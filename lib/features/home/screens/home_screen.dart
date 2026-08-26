@@ -58,14 +58,17 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
           if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                'Could not load your study rooms.',
-                style: AppTextStyles.body,
-                textAlign: TextAlign.center,
-              ),
-            );
-          }
+  return Center(
+    child: Padding(
+      padding: const EdgeInsets.all(AppSpacing.containerMargin),
+      child: Text(
+        'Could not load your study rooms.\n\n${snapshot.error}',
+        style: AppTextStyles.body,
+        textAlign: TextAlign.center,
+      ),
+    ),
+  );
+}
 
           final rooms = snapshot.data ?? [];
 

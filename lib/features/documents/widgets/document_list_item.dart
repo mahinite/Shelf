@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import '../models/note.dart';
+
+import '../models/document.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/tactile.dart';
 
-/// A single row representing a document (Notes or an Exercise) inside
-/// a chapter. Plain divider-separated row — no card chrome — so the
-/// document content it links to stays the visual focus, not the list.
+/// A single row representing a document inside a chapter.
 class DocumentListItem extends StatelessWidget {
   const DocumentListItem({
     super.key,
@@ -16,11 +15,8 @@ class DocumentListItem extends StatelessWidget {
     this.accent,
   });
 
-  final NoteDocument document;
+  final Document document;
   final VoidCallback onTap;
-
-  /// Optional small accent pip (used for exercises within a subject's
-  /// chapter, if you want to tie it back to the subject color subtly).
   final Color? accent;
 
   @override
@@ -28,7 +24,9 @@ class DocumentListItem extends StatelessWidget {
     return Tactile(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        padding: const EdgeInsets.symmetric(
+          vertical: AppSpacing.sm,
+        ),
         child: Row(
           children: [
             if (accent != null) ...[
@@ -41,21 +39,20 @@ class DocumentListItem extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
-            ] else
+            ] else ...[
               const Icon(
                 Icons.description_outlined,
                 size: 20,
                 color: AppColors.textSecondary,
               ),
-            if (accent == null) const SizedBox(width: AppSpacing.sm),
+              const SizedBox(width: AppSpacing.sm),
+            ],
             Expanded(
-              child: Text(document.title, style: AppTextStyles.body),
+              child: Text(
+                document.title,
+                style: AppTextStyles.body,
+              ),
             ),
-            Text(
-              '${document.pageCount} pages',
-              style: AppTextStyles.metadata,
-            ),
-            const SizedBox(width: AppSpacing.xs),
             const Icon(
               Icons.chevron_right,
               size: 18,

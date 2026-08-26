@@ -34,7 +34,7 @@ class RoomCard extends StatelessWidget {
                   Text(room.name, style: AppTextStyles.sectionTitle),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    '${room.subjects.length} subject${room.subjects.length == 1 ? '' : 's'}',
+                    '${room.subjectCount ?? 0} subject${room.subjectCount == 1 ? '' : 's'}',
                     style: AppTextStyles.metadata,
                   ),
                 ],

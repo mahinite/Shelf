@@ -4,19 +4,26 @@ class Room {
     required this.name,
     required this.createdBy,
     required this.createdAt,
+    this.subjectCount,
   });
 
   final String id;
   final String name;
   final String createdBy;
   final DateTime createdAt;
+  final int? subjectCount;
 
   factory Room.fromJson(Map<String, dynamic> json) {
+    final subjects = json['subjects'];
+
     return Room(
       id: json['id'] as String,
       name: json['name'] as String,
       createdBy: json['created_by'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
+      subjectCount: subjects is List && subjects.isNotEmpty
+          ? (subjects.first['count'] as int?)
+          : null,
     );
   }
 
