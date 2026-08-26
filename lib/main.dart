@@ -1,8 +1,22 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'features/auth/screens/login_screen.dart';
+import 'features/home/screens/home_screen.dart';
 import 'core/theme/app_theme.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: '.env');
+
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL']!,
+    publishableKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  );
+
   runApp(const ShelfApp());
 }
 
@@ -15,11 +29,51 @@ class ShelfApp extends StatelessWidget {
       title: 'Shelf',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
-      // No named routes / route table — the hierarchy is a simple
-      // linear push stack (Login -> Home -> Room -> Subject -> Chapter
-      // -> Notes), so plain Navigator.push with constructor arguments
-      // is enough. A router package would be over-engineering for this.
-      home: const LoginScreen(),
+      home: const AuthGate(),
     );
+  }
+}
+
+class AuthGate extends StatefulWidget {
+  const AuthGate({super.key});
+
+  @override
+  State<AuthGate> createState() => _AuthGateState();
+}
+
+class _AuthGateState extends State<AuthGate> {
+  Session? _session;
+  StreamSubscription<AuthState>? _authStateSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    try {
+      final client = Supabase.instance.client;
+      _session = client.auth.currentSession;
+      _authStateSubscription = client.auth.onAuthStateChange.listen((data) {
+        if (mounted) {
+          setState(() {
+            _session = data.session;
+          });
+        }
+      });
+    } catch (e) {
+      debugPrint('Supabase not initialized in AuthGate (likely in test environment): $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _authStateSubscription?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_session != null) {
+      return const HomeScreen();
+    }
+    return const LoginScreen();
   }
 }

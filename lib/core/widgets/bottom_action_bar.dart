@@ -12,10 +12,12 @@ class BottomActionBar extends StatelessWidget {
     super.key,
     required this.onHomeTap,
     required this.onScanTap,
+    required this.onSettingsTap,
   });
 
   final VoidCallback onHomeTap;
   final VoidCallback onScanTap;
+  final VoidCallback onSettingsTap;
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +62,17 @@ class BottomActionBar extends StatelessWidget {
                   color: AppColors.onPrimaryButton,
                   size: 28,
                 ),
+              ),
+            ),
+            Tactile(
+              onTap: onSettingsTap,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.settings_outlined, color: AppColors.textPrimary),
+                  const SizedBox(height: 2),
+                  Text('Settings', style: AppTextStyles.metadata),
+                ],
               ),
             ),
           ],

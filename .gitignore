@@ -65,3 +65,5 @@ app.*.map.json
 # Android local configuration / generated files
 android/local.properties
 android/.gradle/
+
+.env

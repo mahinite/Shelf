@@ -1,14 +1,31 @@
-import '../../subjects/models/subject.dart';
-
-/// Rooms are the top level of the hierarchy. Per the design brief,
-/// rooms are visually neutral — no accent color is stored here on
-/// purpose, unlike Subject which drives color through AppColors.subjectAccent.
 class Room {
   const Room({
+    required this.id,
     required this.name,
-    required this.subjects,
+    required this.createdBy,
+    required this.createdAt,
   });
 
+  final String id;
   final String name;
-  final List<Subject> subjects;
+  final String createdBy;
+  final DateTime createdAt;
+
+  factory Room.fromJson(Map<String, dynamic> json) {
+    return Room(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      createdBy: json['created_by'] as String,
+      createdAt: DateTime.parse(json['created_at'] as String),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'created_by': createdBy,
+      'created_at': createdAt.toIso8601String(),
+    };
+  }
 }

@@ -3,6 +3,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../theme/notebook_background.dart';
 import 'bottom_action_bar.dart';
+import '../../features/settings/screens/settings_screen.dart';
 
 /// Shared scaffold for every screen past login: subtle grid background,
 /// a plain back-enabled app bar, and the persistent bottom action bar.
@@ -32,6 +33,12 @@ class AppScaffold extends StatelessWidget {
     );
   }
 
+  void _goToSettings(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const SettingsScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,6 +55,7 @@ class AppScaffold extends StatelessWidget {
       bottomNavigationBar: BottomActionBar(
         onHomeTap: () => _goHome(context),
         onScanTap: () => _handleScanTap(context),
+        onSettingsTap: () => _goToSettings(context),
       ),
     );
   }
