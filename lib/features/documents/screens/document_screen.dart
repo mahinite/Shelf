@@ -7,9 +7,9 @@ import '../../../core/widgets/app_scaffold.dart';
 
 /// Placeholder document view.
 ///
-/// Scan pages will be loaded and rendered in a later migration phase.
-class NotesScreen extends StatelessWidget {
-  const NotesScreen({
+/// Actual PDF loading and rendering will be added later.
+class DocumentScreen extends StatelessWidget {
+  const DocumentScreen({
     super.key,
     required this.document,
   });

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../models/subject.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -10,7 +11,10 @@ import '../../chapters/models/chapter.dart';
 import '../../chapters/screens/chapter_screen.dart';
 
 class SubjectScreen extends StatefulWidget {
-  const SubjectScreen({super.key, required this.subject});
+  const SubjectScreen({
+    super.key,
+    required this.subject,
+  });
 
   final Subject subject;
 
@@ -30,13 +34,103 @@ class _SubjectScreenState extends State<SubjectScreen> {
   Future<List<Chapter>> _loadChapters() async {
     final data = await Supabase.instance.client
         .from('chapters')
-        .select('*')
+        .select()
         .eq('subject_id', widget.subject.id)
         .order('position', ascending: true);
 
     return (data as List)
         .map((json) => Chapter.fromJson(json))
         .toList();
+  }
+
+  Future<void> _createChapter() async {
+    final controller = TextEditingController();
+
+    final name = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('New Chapter'),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(
+              hintText: 'Chapter name',
+            ),
+            onSubmitted: (value) {
+              final trimmed = value.trim();
+
+              if (trimmed.isNotEmpty) {
+                Navigator.of(context).pop(trimmed);
+              }
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () {
+                final trimmed = controller.text.trim();
+
+                if (trimmed.isNotEmpty) {
+                  Navigator.of(context).pop(trimmed);
+                }
+              },
+              child: const Text('Create'),
+            ),
+          ],
+        );
+      },
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+  controller.dispose();
+});
+
+if (name == null || name.isEmpty) {
+      return;
+    }
+
+    try {
+      final nextPosition = await _nextChapterPosition();
+
+      await Supabase.instance.client.from('chapters').insert({
+        'subject_id': widget.subject.id,
+        'name': name,
+        'position': nextPosition,
+      });
+
+      if (!mounted) return;
+
+      setState(() {
+        _chaptersFuture = _loadChapters();
+      });
+    } catch (error) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Could not create chapter.\n$error'),
+        ),
+      );
+    }
+  }
+
+  Future<int> _nextChapterPosition() async {
+    final data = await Supabase.instance.client
+        .from('chapters')
+        .select('position')
+        .eq('subject_id', widget.subject.id)
+        .order('position', ascending: false)
+        .limit(1);
+
+    if (data.isEmpty) {
+      return 0;
+    }
+
+    return (data.first['position'] as int) + 1;
   }
 
   @override
@@ -59,6 +153,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
             return Center(
               child: Text(
                 'Could not load chapters.\n${snapshot.error}',
+                style: AppTextStyles.body,
                 textAlign: TextAlign.center,
               ),
             );
@@ -66,63 +161,77 @@ class _SubjectScreenState extends State<SubjectScreen> {
 
           final chapters = snapshot.data ?? [];
 
-          if (chapters.isEmpty) {
-            return const Center(
-              child: Text('No chapters yet.'),
-            );
-          }
-
-          return ListView.separated(
-            padding: const EdgeInsets.all(AppSpacing.containerMargin),
-            itemCount: chapters.length,
-            separatorBuilder: (_, __) => const Divider(),
-            itemBuilder: (context, index) {
-              final chapter = chapters[index];
-
-              return Tactile(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => ChapterScreen(
-                        chapter: chapter,
-                        accent: accent,
-                      ),
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: AppSpacing.sm,
+          return Stack(
+            children: [
+              if (chapters.isEmpty)
+                const Center(
+                  child: Text('No chapters yet.'),
+                )
+              else
+                ListView.separated(
+                  padding: const EdgeInsets.all(
+                    AppSpacing.containerMargin,
                   ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 6,
-                        height: 6,
-                        margin: const EdgeInsets.only(
-                          right: AppSpacing.sm,
+                  itemCount: chapters.length,
+                  separatorBuilder: (_, __) => const Divider(),
+                  itemBuilder: (context, index) {
+                    final chapter = chapters[index];
+
+                    return Tactile(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => ChapterScreen(
+                              chapter: chapter,
+                              accent: accent,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppSpacing.sm,
                         ),
-                        decoration: BoxDecoration(
-                          color: accent,
-                          shape: BoxShape.circle,
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 6,
+                              height: 6,
+                              margin: const EdgeInsets.only(
+                                right: AppSpacing.sm,
+                              ),
+                              decoration: BoxDecoration(
+                                color: accent,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                chapter.name,
+                                style: AppTextStyles.body,
+                              ),
+                            ),
+                            const Icon(
+                              Icons.chevron_right,
+                              size: 18,
+                              color: AppColors.textSecondary,
+                            ),
+                          ],
                         ),
                       ),
-                      Expanded(
-                        child: Text(
-                          chapter.name,
-                          style: AppTextStyles.body,
-                        ),
-                      ),
-                      const Icon(
-                        Icons.chevron_right,
-                        size: 18,
-                        color: AppColors.textSecondary,
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
-              );
-            },
+
+              Positioned(
+                right: AppSpacing.containerMargin,
+                bottom: AppSpacing.containerMargin,
+                child: FloatingActionButton(
+                  onPressed: _createChapter,
+                  child: const Icon(Icons.add),
+                ),
+              ),
+            ],
           );
         },
       ),

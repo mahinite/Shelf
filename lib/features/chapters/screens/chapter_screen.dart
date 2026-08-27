@@ -7,7 +7,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_scaffold.dart';
 import '../../documents/widgets/document_list_item.dart';
-import '../../documents/screens/notes_screen.dart';
+import '../../documents/screens/document_screen.dart';
 
 class ChapterScreen extends StatefulWidget {
   const ChapterScreen({
@@ -24,42 +24,24 @@ class ChapterScreen extends StatefulWidget {
 }
 
 class _ChapterScreenState extends State<ChapterScreen> {
-  List<Document> _documents = [];
-  bool _isLoading = true;
-  String? _error;
+  late Future<List<Document>> _documentsFuture;
 
   @override
   void initState() {
     super.initState();
-    _loadDocuments();
+    _documentsFuture = _loadDocuments();
   }
 
-  Future<void> _loadDocuments() async {
-    try {
-      final data = await Supabase.instance.client
-          .from('documents')
-          .select('*')
-          .eq('chapter_id', widget.chapter.id)
-          .order('created_at', ascending: true);
+  Future<List<Document>> _loadDocuments() async {
+    final data = await Supabase.instance.client
+        .from('documents')
+        .select()
+        .eq('chapter_id', widget.chapter.id)
+        .order('position', ascending: true);
 
-      final documents = (data as List)
-          .map((json) => Document.fromJson(json))
-          .toList();
-
-      if (!mounted) return;
-
-      setState(() {
-        _documents = documents;
-        _isLoading = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
-    }
+    return (data as List)
+    .map((json) => Document.fromJson(json))
+    .toList();
   }
 
   @override
@@ -67,79 +49,59 @@ class _ChapterScreenState extends State<ChapterScreen> {
     return AppScaffold(
       title: widget.chapter.name,
       showBackButton: true,
-      body: _buildBody(context),
-    );
-  }
+      body: FutureBuilder<List<Document>>(
+        future: _documentsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-  Widget _buildBody(BuildContext context) {
-    if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-
-    if (_error != null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.containerMargin),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Couldn\'t load documents',
-                style: AppTextStyles.sectionTitle,
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                _error!,
-                style: AppTextStyles.bodySecondary,
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Could not load documents.\n${snapshot.error}',
+                style: AppTextStyles.body,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: AppSpacing.md),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _isLoading = true;
-                    _error = null;
-                  });
-                  _loadDocuments();
-                },
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+            );
+          }
 
-    if (_documents.isEmpty) {
-      return Center(
-        child: Text(
-          'No documents yet.',
-          style: AppTextStyles.bodySecondary,
-        ),
-      );
-    }
+          final documents = snapshot.data ?? [];
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(AppSpacing.containerMargin),
-      itemCount: _documents.length,
-      separatorBuilder: (_, __) => const Divider(),
-      itemBuilder: (context, index) {
-        final document = _documents[index];
+          if (documents.isEmpty) {
+            return const Center(
+              child: Text('No documents yet.'),
+            );
+          }
 
-        return DocumentListItem(
-          document: document,
-          onTap: () => _openDocument(context, document),
-        );
-      },
+          return ListView.separated(
+            padding: const EdgeInsets.all(AppSpacing.containerMargin),
+            itemCount: documents.length,
+            separatorBuilder: (_, __) => const Divider(),
+            itemBuilder: (context, index) {
+              final document = documents[index];
+
+              return DocumentListItem(
+                document: document,
+                accent: widget.accent,
+                onTap: () => _openDocument(context, document),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
-  void _openDocument(BuildContext context, Document document) {
+  void _openDocument(
+  BuildContext context,
+  Document document,
+) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => NotesScreen(document: document),
+        builder: (_) => DocumentScreen(document: document),
       ),
     );
   }

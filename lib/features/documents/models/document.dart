@@ -5,6 +5,10 @@ class Document {
     required this.title,
     required this.createdAt,
     required this.updatedAt,
+    this.filePath,
+    this.fileSize,
+    this.pageCount,
+    required this.position,
   });
 
   final String id;
@@ -12,6 +16,10 @@ class Document {
   final String title;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? filePath;
+  final int? fileSize;
+  final int? pageCount;
+  final int position;
 
   factory Document.fromJson(Map<String, dynamic> json) {
     return Document(
@@ -20,6 +28,10 @@ class Document {
       title: json['title'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
+      filePath: json['file_path'] as String?,
+      fileSize: json['file_size'] as int?,
+      pageCount: json['page_count'] as int?,
+      position: json['position'] as int,
     );
   }
 
@@ -30,6 +42,10 @@ class Document {
       'title': title,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
+      'file_path': filePath,
+      'file_size': fileSize,
+      'page_count': pageCount,
+      'position': position,
     };
   }
 }
