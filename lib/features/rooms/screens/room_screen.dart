@@ -32,7 +32,7 @@ class _RoomScreenState extends State<RoomScreen> {
   Future<List<Subject>> _loadSubjects() async {
     final data = await Supabase.instance.client
         .from('subjects')
-        .select()
+        .select('*, chapters(count)')
         .eq('room_id', widget.room.id)
         .order('position', ascending: true);
 

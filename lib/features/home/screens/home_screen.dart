@@ -41,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
         .from('rooms')
         .select(
           'id, name, created_by, created_at, '
+          'subjects(count), '
           'room_members!inner(user_id)',
         )
         .eq('room_members.user_id', user.id)

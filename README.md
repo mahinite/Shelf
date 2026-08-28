@@ -1,8 +1,9 @@
 # Shelf (MVP)
 
-A calm, notebook-inspired study notes app — this build is frontend
-navigation + visual foundation only, per the implementation brief.
-Mock data, no backend, no camera, no PDF viewer yet.
+A calm, notebook-inspired study notes app — this build includes live
+Supabase authentication and full CRUD (rooms → subjects → chapters →
+documents). Camera/scan, PDF viewer, OCR, and offline sync are not
+yet implemented.
 
 ## Run it
 
@@ -26,9 +27,8 @@ that's not a substitute for the real analyzer.
 lib/
   main.dart              # MaterialApp entry point, no router package
   theme/                 # colors, spacing, type, ThemeData, grid background
-  models/                # Room -> Subject -> Chapter -> (Notes + Exercises)
-  data/mock_data.dart    # static mock rooms/subjects/chapters
-  screens/               # Login, SignUp, Home, Room, Subject, Chapter, Notes
+  models/                # Room -> Subject -> Chapter -> Documents
+  screens/               # Login, SignUp, Home, Room, Subject, Chapter, Document
   widgets/               # AppScaffold, BottomActionBar, cards, Tactile wrapper
 ```
 
@@ -59,6 +59,6 @@ lib/
 
 ## Known gaps (intentional — out of scope for this build)
 
-Auth, camera/scan, PDF generation/viewing, cloud storage, OCR/search,
+Camera/scan, PDF generation/viewing, cloud storage, OCR/search,
 profiles, notifications, offline sync, AI, settings. All of these are
 referenced in the UI (e.g. the Scan button) but not implemented.
