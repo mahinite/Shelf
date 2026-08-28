@@ -54,4 +54,4 @@ kilo.jsonc
 # Local environment / secrets
 .env
 .env.*
-!.env.example
+!.env.examplesupabase/.temp/
