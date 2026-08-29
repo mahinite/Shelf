@@ -478,6 +478,10 @@ ALTER TABLE "public"."subjects" ENABLE ROW LEVEL SECURITY;
 
 ALTER PUBLICATION "supabase_realtime" OWNER TO "postgres";
 
+ALTER PUBLICATION "supabase_realtime" ADD TABLE "public"."subjects";
+ALTER PUBLICATION "supabase_realtime" ADD TABLE "public"."chapters";
+ALTER PUBLICATION "supabase_realtime" ADD TABLE "public"."documents";
+
 
 GRANT USAGE ON SCHEMA "public" TO "postgres";
 GRANT USAGE ON SCHEMA "public" TO "anon";
