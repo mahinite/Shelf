@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 
 /// Action sheet shown on long-press with Rename/Delete options.
@@ -34,8 +35,8 @@ class RenameDeleteSheet extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.delete_outline, color: Colors.red[600]),
-            title: Text('Delete $itemType', style: AppTextStyles.body.copyWith(color: Colors.red[600])),
+            leading: Icon(Icons.delete_outline, color: AppColors.destructive),
+            title: Text('Delete $itemType', style: AppTextStyles.body.copyWith(color: AppColors.destructive)),
             onTap: () {
               Navigator.pop(context);
               _showDeleteConfirmation(context);
@@ -112,7 +113,7 @@ class RenameDeleteSheet extends StatelessWidget {
             child: const Text('Cancel'),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Colors.red[600]),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.destructive),
             onPressed: () {
               Navigator.of(context).pop();
               onDelete();

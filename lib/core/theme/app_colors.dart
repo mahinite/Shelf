@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 /// tokens (tertiary-fixed, inverse-surface, etc.) that exist for future
 /// screens we are not building yet.
 class AppColors {
+  // Destructive action (e.g., delete) – a muted red that fits the notebook aesthetic
   AppColors._();
 
   // Base surface
@@ -24,6 +25,8 @@ class AppColors {
   // Primary action (buttons)
   static const primaryButton = Color(0xFF2D2D2D); // charcoal fill
   static const onPrimaryButton = Color(0xFFF9F7F2); // cream text
+  // Destructive (delete) color – muted red matching the notebook aesthetic
+  static const destructive = Color(0xFFB05A5A);
 
   // Subject accents — used sparingly (side borders, pips, underlines).
   // Rooms are intentionally NOT assigned a color from this set.
