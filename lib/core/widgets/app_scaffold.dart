@@ -4,6 +4,7 @@ import '../theme/app_text_styles.dart';
 import '../theme/notebook_background.dart';
 import 'bottom_action_bar.dart';
 import '../../features/settings/screens/settings_screen.dart';
+import '../../features/documents/screens/scan_entry_screen.dart';
 
 /// Shared scaffold for every screen past login: subtle grid background,
 /// a plain back-enabled app bar, and the persistent bottom action bar.
@@ -26,10 +27,8 @@ class AppScaffold extends StatelessWidget {
   }
 
   void _handleScanTap(BuildContext context) {
-    // Scan intentionally does nothing functional yet — just a lightweight
-    // acknowledgement so the action still feels reachable.
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Scan coming soon')),
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const ScanEntryScreen()),
     );
   }
 
