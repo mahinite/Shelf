@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'features/auth/screens/login_screen.dart';
@@ -15,6 +16,20 @@ Future<void> main() async {
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,
     publishableKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  );
+
+  // Initialize Google Sign-In
+  final webClientId = dotenv.env['GOOGLE_WEB_CLIENT_ID']!;
+  final androidClientId = dotenv.env['GOOGLE_ANDROID_CLIENT_ID']!;
+  // iOS client ID (optional, if targeting iOS):
+  // final iosClientId = dotenv.env['GOOGLE_IOS_CLIENT_ID'];
+
+  await GoogleSignIn.instance.initialize(
+    serverClientId: webClientId,
+    clientId: androidClientId,
+    // iOS client ID is optional — omit if not targeting iOS
+    // If iOS is added later, uncomment and add GOOGLE_IOS_CLIENT_ID to .env:
+    // clientId: iosClientId!,
   );
 
   runApp(const ShelfApp());

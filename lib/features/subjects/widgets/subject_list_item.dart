@@ -8,10 +8,16 @@ import '../../../core/widgets/tactile.dart';
 /// A subject's accent color shows up ONLY as a thin 4px left border strip —
 /// per the brief, no large colored surfaces or gradients.
 class SubjectListItem extends StatelessWidget {
-  const SubjectListItem({super.key, required this.subject, required this.onTap});
+  const SubjectListItem({
+    super.key,
+    required this.subject,
+    required this.onTap,
+    this.onLongPress,
+  });
 
   final Subject subject;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +25,7 @@ class SubjectListItem extends StatelessWidget {
 
     return Tactile(
       onTap: onTap,
+      onLongPress: onLongPress,
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(

@@ -14,6 +14,7 @@ dependencies:
   # plain Flutter with no extra packages.
   flutter_dotenv: ^6.0.1
   google_fonts: ^6.2.1
+  google_sign_in: ^7.0.0
   supabase_flutter: ^2.17.2
 
 dev_dependencies:
@@ -25,3 +26,4 @@ flutter:
   uses-material-design: true
   assets:
     - .env
+    - assets/

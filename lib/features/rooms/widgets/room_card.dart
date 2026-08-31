@@ -8,15 +8,22 @@ import '../../../core/widgets/tactile.dart';
 /// Rooms are intentionally plain — no accent color, no left border strip.
 /// Just a quiet card with the room name and a subject count.
 class RoomCard extends StatelessWidget {
-  const RoomCard({super.key, required this.room, required this.onTap});
+  const RoomCard({
+    super.key,
+    required this.room,
+    required this.onTap,
+    this.onLongPress,
+  });
 
   final Room room;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
 
   @override
   Widget build(BuildContext context) {
     return Tactile(
       onTap: onTap,
+      onLongPress: onLongPress,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),

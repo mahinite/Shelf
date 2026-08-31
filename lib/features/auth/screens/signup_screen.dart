@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -17,6 +18,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -90,6 +92,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
+  Future<void> _signInWithGoogle() async {
+    try {
+      final signIn = GoogleSignIn.instance;
+      final googleAccount = await signIn.authenticate();
+
+      final googleAuthorization = await googleAccount.authorizationClient
+              .authorizationForScopes(['email', 'profile']) ??
+          await googleAccount.authorizationClient
+              .authorizeScopes(['email', 'profile']);
+
+      final idToken = googleAccount.authentication.idToken;
+      final accessToken = googleAuthorization.accessToken;
+
+      if (idToken == null) {
+        throw 'No ID Token found.';
+      }
+
+      await Supabase.instance.client.auth.signInWithIdToken(
+        provider: OAuthProvider.google,
+        idToken: idToken,
+        accessToken: accessToken,
+      );
+      // No manual navigation needed here — AuthGate's onAuthStateChange
+      // listener in main.dart already handles the transition to
+      // HomeScreen once the session updates, same as the existing
+      // email/password login flow.
+    } catch (e, stackTrace) {
+      debugPrint('Google sign-in error type: ${e.runtimeType}');
+      debugPrint(e.toString());
+      debugPrint(stackTrace.toString());
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not sign in with Google.')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,8 +168,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const SizedBox(height: AppSpacing.lg),
                     TextField(
                       controller: _passwordController,
-                      decoration: const InputDecoration(labelText: 'Password'),
-                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
+                        ),
+                      ),
+                      obscureText: _obscurePassword,
                       enabled: !_isLoading,
                     ),
                     const SizedBox(height: AppSpacing.xl),
@@ -149,6 +201,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                               )
                             : const Text('Create Account'),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    // Divider with "or"
+                    Row(
+                      children: [
+                        const Expanded(child: Divider()),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                          child: Text('or', style: AppTextStyles.metadata),
+                        ),
+                        const Expanded(child: Divider()),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    // Google Sign-In button
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: _isLoading ? null : _signInWithGoogle,
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppRadius.md),
+                          ),
+                          textStyle: AppTextStyles.buttonLabel,
+                        ),
+                        child: const Text('Continue with Google'),
                       ),
                     ),
                     const SizedBox(height: AppSpacing.lg),

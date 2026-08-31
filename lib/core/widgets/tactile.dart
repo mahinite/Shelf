@@ -4,9 +4,15 @@ import 'package:flutter/material.dart';
 /// feedback the design calls for. Kept short and simple — 96% scale,
 /// ~120ms — so it reads as tactile rather than springy/showy.
 class Tactile extends StatefulWidget {
-  const Tactile({super.key, required this.onTap, required this.child});
+  const Tactile({
+    super.key,
+    required this.onTap,
+    required this.child,
+    this.onLongPress,
+  });
 
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
   final Widget child;
 
   @override
@@ -25,6 +31,7 @@ class _TactileState extends State<Tactile> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: widget.onTap,
+      onLongPress: widget.onLongPress,
       onTapDown: (_) => _setPressed(true),
       onTapUp: (_) => _setPressed(false),
       onTapCancel: () => _setPressed(false),

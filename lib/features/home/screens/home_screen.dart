@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_scaffold.dart';
+import '../../../core/widgets/rename_delete_sheet.dart';
 import '../../rooms/widgets/room_card.dart';
 import '../../rooms/screens/room_screen.dart';
 import '../../rooms/models/room.dart';
@@ -47,9 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
         .eq('room_members.user_id', user.id)
         .order('created_at', ascending: true);
 
-    return (response as List)
-        .map((json) => Room.fromJson(json))
-        .toList();
+    return (response as List).map((json) => Room.fromJson(json)).toList();
   }
 
   Future<void> _createRoom() async {
@@ -184,6 +183,65 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _renameRoom(Room room, String newName) async {
+    try {
+      await Supabase.instance.client
+          .from('rooms')
+          .update({'name': newName}).eq('id', room.id);
+
+      if (!mounted) return;
+
+      setState(() {
+        _roomsFuture = _loadRooms();
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Room renamed to $newName')),
+        );
+      }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not rename room.\n$error')),
+      );
+    }
+  }
+
+  Future<void> _deleteRoom(Room room) async {
+    try {
+      await Supabase.instance.client.from('rooms').delete().eq('id', room.id);
+
+      if (!mounted) return;
+
+      setState(() {
+        _roomsFuture = _loadRooms();
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Room deleted')),
+        );
+      }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not delete room.\n$error')),
+      );
+    }
+  }
+
+  void _showRoomActions(Room room) {
+    showRenameDeleteSheet(
+      context: context,
+      currentName: room.name,
+      itemType: 'Room',
+      hasChildren: true,
+      onRename: (newName) => _renameRoom(room, newName),
+      onDelete: () => _deleteRoom(room),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
@@ -237,15 +295,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     for (final room in rooms) ...[
                       RoomCard(
                         room: room,
-                        onTap: () {
-                          Navigator.of(context).push(
+                        onTap: () async {
+                          await Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (_) => RoomScreen(
                                 room: room,
                               ),
                             ),
                           );
+                          if (mounted) {
+                            setState(() {
+                              _roomsFuture = _loadRooms();
+                            });
+                          }
                         },
+                        onLongPress: () => _showRoomActions(room),
                       ),
                       const SizedBox(height: AppSpacing.md),
                     ],

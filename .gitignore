@@ -54,4 +54,11 @@ kilo.jsonc
 # Local environment / secrets
 .env
 .env.*
-!.env.examplesupabase/.temp/
+!.env.example
+.dev.vars
+.dev.vars.*
+
+# Wrangler / Cloudflare Worker
+cloudflare-worker/node_modules/
+cloudflare-worker/dist/
+cloudflare-worker/.wrangler/

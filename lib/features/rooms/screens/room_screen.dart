@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/room.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_scaffold.dart';
+import '../../../core/widgets/item_action_sheet.dart';
 import '../../subjects/models/subject.dart';
 import '../../subjects/widgets/subject_list_item.dart';
 import '../../subjects/screens/subject_screen.dart';
@@ -36,9 +37,7 @@ class _RoomScreenState extends State<RoomScreen> {
         .eq('room_id', widget.room.id)
         .order('position', ascending: true);
 
-    return (data as List)
-        .map((json) => Subject.fromJson(json))
-        .toList();
+    return (data as List).map((json) => Subject.fromJson(json)).toList();
   }
 
   Future<void> _createSubject() async {
@@ -83,11 +82,11 @@ class _RoomScreenState extends State<RoomScreen> {
       },
     );
 
-   WidgetsBinding.instance.addPostFrameCallback((_) {
-  controller.dispose();
-});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.dispose();
+    });
 
-if (name == null || name.isEmpty) {
+    if (name == null || name.isEmpty) {
       return;
     }
 
@@ -129,6 +128,131 @@ if (name == null || name.isEmpty) {
     }
 
     return (data.first['position'] as int) + 1;
+  }
+
+  Future<void> _renameSubject(Subject subject, String newName) async {
+    try {
+      await Supabase.instance.client
+          .from('subjects')
+          .update({'name': newName}).eq('id', subject.id);
+
+      if (!mounted) return;
+
+      setState(() {
+        _subjectsFuture = _loadSubjects();
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Subject renamed to $newName')),
+        );
+      }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not rename subject.\n$error')),
+      );
+    }
+  }
+
+  Future<void> _deleteSubject(Subject subject) async {
+    try {
+      await Supabase.instance.client
+          .from('subjects')
+          .delete()
+          .eq('id', subject.id);
+
+      if (!mounted) return;
+
+      setState(() {
+        _subjectsFuture = _loadSubjects();
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Subject deleted')),
+        );
+      }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not delete subject.\n$error')),
+      );
+    }
+  }
+
+  void _showSubjectActions(Subject subject) {
+    showItemActionSheet(
+      context: context,
+      itemName: subject.name,
+      onRename: () async {
+        final controller = TextEditingController(text: subject.name);
+        final name = await showDialog<String>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Rename Subject'),
+            content: TextField(
+              controller: controller,
+              autofocus: true,
+              textCapitalization: TextCapitalization.words,
+              decoration: const InputDecoration(hintText: 'Subject name'),
+              onSubmitted: (value) {
+                final trimmed = value.trim();
+                if (trimmed.isNotEmpty && trimmed != subject.name) {
+                  Navigator.of(context).pop(trimmed);
+                } else {
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Cancel')),
+              FilledButton(
+                onPressed: () {
+                  final trimmed = controller.text.trim();
+                  if (trimmed.isNotEmpty && trimmed != subject.name) {
+                    Navigator.of(context).pop(trimmed);
+                  } else {
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          ),
+        );
+        if (name != null && name.isNotEmpty && name != subject.name) {
+          await _renameSubject(subject, name);
+        }
+      },
+      onDelete: () async {
+        final confirm = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Delete Subject?'),
+            content: Text(
+              'Are you sure you want to delete "${subject.name}"?\n\n'
+              'This will also delete all chapters and documents inside this subject. This cannot be undone.',
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('Cancel')),
+              FilledButton(
+                style: FilledButton.styleFrom(backgroundColor: Colors.red[600]),
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Delete'),
+              ),
+            ],
+          ),
+        );
+        if (confirm == true) {
+          await _deleteSubject(subject);
+        }
+      },
+    );
   }
 
   @override
@@ -175,19 +299,24 @@ if (name == null || name.isEmpty) {
 
                     return SubjectListItem(
                       subject: subject,
-                      onTap: () {
-                        Navigator.of(context).push(
+                      onTap: () async {
+                        await Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (_) => SubjectScreen(
                               subject: subject,
                             ),
                           ),
                         );
+                        if (mounted) {
+                          setState(() {
+                            _subjectsFuture = _loadSubjects();
+                          });
+                        }
                       },
+                      onLongPress: () => _showSubjectActions(subject),
                     );
                   },
                 ),
-
               Positioned(
                 right: AppSpacing.containerMargin,
                 bottom: AppSpacing.containerMargin,
