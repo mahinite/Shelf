@@ -6,7 +6,7 @@ import '../../documents/models/document.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_scaffold.dart';
-import '../../../core/widgets/item_action_sheet.dart';
+import '../../../core/widgets/rename_delete_sheet.dart';
 import '../../documents/widgets/document_list_item.dart';
 import '../../documents/screens/document_screen.dart';
 
@@ -95,76 +95,13 @@ class _ChapterScreenState extends State<ChapterScreen> {
   }
 
   void _showDocumentActions(Document document) {
-    showItemActionSheet(
+    showRenameDeleteSheet(
       context: context,
-      itemName: document.title,
-      onRename: () async {
-        final controller = TextEditingController(text: document.title);
-        final name = await showDialog<String>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Rename Document'),
-            content: TextField(
-              controller: controller,
-              autofocus: true,
-              textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(hintText: 'Document title'),
-              onSubmitted: (value) {
-                final trimmed = value.trim();
-                if (trimmed.isNotEmpty && trimmed != document.title) {
-                  Navigator.of(context).pop(trimmed);
-                } else {
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-            actions: [
-              TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancel')),
-              FilledButton(
-                onPressed: () {
-                  final trimmed = controller.text.trim();
-                  if (trimmed.isNotEmpty && trimmed != document.title) {
-                    Navigator.of(context).pop(trimmed);
-                  } else {
-                    Navigator.of(context).pop();
-                  }
-                },
-                child: const Text('Save'),
-              ),
-            ],
-          ),
-        );
-        if (name != null && name.isNotEmpty && name != document.title) {
-          await _renameDocument(document, name);
-        }
-      },
-      onDelete: () async {
-        final confirm = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Delete Document?'),
-            content: Text(
-              'Are you sure you want to delete "${document.title}"?\n\n'
-              'This cannot be undone.',
-            ),
-            actions: [
-              TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('Cancel')),
-              FilledButton(
-                style: FilledButton.styleFrom(backgroundColor: Colors.red[600]),
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Delete'),
-              ),
-            ],
-          ),
-        );
-        if (confirm == true) {
-          await _deleteDocument(document);
-        }
-      },
+      currentName: document.title,
+      itemType: 'Document',
+      hasChildren: false,
+      onRename: (newName) => _renameDocument(document, newName),
+      onDelete: () => _deleteDocument(document),
     );
   }
 

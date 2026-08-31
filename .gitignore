@@ -62,3 +62,6 @@ kilo.jsonc
 cloudflare-worker/node_modules/
 cloudflare-worker/dist/
 cloudflare-worker/.wrangler/
+
+# Supabase CLI
+supabase/.temp/

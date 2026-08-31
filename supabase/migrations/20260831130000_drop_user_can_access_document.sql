@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.user_can_access_document(uuid, uuid);

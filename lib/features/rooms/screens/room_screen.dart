@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/room.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_scaffold.dart';
-import '../../../core/widgets/item_action_sheet.dart';
+import '../../../core/widgets/rename_delete_sheet.dart';
 import '../../subjects/models/subject.dart';
 import '../../subjects/widgets/subject_list_item.dart';
 import '../../subjects/screens/subject_screen.dart';
@@ -182,76 +182,13 @@ class _RoomScreenState extends State<RoomScreen> {
   }
 
   void _showSubjectActions(Subject subject) {
-    showItemActionSheet(
+    showRenameDeleteSheet(
       context: context,
-      itemName: subject.name,
-      onRename: () async {
-        final controller = TextEditingController(text: subject.name);
-        final name = await showDialog<String>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Rename Subject'),
-            content: TextField(
-              controller: controller,
-              autofocus: true,
-              textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(hintText: 'Subject name'),
-              onSubmitted: (value) {
-                final trimmed = value.trim();
-                if (trimmed.isNotEmpty && trimmed != subject.name) {
-                  Navigator.of(context).pop(trimmed);
-                } else {
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-            actions: [
-              TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancel')),
-              FilledButton(
-                onPressed: () {
-                  final trimmed = controller.text.trim();
-                  if (trimmed.isNotEmpty && trimmed != subject.name) {
-                    Navigator.of(context).pop(trimmed);
-                  } else {
-                    Navigator.of(context).pop();
-                  }
-                },
-                child: const Text('Save'),
-              ),
-            ],
-          ),
-        );
-        if (name != null && name.isNotEmpty && name != subject.name) {
-          await _renameSubject(subject, name);
-        }
-      },
-      onDelete: () async {
-        final confirm = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Delete Subject?'),
-            content: Text(
-              'Are you sure you want to delete "${subject.name}"?\n\n'
-              'This will also delete all chapters and documents inside this subject. This cannot be undone.',
-            ),
-            actions: [
-              TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('Cancel')),
-              FilledButton(
-                style: FilledButton.styleFrom(backgroundColor: Colors.red[600]),
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Delete'),
-              ),
-            ],
-          ),
-        );
-        if (confirm == true) {
-          await _deleteSubject(subject);
-        }
-      },
+      currentName: subject.name,
+      itemType: 'Subject',
+      hasChildren: true,
+      onRename: (newName) => _renameSubject(subject, newName),
+      onDelete: () => _deleteSubject(subject),
     );
   }
 
