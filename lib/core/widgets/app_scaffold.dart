@@ -4,7 +4,8 @@ import '../theme/app_text_styles.dart';
 import '../theme/notebook_background.dart';
 import 'bottom_action_bar.dart';
 import '../../features/settings/screens/settings_screen.dart';
-import '../../features/documents/screens/scan_entry_screen.dart';
+import 'package:flutter_doc_scanner/flutter_doc_scanner.dart';
+import 'package:flutter/services.dart';
 
 /// Shared scaffold for every screen past login: subtle grid background,
 /// a plain back-enabled app bar, and the persistent bottom action bar.
@@ -26,10 +27,39 @@ class AppScaffold extends StatelessWidget {
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
-  void _handleScanTap(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const ScanEntryScreen()),
-    );
+  void _handleScanTap(BuildContext context) async {
+    try {
+      final dynamic result = await FlutterDocScanner().getScannedDocumentAsImages();
+      // The scanner returns a list of image file paths (List<String>?) or null if cancelled.
+      if (result == null) {
+        // User cancelled.
+        return;
+      }
+      if (result is! List<String>) {
+        // Unexpected type.
+        return;
+      }
+      final imagePaths = result as List<String>;
+      if (imagePaths.isEmpty) {
+        return;
+      }
+      // TODO: Navigate to configuration screen with image paths (Prompt 3).
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Scanned ${imagePaths.length} page(s)')),
+      );
+    } on PlatformException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Camera error: ${e.message}'),
+          action: SnackBarAction(
+            label: 'Open Settings',
+            onPressed: () {
+              // Placeholder for opening settings.
+            },
+          ),
+        ),
+      );
+    }
   }
 
   void _goToSettings(BuildContext context) {

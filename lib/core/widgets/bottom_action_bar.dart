@@ -58,7 +58,7 @@ class BottomActionBar extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
-                  Icons.add,
+                  Icons.camera_alt,
                   color: AppColors.onPrimaryButton,
                   size: 28,
                 ),
