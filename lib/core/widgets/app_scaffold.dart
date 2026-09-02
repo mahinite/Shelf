@@ -6,6 +6,7 @@ import 'bottom_action_bar.dart';
 import '../../features/settings/screens/settings_screen.dart';
 import 'package:flutter_doc_scanner/flutter_doc_scanner.dart';
 import 'package:flutter/services.dart';
+import '../../features/documents/screens/scan_config_screen.dart';
 
 /// Shared scaffold for every screen past login: subtle grid background,
 /// a plain back-enabled app bar, and the persistent bottom action bar.
@@ -27,40 +28,49 @@ class AppScaffold extends StatelessWidget {
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
-  void _handleScanTap(BuildContext context) async {
-    try {
-      final dynamic result = await FlutterDocScanner().getScannedDocumentAsImages();
-      // The scanner returns a list of image file paths (List<String>?) or null if cancelled.
-      if (result == null) {
-        // User cancelled.
-        return;
-      }
-      if (result is! List<String>) {
-        // Unexpected type.
-        return;
-      }
-      final imagePaths = result as List<String>;
-      if (imagePaths.isEmpty) {
-        return;
-      }
-      // TODO: Navigate to configuration screen with image paths (Prompt 3).
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Scanned ${imagePaths.length} page(s)')),
-      );
-    } on PlatformException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Camera error: ${e.message}'),
-          action: SnackBarAction(
-            label: 'Open Settings',
-            onPressed: () {
-              // Placeholder for opening settings.
-            },
-          ),
-        ),
-      );
+void _handleScanTap(BuildContext context) async {
+  try {
+    final dynamic result = await FlutterDocScanner().getScannedDocumentAsImages();
+    if (result == null) {
+      // User cancelled.
+      return;
     }
+    // Normalize: result may be List<dynamic> where each element is string-like.
+    if (result is! List) {
+      debugPrint('Unexpected scanner result type: $result (expected List)');
+      return;
+    }
+    final List<dynamic> rawList = result as List<dynamic>;
+    final List<String> imagePaths = rawList.map((e) => e.toString()).toList();
+    // Optionally warn if any element wasn't a string originally (but toString safe).
+    if (imagePaths.any((path) => path.isEmpty)) {
+      debugPrint('Scanner returned empty path(s): $imagePaths');
+    }
+    if (imagePaths.isEmpty) {
+      return;
+    }
+    // Navigate to configuration screen.
+    if (!context.mounted) return;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ScanConfigScreen(imagePaths: imagePaths),
+      ),
+    );
+  } on PlatformException catch (e) {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Camera error: ${e.message}'),
+        action: SnackBarAction(
+          label: 'Open Settings',
+          onPressed: () {
+            // Placeholder for opening settings.
+          },
+        ),
+      ),
+    );
   }
+}
 
   void _goToSettings(BuildContext context) {
     Navigator.of(context).push(

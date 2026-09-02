@@ -11,6 +11,7 @@ import '../../features/documents/widgets/document_list_item.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
+import '../theme/app_theme.dart';
 import '../widgets/tactile.dart';
 
 /// Mode determines the final selection type.
@@ -45,6 +46,7 @@ class _HierarchyPickerSheetState extends State<HierarchyPickerSheet> {
   Room? _selectedRoom;
   Subject? _selectedSubject;
   Chapter? _selectedChapter;
+  Document? _selectedDocument;
 
   @override
   void initState() {
@@ -165,7 +167,44 @@ class _HierarchyPickerSheetState extends State<HierarchyPickerSheet> {
           Expanded(
             child: _buildBody(),
           ),
-        ],
+          if ((_level == 2 && widget.mode == HierarchyPickerMode.pickChapter) ||
+              (_level == 3 && widget.mode == HierarchyPickerMode.pickDocument))
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.containerMargin),
+              child: Tactile(
+                onTap: () {
+                  if (widget.mode == HierarchyPickerMode.pickChapter && _selectedChapter != null) {
+                    widget.onChapterPicked(_selectedChapter!);
+                    Navigator.of(context).pop();
+                  } else if (widget.mode == HierarchyPickerMode.pickDocument && _selectedDocument != null) {
+                    widget.onDocumentPicked!(_selectedDocument!);
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+color: ((widget.mode == HierarchyPickerMode.pickChapter && _selectedChapter != null) ||
+                             (widget.mode == HierarchyPickerMode.pickDocument && _selectedDocument != null))
+                         ? AppColors.primaryButton
+                         : AppColors.border,
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                  child: Text(
+                    'Select',
+                    style: AppTextStyles.buttonLabel.copyWith(
+color: ((widget.mode == HierarchyPickerMode.pickChapter && _selectedChapter != null) ||
+                               (widget.mode == HierarchyPickerMode.pickDocument && _selectedDocument != null))
+                           ? AppColors.onPrimaryButton
+                           : AppColors.textSecondary,
+                    ),
+                  ),
+),
+               ),
+             ),
+         ],
       ),
     );
   }
@@ -211,12 +250,15 @@ class _HierarchyPickerSheetState extends State<HierarchyPickerSheet> {
             final chapter = _chapters[i];
             return ListTile(
               title: Text(chapter.name, style: AppTextStyles.body),
-              trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+              trailing: _selectedChapter == chapter
+                  ? const Icon(Icons.check, color: AppColors.primaryButton)
+                  : const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+              selected: _selectedChapter == chapter,
+              selectedTileColor: AppColors.surfaceCard,
               onTap: () async {
-                _selectedChapter = chapter;
+                setState(() => _selectedChapter = chapter);
                 if (widget.mode == HierarchyPickerMode.pickChapter) {
-                  widget.onChapterPicked(chapter);
-                  Navigator.of(context).pop();
+                  // wait for user to confirm via Select button
                 } else {
                   // pick document mode – load documents
                   await _loadDocuments(chapter.id);
@@ -232,14 +274,15 @@ class _HierarchyPickerSheetState extends State<HierarchyPickerSheet> {
           separatorBuilder: (_, __) => const Divider(height: 1),
           itemBuilder: (c, i) {
             final doc = _documents[i];
-            return DocumentListItem(
-              document: doc,
-              accent: null,
+            return ListTile(
+              title: Text(doc.title, style: AppTextStyles.body),
+              trailing: _selectedDocument == doc
+                  ? const Icon(Icons.check, color: AppColors.primaryButton)
+                  : const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+              selected: _selectedDocument == doc,
+              selectedTileColor: AppColors.surfaceCard,
               onTap: () {
-                if (widget.onDocumentPicked != null) {
-                  widget.onDocumentPicked!(doc);
-                  Navigator.of(context).pop();
-                }
+                setState(() => _selectedDocument = doc);
               },
             );
           },

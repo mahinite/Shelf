@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:image/image.dart' as img;
@@ -7,6 +8,8 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf_combiner/pdf_combiner.dart';
 import 'package:pdf_combiner/models/merge_input.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shelf/core/network/worker_client.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Service handling scan‑related uploads and PDF generation.
 class ScanService {
@@ -44,14 +47,10 @@ class ScanService {
     required int pageOrder,
     required Uint8List imageBytes,
   }) async {
-    final client = Supabase.instance.client;
-    final userId = client.auth.currentUser?.id;
-    if (userId == null) throw Exception('Not authenticated');
-    final filePath = 'pages/$documentId/$pageOrder.jpg';
-    await client.storage.from('documents').uploadBinary(
-      filePath,
-      imageBytes,
-      fileOptions: const FileOptions(contentType: 'image/jpeg', upsert: true),
+    await WorkerClient.instance.putBytes(
+      objectPath: 'pages/$documentId/$pageOrder.jpg',
+      bytes: imageBytes,
+      contentType: 'image/jpeg',
     );
   }
 
@@ -59,14 +58,10 @@ class ScanService {
     required String documentId,
     required Uint8List pdfBytes,
   }) async {
-    final client = Supabase.instance.client;
-    final userId = client.auth.currentUser?.id;
-    if (userId == null) throw Exception('Not authenticated');
-    final filePath = 'documents/$documentId.pdf';
-    await client.storage.from('documents').uploadBinary(
-      filePath,
-      pdfBytes,
-      fileOptions: const FileOptions(contentType: 'application/pdf', upsert: true),
+    await WorkerClient.instance.putBytes(
+      objectPath: 'documents/$documentId.pdf',
+      bytes: pdfBytes,
+      contentType: 'application/pdf',
     );
   }
 
@@ -190,13 +185,8 @@ class ScanService {
       await _uploadPage(documentId: documentId, pageOrder: newOrders[i], imageBytes: processed[i]);
     }
 
-    // 5. Download existing PDF
-    Uint8List existingPdf;
-    try {
-      existingPdf = await client.storage.from('documents').download('documents/$documentId.pdf');
-    } catch (e) {
-      throw Exception('Failed to download existing PDF: $e');
-    }
+    // 5. Download existing PDF via Worker (mandatory)
+    Uint8List existingPdf = await WorkerClient.instance.getBytes('documents/$documentId.pdf');
 
     // 6. Build PDF for new pages only
     final newPdfDoc = pw.Document();

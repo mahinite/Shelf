@@ -7,8 +7,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/tactile.dart';
 import '../../documents/services/scan_service.dart';
-import '../../rooms/models/room.dart'; // Not used directly but ensures model imports are available
-import '../../subjects/models/subject.dart'; // same
+
 import '../../chapters/models/chapter.dart';
 import '../../documents/models/document.dart';
 import '../../../core/widgets/hierarchy_picker_sheet.dart';
@@ -33,6 +32,8 @@ enum _ConfigMode { newDocument, addToExisting }
 
 class _ScanConfigScreenState extends State<ScanConfigScreen> {
   _ConfigMode _mode = _ConfigMode.newDocument;
+  bool _chapterConfirmed = false;
+  bool _documentConfirmed = false;
   String? _title;
   Chapter? _selectedChapter;
   Document? _selectedDocument;
@@ -44,9 +45,12 @@ class _ScanConfigScreenState extends State<ScanConfigScreen> {
       isScrollControlled: true,
       builder: (_) => HierarchyPickerSheet(
         mode: HierarchyPickerMode.pickChapter,
-        onChapterPicked: (chapter) {
-          setState(() => _selectedChapter = chapter);
-        },
+onChapterPicked: (chapter) {
+                  setState(() {
+                    _selectedChapter = chapter;
+                    _chapterConfirmed = false;
+                  });
+                },
       ),
     );
   }
@@ -58,9 +62,12 @@ class _ScanConfigScreenState extends State<ScanConfigScreen> {
       builder: (_) => HierarchyPickerSheet(
         mode: HierarchyPickerMode.pickDocument,
         onChapterPicked: (_) {}, // not used in document mode
-        onDocumentPicked: (doc) {
-          setState(() => _selectedDocument = doc);
-        },
+onDocumentPicked: (doc) {
+           setState(() {
+             _selectedDocument = doc;
+             _documentConfirmed = false;
+           });
+         },
       ),
     );
   }
@@ -68,9 +75,24 @@ class _ScanConfigScreenState extends State<ScanConfigScreen> {
   Future<void> _save() async {
     setState(() => _isSaving = true);
     try {
-      // Placeholder: real upload logic goes here using ScanService.
-      // For now just simulate a short delay.
-      await Future.delayed(const Duration(seconds: 1));
+      if (_mode == _ConfigMode.newDocument) {
+        if (_title == null || _title!.isEmpty || _selectedChapter == null) {
+          throw Exception('Title and chapter required');
+        }
+        await ScanService.uploadNewDocument(
+          imagePaths: widget.imagePaths,
+          title: _title!,
+          chapterId: _selectedChapter!.id,
+        );
+      } else {
+        if (_selectedDocument == null) {
+          throw Exception('Document required');
+        }
+        await ScanService.uploadToExistingDocument(
+          imagePaths: widget.imagePaths,
+          documentId: _selectedDocument!.id,
+        );
+      }
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Save successful')),
@@ -89,8 +111,8 @@ class _ScanConfigScreenState extends State<ScanConfigScreen> {
   @override
   Widget build(BuildContext context) {
     final bool canSave = _mode == _ConfigMode.newDocument
-        ? (_title?.isNotEmpty == true && _selectedChapter != null)
-        : _selectedDocument != null;
+        ? (_title?.isNotEmpty == true && _selectedChapter != null && _chapterConfirmed)
+        : (_selectedDocument != null && _documentConfirmed);
 
     return AppScaffold(
       title: 'Scan Config',
@@ -193,6 +215,23 @@ class _ScanConfigScreenState extends State<ScanConfigScreen> {
             ),
           ),
         ),
+        if (_selectedChapter != null && !_chapterConfirmed)
+          Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.md),
+            child: Tactile(
+              onTap: () => setState(() => _chapterConfirmed = true),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryButton,
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                ),
+                child: const Text('Select', style: TextStyle(color: Colors.white)),
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -221,6 +260,23 @@ class _ScanConfigScreenState extends State<ScanConfigScreen> {
             ),
           ),
         ),
+        if (_selectedDocument != null && !_documentConfirmed)
+          Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.md),
+            child: Tactile(
+              onTap: () => setState(() => _documentConfirmed = true),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryButton,
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                ),
+                child: const Text('Select', style: TextStyle(color: Colors.white)),
+              ),
+            ),
+          ),
       ],
     );
   }
