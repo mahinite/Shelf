@@ -65,3 +65,5 @@ cloudflare-worker/.wrangler/
 
 # Supabase CLI
 supabase/.temp/
+# Widget Preview related
+.widget_preview/

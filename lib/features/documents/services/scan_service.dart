@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'dart:convert';
+
 import 'dart:typed_data';
 
 import 'package:image/image.dart' as img;
@@ -9,7 +9,7 @@ import 'package:pdf_combiner/pdf_combiner.dart';
 import 'package:pdf_combiner/models/merge_input.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shelf/core/network/worker_client.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 /// Service handling scan‑related uploads and PDF generation.
 class ScanService {

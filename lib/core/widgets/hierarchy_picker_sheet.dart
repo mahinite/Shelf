@@ -7,11 +7,9 @@ import '../../features/subjects/models/subject.dart';
 import '../../features/subjects/widgets/subject_list_item.dart';
 import '../../features/chapters/models/chapter.dart';
 import '../../features/documents/models/document.dart';
-import '../../features/documents/widgets/document_list_item.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
-import '../theme/app_theme.dart';
 import '../widgets/tactile.dart';
 
 /// Mode determines the final selection type.
@@ -47,6 +45,8 @@ class _HierarchyPickerSheetState extends State<HierarchyPickerSheet> {
   Subject? _selectedSubject;
   Chapter? _selectedChapter;
   Document? _selectedDocument;
+  bool _isLoading = false;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -55,50 +55,98 @@ class _HierarchyPickerSheetState extends State<HierarchyPickerSheet> {
   }
 
   Future<void> _loadRooms() async {
-    final data = await Supabase.instance.client
-        .from('rooms')
-        .select('id, name, subject_count')
-        .order('position', ascending: true);
     setState(() {
-      _rooms = (data as List).map((json) => Room.fromJson(json)).toList();
-      _level = 0;
+      _isLoading = true;
+      _errorMessage = null;
     });
+    try {
+      final data = await Supabase.instance.client
+          .from('rooms')
+          .select('id, name, created_by, created_at, subjects(count)')
+          .order('created_at', ascending: true);
+      setState(() {
+        _rooms = (data as List).map((json) => Room.fromJson(json)).toList();
+        _level = 0;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Failed to load rooms: $e';
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _loadSubjects(String roomId) async {
-    final data = await Supabase.instance.client
-        .from('subjects')
-        .select('id, name, chapter_count')
-        .eq('room_id', roomId)
-        .order('position', ascending: true);
     setState(() {
-      _subjects = (data as List).map((json) => Subject.fromJson(json)).toList();
-      _level = 1;
+      _isLoading = true;
+      _errorMessage = null;
     });
+    try {
+      final data = await Supabase.instance.client
+          .from('subjects')
+          .select('id, room_id, name, color, position, created_at, chapters(count)')
+          .eq('room_id', roomId)
+          .order('position', ascending: true);
+      setState(() {
+        _subjects = (data as List).map((json) => Subject.fromJson(json)).toList();
+        _level = 1;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Failed to load subjects: $e';
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _loadChapters(String subjectId) async {
-    final data = await Supabase.instance.client
-        .from('chapters')
-        .select('id, name, position')
-        .eq('subject_id', subjectId)
-        .order('position', ascending: true);
     setState(() {
-      _chapters = (data as List).map((json) => Chapter.fromJson(json)).toList();
-      _level = 2;
+      _isLoading = true;
+      _errorMessage = null;
     });
+    try {
+      final data = await Supabase.instance.client
+          .from('chapters')
+          .select('id, subject_id, name, position, created_at')
+          .eq('subject_id', subjectId)
+          .order('position', ascending: true);
+      setState(() {
+        _chapters = (data as List).map((json) => Chapter.fromJson(json)).toList();
+        _level = 2;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Failed to load chapters: $e';
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _loadDocuments(String chapterId) async {
-    final data = await Supabase.instance.client
-        .from('documents')
-        .select('id, title, page_count, chapter_id')
-        .eq('chapter_id', chapterId)
-        .order('position', ascending: true);
     setState(() {
-      _documents = (data as List).map((json) => Document.fromJson(json)).toList();
-      _level = 3;
+      _isLoading = true;
+      _errorMessage = null;
     });
+    try {
+      final data = await Supabase.instance.client
+          .from('documents')
+          .select('id, chapter_id, title, created_at, updated_at, file_path, file_size, page_count, position')
+          .eq('chapter_id', chapterId)
+          .order('position', ascending: true);
+      setState(() {
+        _documents = (data as List).map((json) => Document.fromJson(json)).toList();
+        _level = 3;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Failed to load documents: $e';
+        _isLoading = false;
+      });
+    }
   }
 
   void _goBack() {
@@ -210,6 +258,56 @@ color: ((widget.mode == HierarchyPickerMode.pickChapter && _selectedChapter != n
   }
 
   Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_errorMessage != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.containerMargin),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _errorMessage!,
+                style: AppTextStyles.body.copyWith(color: AppColors.destructive),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Tactile(
+                onTap: () {
+                  if (_level == 0) {
+                    _loadRooms();
+                  } else if (_level == 1 && _selectedRoom != null) {
+                    _loadSubjects(_selectedRoom!.id);
+                  } else if (_level == 2 && _selectedSubject != null) {
+                    _loadChapters(_selectedSubject!.id);
+                  } else if (_level == 3 && _selectedChapter != null) {
+                    _loadDocuments(_selectedChapter!.id);
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                    vertical: AppSpacing.md,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryButton,
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                  child: Text(
+                    'Retry',
+                    style: AppTextStyles.buttonLabel.copyWith(
+                      color: AppColors.onPrimaryButton,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     switch (_level) {
       case 0:
         return ListView.builder(

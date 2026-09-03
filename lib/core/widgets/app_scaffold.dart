@@ -29,33 +29,47 @@ class AppScaffold extends StatelessWidget {
   }
 
 void _handleScanTap(BuildContext context) async {
+  debugPrint('[scan] _handleScanTap ENTERED, context.mounted=${context.mounted}');
   try {
+    debugPrint('[scan] calling FlutterDocScanner().getScannedDocumentAsImages()');
     final dynamic result = await FlutterDocScanner().getScannedDocumentAsImages();
+    debugPrint('[scan] scanner returned. result==null? ${result == null}. runtimeType=${result?.runtimeType}. toString="$result"');
     if (result == null) {
-      // User cancelled.
+      debugPrint('[scan] result is null -> user cancelled, returning');
       return;
     }
-    // Normalize: result may be List<dynamic> where each element is string-like.
-    if (result is! List) {
-      debugPrint('Unexpected scanner result type: $result (expected List)');
+    // Resolve scanner result to a list of image file paths.
+    List<String> imagePaths;
+    if (result is ImageScanResult) {
+      imagePaths = result.images;
+    } else if (result is List) {
+      imagePaths = result.map((e) => e.toString()).toList();
+    } else {
+      debugPrint('[scan] Unexpected scanner result type: ${result.runtimeType}.');
       return;
     }
-    final List<dynamic> rawList = result as List<dynamic>;
-    final List<String> imagePaths = rawList.map((e) => e.toString()).toList();
+    debugPrint('[scan] imagePaths count=${imagePaths.length}');
     // Optionally warn if any element wasn't a string originally (but toString safe).
     if (imagePaths.any((path) => path.isEmpty)) {
-      debugPrint('Scanner returned empty path(s): $imagePaths');
+      debugPrint('[scan] Scanner returned empty path(s): $imagePaths');
     }
     if (imagePaths.isEmpty) {
+      debugPrint('[scan] imagePaths empty after normalization -> returning');
       return;
     }
+    debugPrint('[scan] imagePaths=${imagePaths.length} paths. About to call Navigator.push to ScanConfigScreen.');
     // Navigate to configuration screen.
-    if (!context.mounted) return;
+    if (!context.mounted) {
+      debugPrint('[scan] context not mounted before push -> returning');
+      return;
+    }
+    debugPrint('[scan] calling Navigator.of(context).push(MaterialPageRoute(builder: ScanConfigScreen))');
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => ScanConfigScreen(imagePaths: imagePaths),
       ),
     );
+    debugPrint('[scan] Navigator.push returned (sync). Awaiting frame.');
   } on PlatformException catch (e) {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(

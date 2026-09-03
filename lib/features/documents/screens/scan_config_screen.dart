@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
 
 import '../../../core/widgets/app_scaffold.dart';
 import '../../../core/theme/app_colors.dart';

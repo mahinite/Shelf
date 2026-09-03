@@ -35,7 +35,7 @@ class RenameDeleteSheet extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.delete_outline, color: AppColors.destructive),
+            leading: const Icon(Icons.delete_outline, color: AppColors.destructive),
             title: Text('Delete $itemType', style: AppTextStyles.body.copyWith(color: AppColors.destructive)),
             onTap: () {
               Navigator.pop(context);

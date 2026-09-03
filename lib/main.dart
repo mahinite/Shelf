@@ -66,7 +66,9 @@ class _AuthGateState extends State<AuthGate> {
     try {
       final client = Supabase.instance.client;
       _session = client.auth.currentSession;
+      debugPrint('[auth] AuthGate init. currentSession before listener == null? ${_session == null}');
       _authStateSubscription = client.auth.onAuthStateChange.listen((data) {
+        debugPrint('[auth] onAuthStateChange event=${data.event} sessionBefore=${_session == null ? 'null' : 'non-null'} sessionAfter=${data.session == null ? 'null' : 'non-null'}');
         if (mounted) {
           setState(() {
             _session = data.session;
