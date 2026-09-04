@@ -7,25 +7,28 @@ class PdfBadgeIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final badgeWidth = size;
-    final badgeHeight = size * 0.7;
-    final fontSize = size * 0.45;
+    final badgeWidth = size * 1.3;
+    final badgeHeight = size * 0.75;
 
     return Container(
       width: badgeWidth,
       height: badgeHeight,
+      padding: const EdgeInsets.symmetric(horizontal: 2),
       decoration: BoxDecoration(
         color: const Color(0xFFD32F2F),
         borderRadius: BorderRadius.circular(3),
       ),
       alignment: Alignment.center,
-      child: Text(
-        'PDF',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: fontSize,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 0.2,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          'PDF',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: size * 0.5,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.2,
+          ),
         ),
       ),
     );

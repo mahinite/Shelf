@@ -25,6 +25,7 @@ class DocumentScreen extends StatefulWidget {
 
 class _DocumentScreenState extends State<DocumentScreen> {
   PdfDocument? _pdfDocument;
+  List<Uint8List>? _renderedPages;
   bool _isLoading = true;
   String? _errorMessage;
 
@@ -35,27 +36,45 @@ class _DocumentScreenState extends State<DocumentScreen> {
   }
 
   Future<void> _loadDocument() async {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final dpr = MediaQuery.of(context).devicePixelRatio;
+    const double horizontalPadding = AppSpacing.containerMargin;
+    final double renderWidth = screenWidth - 2 * horizontalPadding;
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
+      _renderedPages = null;
     });
     try {
       final bytes = await WorkerClient.instance.getBytes('documents/${widget.document.id}.pdf');
       _pdfDocument = await PdfDocument.openData(bytes);
-      setState(() {
-        _isLoading = false;
-      });
+
+      final pages = <Uint8List>[];
+      for (int i = 1; i <= _pdfDocument!.pagesCount; i++) {
+        final pageBytes = await _renderPage(i, renderWidth, dpr);
+        if (pageBytes != null) {
+          pages.add(pageBytes);
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _renderedPages = pages;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _errorMessage = 'Failed to load document: $e';
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Failed to load document: $e';
+          _isLoading = false;
+        });
+      }
     }
   }
 
-  Future<Uint8List?> _renderPage(int pageNumber, double targetWidth) async {
-    if (_pdfDocument == null) return null;
-    final dpr = MediaQuery.of(context).devicePixelRatio;
+  Future<Uint8List?> _renderPage(int pageNumber, double targetWidth, double dpr) async {
     try {
       final page = await _pdfDocument!.getPage(pageNumber);
       final pageWidth = page.width.toDouble();
@@ -145,53 +164,35 @@ class _DocumentScreenState extends State<DocumentScreen> {
       );
     }
 
-    final screenWidth = MediaQuery.of(context).size.width;
-    const double horizontalPadding = AppSpacing.containerMargin;
-    final double renderWidth = screenWidth - 2 * horizontalPadding;
+    final renderedPages = _renderedPages;
+    if (renderedPages == null || renderedPages.isEmpty) {
+      return Center(
+        child: Text(
+          'Document has no pages',
+          style: AppTextStyles.bodySecondary,
+        ),
+      );
+    }
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(AppSpacing.containerMargin),
-      itemCount: _pdfDocument!.pagesCount,
-      itemBuilder: (context, index) {
-        final pageNumber = index + 1;
-        return FutureBuilder<Uint8List?>(
-          future: _renderPage(pageNumber, renderWidth),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const SizedBox(
-                height: 200,
-                child: Center(child: CircularProgressIndicator()),
-              );
-            }
-            if (snapshot.hasError || snapshot.data == null) {
-              return Container(
-                height: 200,
-                color: AppColors.surfaceCard,
-                child: Center(
-                  child: Text(
-                    'Failed to render page $pageNumber',
-                    style: AppTextStyles.bodySecondary,
-                  ),
-                ),
-              );
-            }
-            return Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.md),
-              child: InteractiveViewer(
-                minScale: 1.0,
-                maxScale: 4.0,
-                panEnabled: true,
-                scaleEnabled: true,
-                child: Image.memory(
-                  snapshot.data!,
-                  width: double.infinity,
-                  fit: BoxFit.fitWidth,
-                ),
-              ),
-            );
-          },
-        );
-      },
+    return InteractiveViewer(
+      constrained: false,
+      minScale: 1.0,
+      maxScale: 4.0,
+      panEnabled: true,
+      scaleEnabled: true,
+      child: Column(
+        children: [
+          for (int i = 0; i < renderedPages.length; i++) ...[
+            Image.memory(
+              renderedPages[i],
+              width: double.infinity,
+              fit: BoxFit.fitWidth,
+            ),
+            if (i < renderedPages.length - 1)
+              const SizedBox(height: AppSpacing.md),
+          ],
+        ],
+      ),
     );
   }
 }

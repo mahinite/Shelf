@@ -44,7 +44,7 @@ class DocumentListItem extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.sm),
             ] else ...[
-              const PdfBadgeIcon(size: 20),
+              const PdfBadgeIcon(size: 24),
               const SizedBox(width: AppSpacing.sm),
             ],
             Expanded(
