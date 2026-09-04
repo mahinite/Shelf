@@ -20,7 +20,7 @@ dependencies:
   flutter_doc_scanner: ^0.0.21
   pdf: ^3.11.0
   pdf_combiner: ^6.2.1
-  pdfx: ^2.9.2
+  pdfrx: ^2.6.1
   supabase_flutter: ^2.17.2
 
 dev_dependencies:
