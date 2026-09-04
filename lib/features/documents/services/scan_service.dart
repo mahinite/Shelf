@@ -19,7 +19,8 @@ class ScanService {
 
   /// Process an image file: grayscale, contrast boost, downscale, JPEG encode.
   static Future<Uint8List> _processImageFile(String path) async {
-    final file = File(path);
+    final resolvedPath = path.startsWith('file://') ? Uri.parse(path).toFilePath() : path;
+    final file = File(resolvedPath);
     final bytes = await file.readAsBytes();
     final decoded = img.decodeImage(bytes);
     if (decoded == null) throw Exception('Failed to decode image at $path');
@@ -37,21 +38,9 @@ class ScanService {
 
     // Grayscale & contrast
     final gray = img.grayscale(resized);
-    final enhanced = img.contrast(gray, contrast: 1.3);
+    final enhanced = img.contrast(gray, contrast: 130);
     final jpeg = img.encodeJpg(enhanced, quality: 80);
     return Uint8List.fromList(jpeg);
-  }
-
-  static Future<void> _uploadPage({
-    required String documentId,
-    required int pageOrder,
-    required Uint8List imageBytes,
-  }) async {
-    await WorkerClient.instance.putBytes(
-      objectPath: 'pages/$documentId/$pageOrder.jpg',
-      bytes: imageBytes,
-      contentType: 'image/jpeg',
-    );
   }
 
   static Future<void> _uploadPdf({
@@ -86,17 +75,6 @@ class ScanService {
     return result['id'] as String;
   }
 
-  static Future<void> _createScanPages({required String batchId, required String documentId, required List<int> pageOrders}) async {
-    final client = Supabase.instance.client;
-    final rows = pageOrders.map((order) => {
-          'batch_id': batchId,
-          'document_id': documentId,
-          'page_order': order,
-          'file_path': 'pages/$documentId/$order.jpg',
-        }).toList();
-    await client.from('scan_pages').insert(rows);
-  }
-
   static Future<void> _updateDocument({required String documentId, required int pageCount, required int fileSize}) async {
     final client = Supabase.instance.client;
     await client.from('documents').update({
@@ -123,16 +101,9 @@ class ScanService {
     final documentId = await _createDocument(chapterId: chapterId, title: title);
 
     // 3. Create scan batch
-    final batchId = await _createScanBatch(documentId: documentId);
+    await _createScanBatch(documentId: documentId);
 
-    // 4. Insert scan_pages rows & upload images
-    final pageOrders = List<int>.generate(processed.length, (i) => i + 1);
-    await _createScanPages(batchId: batchId, documentId: documentId, pageOrders: pageOrders);
-    for (int i = 0; i < processed.length; i++) {
-      await _uploadPage(documentId: documentId, pageOrder: i + 1, imageBytes: processed[i]);
-    }
-
-    // 5. Assemble PDF from processed images
+    // 4. Assemble PDF from processed images
     final pdfDoc = pw.Document();
     for (final bytes in processed) {
       final imgPdf = pw.MemoryImage(bytes);
@@ -156,39 +127,25 @@ class ScanService {
     required List<String> imagePaths,
     required String documentId,
   }) async {
+    final client = Supabase.instance.client;
+
     // 1. Process new images
     final processed = <Uint8List>[];
     for (final path in imagePaths) {
       processed.add(await _processImageFile(path));
     }
 
-    // 2. Determine next page order
-    final client = Supabase.instance.client;
-    final existing = await client
-        .from('scan_pages')
-        .select('page_order')
-        .eq('document_id', documentId)
-        .order('page_order', ascending: false)
-        .limit(1);
-    int nextOrder = 1;
-    if ((existing as List).isNotEmpty) {
-      nextOrder = (existing.first['page_order'] as int) + 1;
-    }
+    // 2. Read current page_count from documents row (replaces scan_pages query)
+    final docInfo = await client.from('documents').select('page_count').eq('id', documentId).single();
+    final currentCount = (docInfo['page_count'] as int?) ?? 0;
 
     // 3. Create new scan batch
-    final batchId = await _createScanBatch(documentId: documentId);
+    await _createScanBatch(documentId: documentId);
 
-    // 4. Insert scan_pages rows & upload new images
-    final newOrders = List<int>.generate(processed.length, (i) => nextOrder + i);
-    await _createScanPages(batchId: batchId, documentId: documentId, pageOrders: newOrders);
-    for (int i = 0; i < processed.length; i++) {
-      await _uploadPage(documentId: documentId, pageOrder: newOrders[i], imageBytes: processed[i]);
-    }
-
-    // 5. Download existing PDF via Worker (mandatory)
+    // 4. Download existing PDF via Worker (mandatory)
     Uint8List existingPdf = await WorkerClient.instance.getBytes('documents/$documentId.pdf');
 
-    // 6. Build PDF for new pages only
+    // 5. Build PDF for new pages only
     final newPdfDoc = pw.Document();
     for (final bytes in processed) {
       final imgPdf = pw.MemoryImage(bytes);
@@ -200,7 +157,7 @@ class ScanService {
     }
     final newPdfBytes = await newPdfDoc.save();
 
-    // 7. Merge PDFs using pdf_combiner (write to temp files)
+    // 6. Merge PDFs using pdf_combiner (write to temp files)
     Uint8List mergedPdf;
     final tempDir = Directory.systemTemp.createTempSync('pdf_combiner_temp.');
     try {
@@ -226,12 +183,10 @@ class ScanService {
       }
     }
 
-    // 8. Upload merged PDF
+    // 7. Upload merged PDF
     await _uploadPdf(documentId: documentId, pdfBytes: mergedPdf);
 
-    // 9. Update document metadata (page count & file size)
-    final docInfo = await client.from('documents').select('page_count').eq('id', documentId).single();
-    final currentCount = (docInfo['page_count'] as int?) ?? 0;
+    // 8. Update document metadata (page count & file size)
     final newCount = currentCount + processed.length;
     await _updateDocument(documentId: documentId, pageCount: newCount, fileSize: mergedPdf.length);
   }

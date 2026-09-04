@@ -60,9 +60,17 @@ class _HierarchyPickerSheetState extends State<HierarchyPickerSheet> {
       _errorMessage = null;
     });
     try {
-      final data = await Supabase.instance.client
+      final supabase = Supabase.instance.client;
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        throw Exception('Not authenticated');
+      }
+      final data = await supabase
           .from('rooms')
-          .select('id, name, created_by, created_at, subjects(count)')
+          .select(
+            'id, name, created_by, created_at, subjects(count), room_members!inner(user_id)',
+          )
+          .eq('room_members.user_id', userId)
           .order('created_at', ascending: true);
       setState(() {
         _rooms = (data as List).map((json) => Room.fromJson(json)).toList();

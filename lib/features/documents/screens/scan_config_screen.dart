@@ -32,42 +32,38 @@ enum _ConfigMode { newDocument, addToExisting }
 
 class _ScanConfigScreenState extends State<ScanConfigScreen> {
   _ConfigMode _mode = _ConfigMode.newDocument;
-  bool _chapterConfirmed = false;
-  bool _documentConfirmed = false;
   String? _title;
   Chapter? _selectedChapter;
   Document? _selectedDocument;
   bool _isSaving = false;
 
-  void _selectChapter() async {
+void _selectChapter() async {
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (_) => HierarchyPickerSheet(
         mode: HierarchyPickerMode.pickChapter,
-onChapterPicked: (chapter) {
-                  setState(() {
-                    _selectedChapter = chapter;
-                    _chapterConfirmed = false;
-                  });
-                },
+        onChapterPicked: (chapter) {
+          setState(() {
+            _selectedChapter = chapter;
+          });
+        },
       ),
     );
   }
 
-  void _selectDocument() async {
+void _selectDocument() async {
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (_) => HierarchyPickerSheet(
         mode: HierarchyPickerMode.pickDocument,
         onChapterPicked: (_) {}, // not used in document mode
-onDocumentPicked: (doc) {
-           setState(() {
-             _selectedDocument = doc;
-             _documentConfirmed = false;
-           });
-         },
+        onDocumentPicked: (doc) {
+          setState(() {
+            _selectedDocument = doc;
+          });
+        },
       ),
     );
   }
@@ -111,8 +107,8 @@ onDocumentPicked: (doc) {
   @override
   Widget build(BuildContext context) {
     final bool canSave = _mode == _ConfigMode.newDocument
-        ? (_title?.isNotEmpty == true && _selectedChapter != null && _chapterConfirmed)
-        : (_selectedDocument != null && _documentConfirmed);
+        ? (_title?.isNotEmpty == true && _selectedChapter != null)
+        : (_selectedDocument != null);
 
     return AppScaffold(
       title: 'Scan Config',
@@ -215,23 +211,6 @@ onDocumentPicked: (doc) {
             ),
           ),
         ),
-        if (_selectedChapter != null && !_chapterConfirmed)
-          Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.md),
-            child: Tactile(
-              onTap: () => setState(() => _chapterConfirmed = true),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryButton,
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                ),
-                child: const Text('Select', style: TextStyle(color: Colors.white)),
-              ),
-            ),
-          ),
       ],
     );
   }
@@ -260,23 +239,6 @@ onDocumentPicked: (doc) {
             ),
           ),
         ),
-        if (_selectedDocument != null && !_documentConfirmed)
-          Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.md),
-            child: Tactile(
-              onTap: () => setState(() => _documentConfirmed = true),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryButton,
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                ),
-                child: const Text('Select', style: TextStyle(color: Colors.white)),
-              ),
-            ),
-          ),
       ],
     );
   }

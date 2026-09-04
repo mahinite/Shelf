@@ -4,6 +4,7 @@ import '../models/document.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/pdf_badge_icon.dart';
 import '../../../core/widgets/tactile.dart';
 
 /// A single row representing a document inside a chapter.
@@ -43,11 +44,7 @@ class DocumentListItem extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.sm),
             ] else ...[
-              const Icon(
-                Icons.description_outlined,
-                size: 20,
-                color: AppColors.textSecondary,
-              ),
+              const PdfBadgeIcon(size: 20),
               const SizedBox(width: AppSpacing.sm),
             ],
             Expanded(
