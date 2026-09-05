@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -7,9 +8,20 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'features/auth/screens/login_screen.dart';
 import 'features/home/screens/home_screen.dart';
 import 'core/theme/app_theme.dart';
+import 'core/services/crash_logger.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Set up crash logging before runApp
+  FlutterError.onError = (details) {
+    CrashLogger.logError(details.exception, details.stack ?? StackTrace.current);
+  };
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    CrashLogger.logError(error, stack);
+    return true;
+  };
 
   await dotenv.load(fileName: '.env');
 
