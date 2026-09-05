@@ -34,7 +34,7 @@ class _RoomMembersScreenState extends State<RoomMembersScreen> {
   Future<List<RoomMember>> _loadMembers() async {
     final data = await Supabase.instance.client.rpc(
       'get_room_members',
-      params: {'room_id': widget.room.id},
+      params: {'target_room_id': widget.room.id},
     );
 
     return (data as List).map((json) => RoomMember.fromJson(json)).toList();
@@ -101,7 +101,7 @@ class _RoomMembersScreenState extends State<RoomMembersScreen> {
       try {
         final code = await Supabase.instance.client.rpc(
           'regenerate_invite_code',
-          params: {'room_id': widget.room.id},
+          params: {'target_room_id': widget.room.id},
         );
         if (mounted) {
           setState(() {
@@ -208,7 +208,7 @@ class _RoomMembersScreenState extends State<RoomMembersScreen> {
                                   final code = await Supabase.instance.client
                                       .rpc(
                                     'regenerate_invite_code',
-                                    params: {'room_id': widget.room.id},
+                                    params: {'target_room_id': widget.room.id},
                                   );
                                   if (mounted) {
                                     setDialogState(() {
@@ -330,7 +330,7 @@ class _RoomMembersScreenState extends State<RoomMembersScreen> {
     try {
       await Supabase.instance.client.rpc(
         'invite_member_by_email',
-        params: {'room_id': widget.room.id, 'email': email},
+        params: {'target_room_id': widget.room.id, 'target_email': email},
       );
       if (!mounted) return;
       Navigator.of(context).pop();
@@ -358,91 +358,92 @@ class _RoomMembersScreenState extends State<RoomMembersScreen> {
     return AppScaffold(
       title: 'Members',
       showBackButton: true,
-      body: FutureBuilder<List<RoomMember>>(
-        future: _membersFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: Stack(
+        children: [
+          FutureBuilder<List<RoomMember>>(
+            future: _membersFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Could not load members.\n${snapshot.error}',
-                    style: AppTextStyles.body,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  FilledButton(
-                    onPressed: () => setState(() {
-                      _membersFuture = _loadMembers();
-                    }),
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          final members = snapshot.data ?? [];
-
-          return Stack(
-            children: [
-              if (members.isEmpty)
-                const Center(child: Text('No members yet.'))
-              else
-                ListView.separated(
-                  padding: const EdgeInsets.all(AppSpacing.containerMargin),
-                  itemCount: members.length,
-                  separatorBuilder: (_, __) => const Divider(),
-                  itemBuilder: (context, index) {
-                    final member = members[index];
-                    return ListTile(
-                      leading: CircleAvatar(
-                        child: Text(
-                          member.displayName.isNotEmpty
-                              ? member.displayName[0].toUpperCase()
-                              : '?',
-                        ),
+              if (snapshot.hasError) {
+                return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Could not load members.\n${snapshot.error}',
+                        style: AppTextStyles.body,
+                        textAlign: TextAlign.center,
                       ),
-                      title: Text(member.displayName, style: AppTextStyles.body),
-                      trailing: member.isCreator
-                          ? Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.sm,
-                                vertical: AppSpacing.xs,
+                      const SizedBox(height: AppSpacing.md),
+                      FilledButton(
+                        onPressed: () => setState(() {
+                          _membersFuture = _loadMembers();
+                        }),
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              final members = snapshot.data ?? [];
+
+              if (members.isEmpty) {
+                return const Center(child: Text('No members yet.'));
+              }
+
+              return ListView.separated(
+                padding: const EdgeInsets.all(AppSpacing.containerMargin),
+                itemCount: members.length,
+                separatorBuilder: (_, __) => const Divider(),
+                itemBuilder: (context, index) {
+                  final member = members[index];
+                  return ListTile(
+                    leading: CircleAvatar(
+                      child: Text(
+                        member.displayName.isNotEmpty
+                            ? member.displayName[0].toUpperCase()
+                            : '?',
+                      ),
+                    ),
+                    title: Text(member.displayName, style: AppTextStyles.body),
+                    trailing: member.isCreator
+                        ? Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.sm,
+                              vertical: AppSpacing.xs,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryButton.withValues(alpha: 0.1),
+                              borderRadius:
+                                  BorderRadius.circular(AppRadius.sm),
+                            ),
+                            child: Text(
+                              'Creator',
+                              style: AppTextStyles.metadata.copyWith(
+                                color: AppColors.primaryButton,
+                                fontWeight: FontWeight.w600,
                               ),
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryButton.withValues(alpha: 0.1),
-                                borderRadius:
-                                    BorderRadius.circular(AppRadius.sm),
-                              ),
-                              child: Text(
-                                'Creator',
-                                style: AppTextStyles.metadata.copyWith(
-                                  color: AppColors.primaryButton,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            )
-                          : null,
-                    );
-                  },
-                ),
-              Positioned(
-                right: AppSpacing.containerMargin,
-                bottom: AppSpacing.containerMargin,
-                child: FloatingActionButton(
-                  onPressed: _showInviteSheet,
-                  child: const Icon(Icons.person_add),
-                ),
-              ),
-            ],
-          );
-        },
+                            ),
+                          )
+                        : null,
+                  );
+                },
+              );
+            },
+          ),
+          Positioned(
+            right: AppSpacing.containerMargin,
+            bottom: AppSpacing.containerMargin,
+            child: FloatingActionButton(
+              onPressed: _showInviteSheet,
+              child: const Icon(Icons.person_add),
+            ),
+          ),
+        ],
       ),
     );
   }

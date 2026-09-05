@@ -284,20 +284,20 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final response = await Supabase.instance.client.rpc(
         'join_room_by_code',
-        params: {'invite_code': code},
+        params: {'code': code},
       );
 
       if (!mounted) return;
 
-      final rooms = response as List;
-      if (rooms.isEmpty) {
+      // join_room_by_code returns a single room object (not a list)
+      debugPrint('join_room_by_code raw response: $response');
+      if (response == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Invalid invite code')),
         );
         return;
       }
-
-      final room = Room.fromJson(rooms.first);
+      final room = Room.fromJson(response as Map<String, dynamic>);
 
       setState(() {
         _roomsFuture = _loadRooms();
