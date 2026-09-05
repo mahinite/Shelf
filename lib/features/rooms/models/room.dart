@@ -5,6 +5,7 @@ class Room {
     required this.createdBy,
     required this.createdAt,
     this.subjectCount,
+    this.inviteCode,
   });
 
   final String id;
@@ -12,6 +13,7 @@ class Room {
   final String createdBy;
   final DateTime createdAt;
   final int? subjectCount;
+  final String? inviteCode;
 
   factory Room.fromJson(Map<String, dynamic> json) {
     final subjects = json['subjects'];
@@ -24,6 +26,7 @@ class Room {
       subjectCount: subjects is List && subjects.isNotEmpty
           ? (subjects.first['count'] as int?)
           : null,
+      inviteCode: json['invite_code'] as String?,
     );
   }
 
@@ -33,6 +36,7 @@ class Room {
       'name': name,
       'created_by': createdBy,
       'created_at': createdAt.toIso8601String(),
+      'invite_code': inviteCode,
     };
   }
 }

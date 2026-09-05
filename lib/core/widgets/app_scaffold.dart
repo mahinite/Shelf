@@ -18,11 +18,13 @@ class AppScaffold extends StatelessWidget {
     required this.title,
     required this.body,
     this.showBackButton = false,
+    this.actions,
   });
 
   final String title;
   final Widget body;
   final bool showBackButton;
+  final List<Widget>? actions;
 
   void _goHome(BuildContext context) {
     Navigator.of(context).popUntil((route) => route.isFirst);
@@ -103,6 +105,7 @@ void _handleScanTap(BuildContext context) async {
         automaticallyImplyLeading: showBackButton,
         iconTheme: const IconThemeData(color: AppColors.textPrimary),
         title: Text(title, style: AppTextStyles.sectionTitle),
+        actions: actions,
       ),
       body: NotebookBackground(child: body),
       bottomNavigationBar: BottomActionBar(

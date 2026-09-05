@@ -8,6 +8,7 @@ import '../../../core/widgets/rename_delete_sheet.dart';
 import '../../subjects/models/subject.dart';
 import '../../subjects/widgets/subject_list_item.dart';
 import '../../subjects/screens/subject_screen.dart';
+import 'room_members_screen.dart';
 
 class RoomScreen extends StatefulWidget {
   const RoomScreen({
@@ -197,6 +198,18 @@ class _RoomScreenState extends State<RoomScreen> {
     return AppScaffold(
       title: widget.room.name,
       showBackButton: true,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.people_outline),
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => RoomMembersScreen(room: widget.room),
+              ),
+            );
+          },
+        ),
+      ],
       body: FutureBuilder<List<Subject>>(
         future: _subjectsFuture,
         builder: (context, snapshot) {

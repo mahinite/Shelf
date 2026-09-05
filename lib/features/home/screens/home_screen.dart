@@ -231,6 +231,103 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _joinRoomByCode() async {
+    final controller = TextEditingController();
+
+    final code = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Join Room'),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            textCapitalization: TextCapitalization.characters,
+            decoration: const InputDecoration(
+              hintText: 'Invite code',
+              labelText: 'Invite Code',
+            ),
+            onSubmitted: (value) {
+              final trimmed = value.trim().toUpperCase();
+              if (trimmed.isNotEmpty) {
+                Navigator.of(context).pop(trimmed);
+              }
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () {
+                final trimmed = controller.text.trim().toUpperCase();
+                if (trimmed.isNotEmpty) {
+                  Navigator.of(context).pop(trimmed);
+                }
+              },
+              child: const Text('Join'),
+            ),
+          ],
+        );
+      },
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.dispose();
+    });
+
+    if (code == null || code.isEmpty) {
+      return;
+    }
+
+    try {
+      final response = await Supabase.instance.client.rpc(
+        'join_room_by_code',
+        params: {'invite_code': code},
+      );
+
+      if (!mounted) return;
+
+      final rooms = response as List;
+      if (rooms.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Invalid invite code')),
+        );
+        return;
+      }
+
+      final room = Room.fromJson(rooms.first);
+
+      setState(() {
+        _roomsFuture = _loadRooms();
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Joined "${room.name}"')),
+        );
+
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => RoomScreen(room: room),
+          ),
+        );
+
+        if (mounted) {
+          setState(() {
+            _roomsFuture = _loadRooms();
+          });
+        }
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not join room: $e')),
+      );
+    }
+  }
+
   void _showRoomActions(Room room) {
     showRenameDeleteSheet(
       context: context,
@@ -324,6 +421,15 @@ class _HomeScreenState extends State<HomeScreen> {
             child: FloatingActionButton(
               onPressed: _createRoom,
               child: const Icon(Icons.add),
+            ),
+          ),
+          Positioned(
+            right: AppSpacing.containerMargin * 3 + 56, // FAB width + margin
+            bottom: AppSpacing.containerMargin,
+            child: FloatingActionButton.small(
+              onPressed: _joinRoomByCode,
+              heroTag: 'joinRoomFab',
+              child: const Icon(Icons.login),
             ),
           ),
         ],
