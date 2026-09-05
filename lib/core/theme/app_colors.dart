@@ -10,19 +10,19 @@ class AppColors {
   // Destructive action (e.g., delete) – a muted red that fits the notebook aesthetic
   AppColors._();
 
-  // Base surface
+  // Base surface (light)
   static const background = Color(0xFFF9F7F2); // warm cream
   static const surfaceCard = Color(0xFFFFFFFF); // level-1 card surface
 
-  // Text
+  // Text (light)
   static const textPrimary = Color(0xFF2D2D2D); // charcoal
   static const textSecondary = Color(0xFF717171); // muted grey
 
-  // Structure
+  // Structure (light)
   static const border = Color(0xFFEAE7E0); // very subtle 1px borders
   static const divider = Color(0xFFEAE7E0);
 
-  // Primary action (buttons)
+  // Primary action (buttons) — same for both themes
   static const primaryButton = Color(0xFF2D2D2D); // charcoal fill
   static const onPrimaryButton = Color(0xFFF9F7F2); // cream text
   // Destructive (delete) color – muted red matching the notebook aesthetic
@@ -35,6 +35,18 @@ class AppColors {
   static const literatureAccent = Color(0xFFC97B63); // Muted Coral
   static const chemistryAccent = Color(0xFFB08D57); // Warm Ochre
   static const historyAccent = Color(0xFF9E7B8C); // Muted Plum
+
+  // Base surface (dark)
+  static const backgroundDark = Color(0xFF1E1E1E); // near-black
+  static const surfaceCardDark = Color(0xFF2A2A2A); // elevated surface
+
+  // Text (dark)
+  static const textPrimaryDark = Color(0xFFF9F7F2); // cream
+  static const textSecondaryDark = Color(0xFFA0A0A0); // muted grey
+
+  // Structure (dark)
+  static const borderDark = Color(0xFF3A3A3A); // subtle borders
+  static const dividerDark = Color(0xFF3A3A3A);
 
   /// Looks up a subject's accent color by subject name.
   /// Falls back to textSecondary (neutral) for unrecognized subjects,

@@ -79,4 +79,75 @@ class AppTheme {
       highlightColor: Colors.transparent,
     );
   }
+
+  static ThemeData get darkTheme {
+    return ThemeData(
+      useMaterial3: true,
+      scaffoldBackgroundColor: AppColors.backgroundDark,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: AppColors.textPrimaryDark,
+        surface: AppColors.backgroundDark,
+        brightness: Brightness.dark,
+      ),
+      textTheme: TextTheme(
+        headlineLarge: AppTextStyles.largeTitle.copyWith(color: AppColors.textPrimaryDark),
+        titleLarge: AppTextStyles.sectionTitle.copyWith(color: AppColors.textPrimaryDark),
+        bodyLarge: AppTextStyles.body.copyWith(color: AppColors.textPrimaryDark),
+        bodyMedium: AppTextStyles.bodySecondary.copyWith(color: AppColors.textSecondaryDark),
+        labelMedium: AppTextStyles.metadata.copyWith(color: AppColors.textSecondaryDark),
+      ),
+      cardTheme: CardThemeData(
+        color: AppColors.surfaceCardDark,
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          side: const BorderSide(color: AppColors.borderDark, width: 1),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primaryButton,
+          foregroundColor: AppColors.onPrimaryButton,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+          textStyle: AppTextStyles.buttonLabel,
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.textPrimaryDark,
+          side: const BorderSide(color: AppColors.textPrimaryDark, width: 1),
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+          textStyle: AppTextStyles.buttonLabel,
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        border: const UnderlineInputBorder(
+          borderSide: BorderSide(color: AppColors.borderDark),
+        ),
+        enabledBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: AppColors.borderDark),
+        ),
+        focusedBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: AppColors.textPrimaryDark, width: 2),
+        ),
+        labelStyle: AppTextStyles.bodySecondary.copyWith(color: AppColors.textSecondaryDark),
+        floatingLabelStyle: AppTextStyles.metadata.copyWith(color: AppColors.textSecondaryDark),
+      ),
+      dividerTheme: const DividerThemeData(
+        color: AppColors.dividerDark,
+        thickness: 1,
+        space: AppSpacing.md,
+      ),
+      splashFactory: NoSplash.splashFactory,
+      highlightColor: Colors.transparent,
+    );
+  }
 }

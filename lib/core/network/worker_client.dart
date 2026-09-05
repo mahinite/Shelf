@@ -5,8 +5,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Singleton client for communicating with the Cloudflare Worker that proxies
-/// requests to Backblaze B2. It uses the Supabase session access token for
-/// authentication.
+/// requests to Backblaze B2 and handles account management. It uses the
+/// Supabase session access token for authentication.
 class WorkerClient {
   // Private constructor
   WorkerClient._();
@@ -56,5 +56,20 @@ class WorkerClient {
     }
     final List<int> data = await response.expand((b) => b).toList();
     return Uint8List.fromList(data);
+  }
+
+  /// Deletes the current user's account via the Worker.
+  /// Calls DELETE /account with the current session's access token.
+  /// The Worker resolves the user ID from the token and uses the service role key.
+  Future<void> deleteAccount() async {
+    final uri = Uri.parse('$_baseUrl/account');
+    final request = await HttpClient().deleteUrl(uri);
+    request.headers.set('Authorization', 'Bearer ${_accessToken()}');
+    final response = await request.close();
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final body = await response.transform(utf8.decoder).join();
+      throw Exception('Worker DELETE account failed ${response.statusCode}: $body');
+    }
+    await response.drain();
   }
 }

@@ -9,6 +9,7 @@ import 'features/auth/screens/login_screen.dart';
 import 'features/home/screens/home_screen.dart';
 import 'core/theme/app_theme.dart';
 import 'core/services/crash_logger.dart';
+import 'core/services/theme_notifier.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,19 +45,31 @@ Future<void> main() async {
     // clientId: iosClientId!,
   );
 
-  runApp(const ShelfApp());
+  final themeNotifier = ThemeModeNotifier();
+  await themeNotifier.load();
+
+  runApp(ShelfApp(themeNotifier: themeNotifier));
 }
 
 class ShelfApp extends StatelessWidget {
-  const ShelfApp({super.key});
+  final ThemeModeNotifier themeNotifier;
+
+  const ShelfApp({super.key, required this.themeNotifier});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Shelf',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.theme,
-      home: const AuthGate(),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier,
+      builder: (context, themeMode, _) {
+        return MaterialApp(
+          title: 'Shelf',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.theme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeMode,
+          home: const AuthGate(),
+        );
+      },
     );
   }
 }

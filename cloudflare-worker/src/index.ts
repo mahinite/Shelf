@@ -8,6 +8,7 @@ interface Env {
   B2_APPLICATION_KEY: string;
   SUPABASE_URL: string;
   SUPABASE_ANON_KEY: string;
+  SUPABASE_SERVICE_ROLE_KEY: string;
 }
 
 function corsHeaders(origin: string): HeadersInit {
@@ -109,6 +110,96 @@ async function checkDocumentAccess(env: Env, documentId: string, token: string):
   return Array.isArray(documents) && documents.length > 0;
 }
 
+async function handleDeleteAccount(request: Request, env: Env): Promise<Response> {
+  const origin = request.headers.get("Origin") || "*";
+  const cors = corsHeaders(origin);
+
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: cors });
+  }
+
+  if (request.method !== "DELETE") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { "Content-Type": "application/json", ...cors },
+    });
+  }
+
+  const authHeader = request.headers.get("Authorization");
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return new Response(JSON.stringify({ error: "Unauthorized: missing or invalid Authorization header" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json", ...cors },
+    });
+  }
+
+  const token = authHeader.substring(7);
+
+  try {
+    // Step 1: Resolve the caller's own user ID using the Bearer token
+    const userResponse = await fetch(
+      `${env.SUPABASE_URL}/auth/v1/user`,
+      {
+        headers: {
+          'apikey': env.SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!userResponse.ok) {
+      const errorText = await userResponse.text();
+      console.error('Failed to resolve user:', errorText);
+      return new Response(JSON.stringify({ error: "Failed to authenticate user" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json", ...cors },
+      });
+    }
+
+    const userData = await userResponse.json();
+    const userId = userData.id as string;
+
+    if (!userId) {
+      return new Response(JSON.stringify({ error: "Could not determine user ID" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...cors },
+      });
+    }
+
+    // Step 2: Delete the user using the service role key (admin API)
+    const deleteResponse = await fetch(
+      `${env.SUPABASE_URL}/auth/v1/admin/users/${encodeURIComponent(userId)}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'apikey': env.SUPABASE_SERVICE_ROLE_KEY,
+          'Authorization': `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+        },
+      }
+    );
+
+    if (!deleteResponse.ok) {
+      const errorText = await deleteResponse.text();
+      console.error('Failed to delete user:', errorText);
+      return new Response(JSON.stringify({ error: "Failed to delete account" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json", ...cors },
+      });
+    }
+
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json", ...cors },
+    });
+  } catch (error) {
+    console.error('Delete account error:', error);
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json", ...cors },
+    });
+  }
+}
+
 async function handleRequest(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   const origin = request.headers.get("Origin") || "*";
@@ -116,6 +207,11 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
 
   if (request.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: cors });
+  }
+
+  // Handle DELETE /account route
+  if (url.pathname === "/account" && request.method === "DELETE") {
+    return handleDeleteAccount(request, env);
   }
 
   if (url.pathname === "/" || url.pathname === "/health") {
