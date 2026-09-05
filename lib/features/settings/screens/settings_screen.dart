@@ -50,6 +50,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.all(AppSpacing.containerMargin),
         child: ListView(
           children: [
+            Center(
+              child: Image.asset(
+                'assets/Shelf-text-logo-non-transparent.png',
+                width: 160,
+                height: 160,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
             Text('Account', style: AppTextStyles.sectionTitle),
             const SizedBox(height: AppSpacing.sm),
             Text(email, style: AppTextStyles.bodySecondary),
