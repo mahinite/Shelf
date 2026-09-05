@@ -9,6 +9,7 @@ class Document {
     this.fileSize,
     this.pageCount,
     required this.position,
+    this.createdBy,
   });
 
   final String id;
@@ -20,6 +21,7 @@ class Document {
   final int? fileSize;
   final int? pageCount;
   final int position;
+  final String? createdBy;
 
   factory Document.fromJson(Map<String, dynamic> json) {
     return Document(
@@ -32,6 +34,7 @@ class Document {
       fileSize: json['file_size'] as int?,
       pageCount: json['page_count'] as int?,
       position: json['position'] as int,
+      createdBy: json['created_by'] as String?,
     );
   }
 

@@ -210,9 +210,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _deleteRoom(Room room) async {
     try {
-      await Supabase.instance.client.from('rooms').delete().eq('id', room.id);
+      final result = await Supabase.instance.client.from('rooms').delete().eq('id', room.id).select();
 
       if (!mounted) return;
+
+      if (result.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You don\'t have permission to delete this room')),
+        );
+        return;
+      }
 
       setState(() {
         _roomsFuture = _loadRooms();
@@ -329,13 +336,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showRoomActions(Room room) {
+    final currentUserId = Supabase.instance.client.auth.currentUser?.id;
+    final isCreator = currentUserId == room.createdBy;
+    
     showRenameDeleteSheet(
       context: context,
       currentName: room.name,
       itemType: 'Room',
       hasChildren: true,
-      onRename: (newName) => _renameRoom(room, newName),
-      onDelete: () => _deleteRoom(room),
+      onRename: isCreator ? (newName) => _renameRoom(room, newName) : null,
+      onDelete: isCreator ? () => _deleteRoom(room) : null,
     );
   }
 

@@ -4,6 +4,7 @@ import '../../core/theme/app_text_styles.dart';
 
 /// Action sheet shown on long-press with Rename/Delete options.
 /// Caller provides callbacks for rename/delete and the item's current name.
+/// If a callback is null, that option will not be shown.
 class RenameDeleteSheet extends StatelessWidget {
   const RenameDeleteSheet({
     super.key,
@@ -15,8 +16,8 @@ class RenameDeleteSheet extends StatelessWidget {
   });
 
   final String currentName;
-  final Future<void> Function(String newName) onRename;
-  final Future<void> Function() onDelete;
+  final Future<void> Function(String newName)? onRename;
+  final Future<void> Function()? onDelete;
   final String itemType; // e.g., 'Room', 'Subject', 'Chapter', 'Document'
   final bool hasChildren; // whether deleting cascades to nested items
 
@@ -26,22 +27,24 @@ class RenameDeleteSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ListTile(
-            leading: const Icon(Icons.edit_outlined),
-            title: Text('Rename $itemType', style: AppTextStyles.body),
-            onTap: () {
-              Navigator.pop(context);
-              _showRenameDialog(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.delete_outline, color: AppColors.destructive),
-            title: Text('Delete $itemType', style: AppTextStyles.body.copyWith(color: AppColors.destructive)),
-            onTap: () {
-              Navigator.pop(context);
-              _showDeleteConfirmation(context);
-            },
-          ),
+          if (onRename != null)
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: Text('Rename $itemType', style: AppTextStyles.body),
+              onTap: () {
+                Navigator.pop(context);
+                _showRenameDialog(context);
+              },
+            ),
+          if (onDelete != null)
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: AppColors.destructive),
+              title: Text('Delete $itemType', style: AppTextStyles.body.copyWith(color: AppColors.destructive)),
+              onTap: () {
+                Navigator.pop(context);
+                _showDeleteConfirmation(context);
+              },
+            ),
           SizedBox(height: MediaQuery.of(context).padding.bottom),
         ],
       ),
@@ -66,7 +69,7 @@ class RenameDeleteSheet extends StatelessWidget {
             final trimmed = value.trim();
             if (trimmed.isNotEmpty && trimmed != currentName) {
               Navigator.of(context).pop();
-              onRename(trimmed);
+              onRename!(trimmed);
             } else {
               Navigator.of(context).pop();
             }
@@ -82,7 +85,7 @@ class RenameDeleteSheet extends StatelessWidget {
               final trimmed = controller.text.trim();
               if (trimmed.isNotEmpty && trimmed != currentName) {
                 Navigator.of(context).pop();
-                onRename(trimmed);
+                onRename!(trimmed);
               } else {
                 Navigator.of(context).pop();
               }
@@ -116,7 +119,7 @@ class RenameDeleteSheet extends StatelessWidget {
             style: FilledButton.styleFrom(backgroundColor: AppColors.destructive),
             onPressed: () {
               Navigator.of(context).pop();
-              onDelete();
+              onDelete!();
             },
             child: const Text('Delete'),
           ),
@@ -130,8 +133,8 @@ class RenameDeleteSheet extends StatelessWidget {
 Future<void> showRenameDeleteSheet({
   required BuildContext context,
   required String currentName,
-  required Future<void> Function(String newName) onRename,
-  required Future<void> Function() onDelete,
+  Future<void> Function(String newName)? onRename,
+  Future<void> Function()? onDelete,
   required String itemType,
   bool hasChildren = false,
 }) {

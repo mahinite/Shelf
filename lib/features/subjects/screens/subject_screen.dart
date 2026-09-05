@@ -15,9 +15,11 @@ class SubjectScreen extends StatefulWidget {
   const SubjectScreen({
     super.key,
     required this.subject,
+    required this.roomCreatedBy,
   });
 
   final Subject subject;
+  final String roomCreatedBy;
 
   @override
   State<SubjectScreen> createState() => _SubjectScreenState();
@@ -159,12 +161,20 @@ class _SubjectScreenState extends State<SubjectScreen> {
 
   Future<void> _deleteChapter(Chapter chapter) async {
     try {
-      await Supabase.instance.client
+      final result = await Supabase.instance.client
           .from('chapters')
           .delete()
-          .eq('id', chapter.id);
+          .eq('id', chapter.id)
+          .select();
 
       if (!mounted) return;
+
+      if (result.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You don\'t have permission to delete this chapter')),
+        );
+        return;
+      }
 
       setState(() {
         _chaptersFuture = _loadChapters();
@@ -184,13 +194,16 @@ class _SubjectScreenState extends State<SubjectScreen> {
   }
 
   void _showChapterActions(Chapter chapter) {
+    final currentUserId = Supabase.instance.client.auth.currentUser?.id;
+    final isRoomCreator = currentUserId == widget.roomCreatedBy;
+
     showRenameDeleteSheet(
       context: context,
       currentName: chapter.name,
       itemType: 'Chapter',
       hasChildren: true,
-      onRename: (newName) => _renameChapter(chapter, newName),
-      onDelete: () => _deleteChapter(chapter),
+      onRename: (newName) => _renameChapter(chapter, newName), // rename is allowed for all members
+      onDelete: isRoomCreator ? () => _deleteChapter(chapter) : null,
     );
   }
 
@@ -245,6 +258,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
                             builder: (_) => ChapterScreen(
                               chapter: chapter,
                               accent: accent,
+                              roomCreatedBy: widget.roomCreatedBy,
                             ),
                           ),
                         );

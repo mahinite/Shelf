@@ -158,12 +158,20 @@ class _RoomScreenState extends State<RoomScreen> {
 
   Future<void> _deleteSubject(Subject subject) async {
     try {
-      await Supabase.instance.client
+      final result = await Supabase.instance.client
           .from('subjects')
           .delete()
-          .eq('id', subject.id);
+          .eq('id', subject.id)
+          .select();
 
       if (!mounted) return;
+
+      if (result.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You don\'t have permission to delete this subject')),
+        );
+        return;
+      }
 
       setState(() {
         _subjectsFuture = _loadSubjects();
@@ -183,13 +191,16 @@ class _RoomScreenState extends State<RoomScreen> {
   }
 
   void _showSubjectActions(Subject subject) {
+    final currentUserId = Supabase.instance.client.auth.currentUser?.id;
+    final isRoomCreator = currentUserId == widget.room.createdBy;
+
     showRenameDeleteSheet(
       context: context,
       currentName: subject.name,
       itemType: 'Subject',
       hasChildren: true,
-      onRename: (newName) => _renameSubject(subject, newName),
-      onDelete: () => _deleteSubject(subject),
+      onRename: (newName) => _renameSubject(subject, newName), // rename is allowed for all members
+      onDelete: isRoomCreator ? () => _deleteSubject(subject) : null,
     );
   }
 
@@ -254,6 +265,7 @@ class _RoomScreenState extends State<RoomScreen> {
                           MaterialPageRoute(
                             builder: (_) => SubjectScreen(
                               subject: subject,
+                              roomCreatedBy: widget.room.createdBy,
                             ),
                           ),
                         );

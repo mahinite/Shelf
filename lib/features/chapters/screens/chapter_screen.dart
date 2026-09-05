@@ -15,10 +15,12 @@ class ChapterScreen extends StatefulWidget {
     super.key,
     required this.chapter,
     required this.accent,
+    required this.roomCreatedBy,
   });
 
   final Chapter chapter;
   final Color accent;
+  final String roomCreatedBy;
 
   @override
   State<ChapterScreen> createState() => _ChapterScreenState();
@@ -70,12 +72,20 @@ class _ChapterScreenState extends State<ChapterScreen> {
 
   Future<void> _deleteDocument(Document document) async {
     try {
-      await Supabase.instance.client
+      final result = await Supabase.instance.client
           .from('documents')
           .delete()
-          .eq('id', document.id);
+          .eq('id', document.id)
+          .select();
 
       if (!mounted) return;
+
+      if (result.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You don\'t have permission to delete this document')),
+        );
+        return;
+      }
 
       setState(() {
         _documentsFuture = _loadDocuments();
@@ -95,13 +105,18 @@ class _ChapterScreenState extends State<ChapterScreen> {
   }
 
   void _showDocumentActions(Document document) {
+    final currentUserId = Supabase.instance.client.auth.currentUser?.id;
+    final isRoomCreator = currentUserId == widget.roomCreatedBy;
+    final isUploader = currentUserId == document.createdBy;
+    final canDelete = isRoomCreator || isUploader;
+
     showRenameDeleteSheet(
       context: context,
       currentName: document.title,
       itemType: 'Document',
       hasChildren: false,
-      onRename: (newName) => _renameDocument(document, newName),
-      onDelete: () => _deleteDocument(document),
+      onRename: (newName) => _renameDocument(document, newName), // rename is allowed for all members
+      onDelete: canDelete ? () => _deleteDocument(document) : null,
     );
   }
 
@@ -163,7 +178,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
   ) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => DocumentScreen(document: document),
+        builder: (_) => DocumentScreen(document: document, roomCreatedBy: widget.roomCreatedBy),
       ),
     );
   }

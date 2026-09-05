@@ -15,9 +15,11 @@ class DocumentScreen extends StatefulWidget {
   const DocumentScreen({
     super.key,
     required this.document,
+    required this.roomCreatedBy,
   });
 
   final Document document;
+  final String roomCreatedBy;
 
   @override
   State<DocumentScreen> createState() => _DocumentScreenState();

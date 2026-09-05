@@ -56,10 +56,13 @@ class ScanService {
 
   static Future<String> _createDocument({required String chapterId, required String title}) async {
     final client = Supabase.instance.client;
+    final userId = client.auth.currentUser?.id;
+    if (userId == null) throw Exception('Not authenticated');
     final result = await client.from('documents').insert({
       'chapter_id': chapterId,
       'title': title,
       'position': 0,
+      'created_by': userId,
     }).select('id').single();
     return result['id'] as String;
   }
