@@ -403,7 +403,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       RoomCard(
                         room: room,
                         onTap: () async {
-                          await Navigator.of(context).push(
+                          await Navigator.of(context).push<bool>(
                             MaterialPageRoute(
                               builder: (_) => RoomScreen(
                                 room: room,

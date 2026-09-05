@@ -212,12 +212,17 @@ class _RoomScreenState extends State<RoomScreen> {
       actions: [
         IconButton(
           icon: const Icon(Icons.people_outline),
-          onPressed: () {
-            Navigator.of(context).push(
+          onPressed: () async {
+            if (!mounted) return;
+            final navigator = Navigator.of(context);
+            final leftRoom = await navigator.push<bool>(
               MaterialPageRoute(
                 builder: (_) => RoomMembersScreen(room: widget.room),
               ),
             );
+            if (leftRoom == true && mounted) {
+              navigator.pop(true); // Propagate leave signal to Home
+            }
           },
         ),
       ],

@@ -23,10 +23,14 @@ class RoomMembersScreen extends StatefulWidget {
 class _RoomMembersScreenState extends State<RoomMembersScreen> {
   late Future<List<RoomMember>> _membersFuture;
   String? _inviteCode;
+  String? _currentUserId;
+  bool _isCreator = false;
 
   @override
   void initState() {
     super.initState();
+    _currentUserId = Supabase.instance.client.auth.currentUser?.id;
+    _isCreator = _currentUserId == widget.room.createdBy;
     _membersFuture = _loadMembers();
     _inviteCode = widget.room.inviteCode;
   }
@@ -45,6 +49,117 @@ class _RoomMembersScreenState extends State<RoomMembersScreen> {
     setState(() {
       _membersFuture = _loadMembers();
     });
+  }
+
+  Future<void> _leaveRoom() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Leave Room?'),
+        content: const Text(
+          'You will lose access to this room and all its contents. '
+          'You can rejoin later with an invite code.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: AppColors.destructive),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Leave'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true || _currentUserId == null) return;
+
+    try {
+      final result = await Supabase.instance.client
+          .from('room_members')
+          .delete()
+          .eq('room_id', widget.room.id)
+          .eq('user_id', _currentUserId!)
+          .select();
+
+      if (!mounted) return;
+
+      if (result.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You don\'t have permission to leave this room')),
+        );
+        return;
+      }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Left room')),
+      );
+      Navigator.of(context).pop(true); // Pop with true to indicate room was left
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not leave room.\n$error')),
+      );
+    }
+  }
+
+  Future<void> _removeMember(RoomMember member) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Remove Member?'),
+        content: Text(
+          'This will remove ${member.displayName} from the room. '
+          'Their uploaded documents will remain in the room. This cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: AppColors.destructive),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Remove'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    try {
+      final result = await Supabase.instance.client
+          .from('room_members')
+          .delete()
+          .eq('room_id', widget.room.id)
+          .eq('user_id', member.userId)
+          .select();
+
+      if (!mounted) return;
+
+      if (result.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You don\'t have permission to remove this member')),
+        );
+        return;
+      }
+
+      _refreshMembers();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${member.displayName} removed')),
+        );
+      }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not remove member.\n$error')),
+      );
+    }
   }
 
   Future<void> _showInviteSheet() async {
@@ -397,10 +512,24 @@ class _RoomMembersScreenState extends State<RoomMembersScreen> {
 
               return ListView.separated(
                 padding: const EdgeInsets.all(AppSpacing.containerMargin),
-                itemCount: members.length,
+                itemCount: members.length + (_isCreator ? 0 : 1), // +1 for Leave Room button for non-creators
                 separatorBuilder: (_, __) => const Divider(),
                 itemBuilder: (context, index) {
+                  // Show Leave Room button as last item for non-creators
+                  if (!_isCreator && index == members.length) {
+                    return ListTile(
+                      leading: const Icon(Icons.logout, color: AppColors.destructive),
+                      title: Text(
+                        'Leave Room',
+                        style: AppTextStyles.body.copyWith(color: AppColors.destructive),
+                      ),
+                      onTap: _leaveRoom,
+                    );
+                  }
+
                   final member = members[index];
+                  final isCurrentUser = member.userId == _currentUserId;
+
                   return ListTile(
                     leading: CircleAvatar(
                       child: Text(
@@ -410,8 +539,11 @@ class _RoomMembersScreenState extends State<RoomMembersScreen> {
                       ),
                     ),
                     title: Text(member.displayName, style: AppTextStyles.body),
-                    trailing: member.isCreator
-                        ? Container(
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (member.isCreator)
+                          Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: AppSpacing.sm,
                               vertical: AppSpacing.xs,
@@ -429,7 +561,14 @@ class _RoomMembersScreenState extends State<RoomMembersScreen> {
                               ),
                             ),
                           )
-                        : null,
+                        else if (_isCreator && !isCurrentUser)
+                          IconButton(
+                            icon: const Icon(Icons.person_remove, color: AppColors.destructive),
+                            onPressed: () => _removeMember(member),
+                            tooltip: 'Remove member',
+                          ),
+                      ],
+                    ),
                   );
                 },
               );
