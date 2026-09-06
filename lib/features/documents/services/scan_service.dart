@@ -17,6 +17,20 @@ class ScanService {
 
   static const int maxDimension = 2000;
 
+  /// Build a B2 object path from a document title and documentId.
+  /// Lowercases, replaces non-alphanumeric with '-', collapses repeated '-',
+  /// trims leading/trailing '-', caps at ~60 chars, appends '-<first 8 chars of id>'.
+  static String _buildObjectPath({required String title, required String documentId}) {
+    final slug = title
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
+        .replaceAll(RegExp(r'-+'), '-')
+        .replaceAll(RegExp(r'^-|-$'), '');
+    final cappedSlug = slug.length > 60 ? slug.substring(0, 60) : slug;
+    final idPrefix = documentId.length >= 8 ? documentId.substring(0, 8) : documentId;
+    return 'documents/$cappedSlug-$idPrefix.pdf';
+  }
+
   /// Process an image file: grayscale, contrast boost, downscale, JPEG encode.
   static Future<Uint8List> _processImageFile(String path) async {
     final resolvedPath = path.startsWith('file://') ? Uri.parse(path).toFilePath() : path;
@@ -44,11 +58,11 @@ class ScanService {
   }
 
   static Future<void> _uploadPdf({
-    required String documentId,
+    required String objectPath,
     required Uint8List pdfBytes,
   }) async {
     await WorkerClient.instance.putBytes(
-      objectPath: 'documents/$documentId.pdf',
+      objectPath: objectPath,
       bytes: pdfBytes,
       contentType: 'application/pdf',
     );
@@ -78,10 +92,15 @@ class ScanService {
     return result['id'] as String;
   }
 
-  static Future<void> _updateDocument({required String documentId, required int pageCount, required int fileSize}) async {
+  static Future<void> _updateDocument({
+    required String documentId,
+    required int pageCount,
+    required int fileSize,
+    required String filePath,
+  }) async {
     final client = Supabase.instance.client;
     await client.from('documents').update({
-      'file_path': 'documents/$documentId.pdf',
+      'file_path': filePath,
       'page_count': pageCount,
       'file_size': fileSize,
       'updated_at': DateTime.now().toIso8601String(),
@@ -106,7 +125,10 @@ class ScanService {
     // 3. Create scan batch
     await _createScanBatch(documentId: documentId);
 
-    // 4. Assemble PDF from processed images
+    // 4. Compute object path from title + documentId (once)
+    final objectPath = _buildObjectPath(title: title, documentId: documentId);
+
+    // 5. Assemble PDF from processed images
     final pdfDoc = pw.Document();
     for (final bytes in processed) {
       final imgPdf = pw.MemoryImage(bytes);
@@ -119,10 +141,15 @@ class ScanService {
     final pdfBytes = await pdfDoc.save();
 
     // 6. Upload PDF
-    await _uploadPdf(documentId: documentId, pdfBytes: pdfBytes);
+    await _uploadPdf(objectPath: objectPath, pdfBytes: pdfBytes);
 
-    // 7. Update document metadata
-    await _updateDocument(documentId: documentId, pageCount: processed.length, fileSize: pdfBytes.length);
+    // 7. Update document metadata with the object path
+    await _updateDocument(
+      documentId: documentId,
+      pageCount: processed.length,
+      fileSize: pdfBytes.length,
+      filePath: objectPath,
+    );
   }
 
   /// Append images to an existing document.
@@ -138,15 +165,20 @@ class ScanService {
       processed.add(await _processImageFile(path));
     }
 
-    // 2. Read current page_count from documents row (replaces scan_pages query)
-    final docInfo = await client.from('documents').select('page_count').eq('id', documentId).single();
+    // 2. Read current page_count and file_path from documents row
+    final docInfo = await client
+        .from('documents')
+        .select('page_count, file_path')
+        .eq('id', documentId)
+        .single();
     final currentCount = (docInfo['page_count'] as int?) ?? 0;
+    final filePath = docInfo['file_path'] as String? ?? 'documents/$documentId.pdf';
 
     // 3. Create new scan batch
     await _createScanBatch(documentId: documentId);
 
-    // 4. Download existing PDF via Worker (mandatory)
-    Uint8List existingPdf = await WorkerClient.instance.getBytes('documents/$documentId.pdf');
+    // 4. Download existing PDF via Worker using stored file_path
+    Uint8List existingPdf = await WorkerClient.instance.getBytes(filePath);
 
     // 5. Build PDF for new pages only
     final newPdfDoc = pw.Document();
@@ -186,11 +218,16 @@ class ScanService {
       }
     }
 
-    // 7. Upload merged PDF
-    await _uploadPdf(documentId: documentId, pdfBytes: mergedPdf);
+    // 7. Upload merged PDF to the same object path (overwrite)
+    await _uploadPdf(objectPath: filePath, pdfBytes: mergedPdf);
 
     // 8. Update document metadata (page count & file size)
     final newCount = currentCount + processed.length;
-    await _updateDocument(documentId: documentId, pageCount: newCount, fileSize: mergedPdf.length);
+    await _updateDocument(
+      documentId: documentId,
+      pageCount: newCount,
+      fileSize: mergedPdf.length,
+      filePath: filePath,
+    );
   }
 }

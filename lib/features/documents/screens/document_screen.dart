@@ -43,7 +43,8 @@ class _DocumentScreenState extends State<DocumentScreen> {
       _pdfBytes = null;
     });
     try {
-      final bytes = await WorkerClient.instance.getBytes('documents/${widget.document.id}.pdf');
+      final filePath = widget.document.filePath ?? 'documents/${widget.document.id}.pdf';
+      final bytes = await WorkerClient.instance.getBytes(filePath);
       if (mounted) {
         setState(() {
           _pdfBytes = bytes;
