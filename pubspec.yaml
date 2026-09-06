@@ -26,6 +26,9 @@ dependencies:
   share_plus: ^10.0.2
   shared_preferences: ^2.3.2
   package_info_plus: ^8.1.0
+  ota_update: ^7.1.0
+  version: ^3.0.2
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:

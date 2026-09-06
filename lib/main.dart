@@ -10,6 +10,7 @@ import 'features/home/screens/home_screen.dart';
 import 'core/theme/app_theme.dart';
 import 'core/services/crash_logger.dart';
 import 'core/services/theme_notifier.dart';
+import 'core/services/update_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,18 +49,37 @@ Future<void> main() async {
   final themeNotifier = ThemeModeNotifier();
   await themeNotifier.load();
 
-  runApp(ShelfApp(themeNotifier: themeNotifier));
+  runApp(const ShelfApp());
 }
 
-class ShelfApp extends StatelessWidget {
-  final ThemeModeNotifier themeNotifier;
+class ShelfApp extends StatefulWidget {
+  const ShelfApp({super.key});
 
-  const ShelfApp({super.key, required this.themeNotifier});
+  @override
+  State<ShelfApp> createState() => _ShelfAppState();
+}
+
+class _ShelfAppState extends State<ShelfApp> {
+  final ThemeModeNotifier _themeNotifier = ThemeModeNotifier();
+
+  @override
+  void initState() {
+    super.initState();
+    _themeNotifier.load();
+    // Check for updates after the first frame is rendered.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // We need a BuildContext to show a dialog.
+      // We can use the context from this state if it's mounted.
+      if (mounted) {
+        UpdateService.checkForUpdate(context);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier,
+      valueListenable: _themeNotifier,
       builder: (context, themeMode, _) {
         return MaterialApp(
           title: 'Shelf',
@@ -67,7 +87,7 @@ class ShelfApp extends StatelessWidget {
           theme: AppTheme.theme,
           darkTheme: AppTheme.darkTheme,
           themeMode: themeMode,
-          home: const AuthGate(),
+home: const AuthGate(),
         );
       },
     );
