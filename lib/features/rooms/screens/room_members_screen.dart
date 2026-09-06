@@ -51,116 +51,104 @@ class _RoomMembersScreenState extends State<RoomMembersScreen> {
     });
   }
 
-  Future<void> _leaveRoom() async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Leave Room?'),
-        content: const Text(
-          'You will lose access to this room and all its contents. '
-          'You can rejoin later with an invite code.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: AppColors.destructive),
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Leave'),
-          ),
-        ],
-      ),
-    );
+Future<void> _leaveRoom() async {
+     final confirm = await showDialog<bool>(
+       context: context,
+       builder: (context) => AlertDialog(
+         title: const Text('Leave Room?'),
+         content: const Text(
+           'You will lose access to this room and all its contents. '
+           'You can rejoin later with an invite code.',
+         ),
+         actions: [
+           TextButton(
+             onPressed: () => Navigator.of(context).pop(false),
+             child: const Text('Cancel'),
+           ),
+           FilledButton(
+             style: FilledButton.styleFrom(backgroundColor: AppColors.destructive),
+             onPressed: () => Navigator.of(context).pop(true),
+             child: const Text('Leave'),
+           ),
+         ],
+       ),
+     );
 
-    if (confirm != true || _currentUserId == null) return;
+     if (confirm != true || _currentUserId == null) return;
 
-    try {
-      final result = await Supabase.instance.client
-          .from('room_members')
-          .delete()
-          .eq('room_id', widget.room.id)
-          .eq('user_id', _currentUserId!)
-          .select();
+     try {
+       await Supabase.instance.client.rpc('leave_room', params: {
+         'target_room_id': widget.room.id,
+       });
 
-      if (!mounted) return;
+       if (!mounted) return;
+       ScaffoldMessenger.of(context).showSnackBar(
+         const SnackBar(content: Text('Left room')),
+       );
+       Navigator.of(context).pop(true);
+     } on PostgrestException catch (e) {
+       if (!mounted) return;
+       ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(content: Text(e.message)),
+       );
+     } catch (error) {
+       if (!mounted) return;
+       ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(content: Text('Could not leave room.\n$error')),
+       );
+     }
+   }
 
-      if (result.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('You don\'t have permission to leave this room')),
-        );
-        return;
-      }
+Future<void> _removeMember(RoomMember member) async {
+     final confirm = await showDialog<bool>(
+       context: context,
+       builder: (context) => AlertDialog(
+         title: const Text('Remove Member?'),
+         content: Text(
+           'This will remove ${member.displayName} from the room. '
+           'Their uploaded documents will remain in the room. This cannot be undone.',
+         ),
+         actions: [
+           TextButton(
+             onPressed: () => Navigator.of(context).pop(false),
+             child: const Text('Cancel'),
+           ),
+           FilledButton(
+             style: FilledButton.styleFrom(backgroundColor: AppColors.destructive),
+             onPressed: () => Navigator.of(context).pop(true),
+             child: const Text('Remove'),
+           ),
+         ],
+       ),
+     );
 
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Left room')),
-      );
-      Navigator.of(context).pop(true); // Pop with true to indicate room was left
-    } catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not leave room.\n$error')),
-      );
-    }
-  }
+     if (confirm != true) return;
 
-  Future<void> _removeMember(RoomMember member) async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Remove Member?'),
-        content: Text(
-          'This will remove ${member.displayName} from the room. '
-          'Their uploaded documents will remain in the room. This cannot be undone.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: AppColors.destructive),
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Remove'),
-          ),
-        ],
-      ),
-    );
+     try {
+       await Supabase.instance.client.rpc('remove_room_member', params: {
+         'target_room_id': widget.room.id,
+         'target_user_id': member.userId,
+       });
 
-    if (confirm != true) return;
-
-    try {
-      final result = await Supabase.instance.client
-          .from('room_members')
-          .delete()
-          .eq('room_id', widget.room.id)
-          .eq('user_id', member.userId)
-          .select();
-
-      if (!mounted) return;
-
-      if (result.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('You don\'t have permission to remove this member')),
-        );
-        return;
-      }
-
-      _refreshMembers();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${member.displayName} removed')),
-        );
-      }
-    } catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not remove member.\n$error')),
-      );
-    }
-  }
+       if (!mounted) return;
+       _refreshMembers();
+       if (mounted) {
+         ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(content: Text('${member.displayName} removed')),
+         );
+       }
+     } on PostgrestException catch (e) {
+       if (!mounted) return;
+       ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(content: Text(e.message)),
+       );
+     } catch (error) {
+       if (!mounted) return;
+       ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(content: Text('Could not remove member.\n$error')),
+       );
+     }
+   }
 
   Future<void> _showInviteSheet() async {
     await showModalBottomSheet(
