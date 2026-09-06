@@ -183,21 +183,27 @@ class _RoomMembersScreenState extends State<RoomMembersScreen> {
                 style: AppTextStyles.sectionTitle,
               ),
               const SizedBox(height: AppSpacing.md),
-              ListTile(
-                leading: const Icon(Icons.qr_code),
-                title: const Text('Share invite code'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _showInviteCodeDialog();
-                },
+              Material(
+                color: Colors.transparent,
+                child: ListTile(
+                  leading: const Icon(Icons.qr_code),
+                  title: const Text('Share invite code'),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showInviteCodeDialog();
+                  },
+                ),
               ),
-              ListTile(
-                leading: const Icon(Icons.email_outlined),
-                title: const Text('Invite by email'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _showInviteByEmailDialog();
-                },
+              Material(
+                color: Colors.transparent,
+                child: ListTile(
+                  leading: const Icon(Icons.email_outlined),
+                  title: const Text('Invite by email'),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showInviteByEmailDialog();
+                  },
+                ),
               ),
               const SizedBox(height: AppSpacing.md),
             ],
@@ -517,13 +523,16 @@ class _RoomMembersScreenState extends State<RoomMembersScreen> {
                 itemBuilder: (context, index) {
                   // Show Leave Room button as last item for non-creators
                   if (!_isCreator && index == members.length) {
-                    return ListTile(
-                      leading: const Icon(Icons.logout, color: AppColors.destructive),
-                      title: Text(
-                        'Leave Room',
-                        style: AppTextStyles.body.copyWith(color: AppColors.destructive),
+                    return Material(
+                      color: Colors.transparent,
+                      child: ListTile(
+                        leading: const Icon(Icons.logout, color: AppColors.destructive),
+                        title: Text(
+                          'Leave Room',
+                          style: AppTextStyles.body.copyWith(color: AppColors.destructive),
+                        ),
+                        onTap: _leaveRoom,
                       ),
-                      onTap: _leaveRoom,
                     );
                   }
 
