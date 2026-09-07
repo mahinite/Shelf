@@ -128,6 +128,13 @@ class ScanService {
     // 4. Compute object path from title + documentId (once)
     final objectPath = _buildObjectPath(title: title, documentId: documentId);
 
+    // 4b. Stamp file_path on the document row NOW so the Worker's
+    // authorization check (file_path exact match) succeeds at PUT time.
+    await Supabase.instance.client
+        .from('documents')
+        .update({'file_path': objectPath})
+        .eq('id', documentId);
+
     // 5. Assemble PDF from processed images
     final pdfDoc = pw.Document();
     for (final bytes in processed) {
