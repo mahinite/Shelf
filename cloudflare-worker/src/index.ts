@@ -37,8 +37,23 @@ async function checkDocumentAuthorization(
     // Check if it's a document PDF path: documents/{document_id}.pdf
     const documentPathMatch = objectPath.match(/^documents\/(.+)\.pdf$/);
     if (documentPathMatch) {
-      const documentId = documentPathMatch[1];
-      return await checkDocumentAccess(env, documentId, token);
+      // Instead of extracting documentId, check by exact file_path match
+      const response = await fetch(
+        `${env.SUPABASE_URL}/rest/v1/documents?file_path=eq.${encodeURIComponent(objectPath)}&select=id`,
+        {
+          headers: {
+            'apikey': env.SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        return false;
+      }
+
+      const documents = await response.json();
+      return Array.isArray(documents) && documents.length > 0;
     }
 
     // Check if it's a scan page path: pages/{document_id}/{page_order}.jpg
@@ -67,24 +82,6 @@ async function checkDocumentAuthorization(
       const documentId = scanPages[0].document_id as string;
       return await checkDocumentAccess(env, documentId, token);
     }
-
-    // If neither pattern matches, fall back to checking exact file_path in documents
-    const response = await fetch(
-      `${env.SUPABASE_URL}/rest/v1/documents?file_path=eq.${encodeURIComponent(objectPath)}&select=id`,
-      {
-        headers: {
-          'apikey': env.SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${token}`,
-        },
-      }
-    );
-
-    if (!response.ok) {
-      return false;
-    }
-
-    const documents = await response.json();
-    return Array.isArray(documents) && documents.length > 0;
   } catch (error) {
     console.error('Authorization check error:', error);
     return false;
