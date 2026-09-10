@@ -33,8 +33,8 @@ class AppScaffold extends StatelessWidget {
 void _handleScanTap(BuildContext context) async {
   debugPrint('[scan] _handleScanTap ENTERED, context.mounted=${context.mounted}');
   try {
-    debugPrint('[scan] calling FlutterDocScanner().getScannedDocumentAsImages()');
-    final dynamic result = await FlutterDocScanner().getScannedDocumentAsImages();
+    debugPrint('[scan] calling FlutterDocScanner().getScannedDocumentAsImages(page: 100)');
+    final dynamic result = await FlutterDocScanner().getScannedDocumentAsImages(page: 100);
     debugPrint('[scan] scanner returned. result==null? ${result == null}. runtimeType=${result?.runtimeType}. toString="$result"');
     if (result == null) {
       debugPrint('[scan] result is null -> user cancelled, returning');
