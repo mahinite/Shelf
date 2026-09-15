@@ -1,7 +1,6 @@
 import 'dart:io';
 
-import 'dart:typed_data';
-
+import 'package:flutter/foundation.dart';
 import 'package:image/image.dart' as img;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -15,7 +14,13 @@ import 'package:shelf/core/network/worker_client.dart';
 class ScanService {
   ScanService._();
 
-  static const int maxDimension = 2000;
+  /// Max pixel dimension for processed images. Lowered to 1600 for low-end
+  /// device memory/CPU headroom; tune upward if quality demands it.
+  static const int maxDimension = 1600;
+
+  /// JPEG quality for processed page images. Conservative 75 to bound
+  /// encode size and CPU on weak devices; tune if needed.
+  static const int jpegQuality = 75;
 
   /// Build a B2 object path from a document title and documentId.
   /// Lowercases, replaces non-alphanumeric with '-', collapses repeated '-',
@@ -31,13 +36,18 @@ class ScanService {
     return 'documents/$cappedSlug-$idPrefix.pdf';
   }
 
-  /// Process an image file: grayscale, contrast boost, downscale, JPEG encode.
-  static Future<Uint8List> _processImageFile(String path) async {
-    final resolvedPath = path.startsWith('file://') ? Uri.parse(path).toFilePath() : path;
+  /// Isolate entry point: process a single image to a one-page PDF temp file.
+  /// Receives a map with keys 'imagePath' (String) and 'index' (int) for
+  /// unique temp filename. Returns the temp PDF file path (String).
+  static Future<String> processPageToTempPdf(Map<String, Object> args) async {
+    final String imagePath = args['imagePath'] as String;
+    final int index = args['index'] as int;
+    final resolvedPath = imagePath.startsWith('file://') ? Uri.parse(imagePath).toFilePath() : imagePath;
+
     final file = File(resolvedPath);
     final bytes = await file.readAsBytes();
     final decoded = img.decodeImage(bytes);
-    if (decoded == null) throw Exception('Failed to decode image at $path');
+    if (decoded == null) throw Exception('Failed to decode image at $imagePath');
 
     // Resize if needed
     img.Image resized = decoded;
@@ -53,8 +63,24 @@ class ScanService {
     // Grayscale & contrast
     final gray = img.grayscale(resized);
     final enhanced = img.contrast(gray, contrast: 130);
-    final jpeg = img.encodeJpg(enhanced, quality: 80);
-    return Uint8List.fromList(jpeg);
+    final jpeg = img.encodeJpg(enhanced, quality: jpegQuality);
+    final jpegBytes = Uint8List.fromList(jpeg);
+
+    // Build single-page PDF
+    final pdfDoc = pw.Document();
+    final imgPdf = pw.MemoryImage(jpegBytes);
+    pdfDoc.addPage(pw.Page(
+      pageFormat: PdfPageFormat.a4,
+      margin: pw.EdgeInsets.zero,
+      build: (c) => pw.Center(child: pw.Image(imgPdf, fit: pw.BoxFit.contain)),
+    ));
+    final pdfBytes = await pdfDoc.save();
+
+    // Write to unique temp file
+    final tempDir = Directory.systemTemp;
+    final tempFile = File('${tempDir.path}/scan_page_${index}_${DateTime.now().microsecondsSinceEpoch}.pdf');
+    await tempFile.writeAsBytes(pdfBytes);
+    return tempFile.path;
   }
 
   static Future<void> _uploadPdf({
@@ -112,67 +138,79 @@ class ScanService {
     required List<String> imagePaths,
     required String title,
     required String chapterId,
+    void Function(int current, int total)? onProgress,
   }) async {
-    // 1. Process images
-    final processed = <Uint8List>[];
-    for (final path in imagePaths) {
-      processed.add(await _processImageFile(path));
-    }
-
-    // 2. Insert document row
+    // 1. Insert document row first (needed for object path)
     final documentId = await _createDocument(chapterId: chapterId, title: title);
 
-    // 3. Create scan batch
+    // 2. Create scan batch
     await _createScanBatch(documentId: documentId);
 
-    // 4. Compute object path from title + documentId (once)
+    // 3. Compute object path from title + documentId (once)
     final objectPath = _buildObjectPath(title: title, documentId: documentId);
 
-    // 4b. Stamp file_path on the document row NOW so the Worker's
+    // 3b. Stamp file_path on the document row NOW so the Worker's
     // authorization check (file_path exact match) succeeds at PUT time.
     await Supabase.instance.client
         .from('documents')
         .update({'file_path': objectPath})
         .eq('id', documentId);
 
-    // 5. Assemble PDF from processed images
-    final pdfDoc = pw.Document();
-    for (final bytes in processed) {
-      final imgPdf = pw.MemoryImage(bytes);
-      pdfDoc.addPage(pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        margin: pw.EdgeInsets.zero,
-        build: (c) => pw.Center(child: pw.Image(imgPdf, fit: pw.BoxFit.contain)),
-      ));
+    // 4. Process each page in an isolate, writing single-page PDFs to temp files.
+    // Sequential only — concurrent isolates each holding a full-res image spikes memory.
+    final pagePdfPaths = <String>[];
+    for (int i = 0; i < imagePaths.length; i++) {
+      onProgress?.call(i + 1, imagePaths.length);
+      final path = await compute(
+        processPageToTempPdf,
+        {'imagePath': imagePaths[i], 'index': i},
+      );
+      pagePdfPaths.add(path);
     }
-    final pdfBytes = await pdfDoc.save();
 
-    // 6. Upload PDF
-    await _uploadPdf(objectPath: objectPath, pdfBytes: pdfBytes);
+    // 5. Merge all single-page PDFs into final PDF via PdfCombiner (temp files).
+    final tempDir = Directory.systemTemp.createTempSync('pdf_merge_temp.');
+    Uint8List mergedPdf;
+    try {
+      final outputFile = File('${tempDir.path}/merged.pdf');
+      await PdfCombiner.mergeMultiplePDFs(
+        inputs: pagePdfPaths.map((p) => MergeInput.path(p)).toList(),
+        outputPath: outputFile.path,
+      );
+      mergedPdf = await outputFile.readAsBytes();
 
-    // 7. Update document metadata with the object path
-    await _updateDocument(
-      documentId: documentId,
-      pageCount: processed.length,
-      fileSize: pdfBytes.length,
-      filePath: objectPath,
-    );
+      // 6. Upload merged PDF
+      await _uploadPdf(objectPath: objectPath, pdfBytes: mergedPdf);
+
+      // 7. Update document metadata
+      await _updateDocument(
+        documentId: documentId,
+        pageCount: pagePdfPaths.length,
+        fileSize: mergedPdf.length,
+        filePath: objectPath,
+      );
+    } finally {
+      // Clean up all per-page temp files and merge temp dir
+      for (final p in pagePdfPaths) {
+        try {
+          await File(p).delete();
+        } catch (_) {}
+      }
+      try {
+        await tempDir.delete(recursive: true);
+      } catch (_) {}
+    }
   }
 
   /// Append images to an existing document.
   static Future<void> uploadToExistingDocument({
     required List<String> imagePaths,
     required String documentId,
+    void Function(int current, int total)? onProgress,
   }) async {
     final client = Supabase.instance.client;
 
-    // 1. Process new images
-    final processed = <Uint8List>[];
-    for (final path in imagePaths) {
-      processed.add(await _processImageFile(path));
-    }
-
-    // 2. Read current page_count and file_path from documents row
+    // 1. Read current page_count and file_path from documents row
     final docInfo = await client
         .from('documents')
         .select('page_count, file_path')
@@ -181,60 +219,70 @@ class ScanService {
     final currentCount = (docInfo['page_count'] as int?) ?? 0;
     final filePath = docInfo['file_path'] as String? ?? 'documents/$documentId.pdf';
 
-    // 3. Create new scan batch
+    // 2. Create new scan batch
     await _createScanBatch(documentId: documentId);
 
-    // 4. Download existing PDF via Worker using stored file_path
+    // 3. Download existing PDF via Worker using stored file_path
     Uint8List existingPdf = await WorkerClient.instance.getBytes(filePath);
 
-    // 5. Build PDF for new pages only
-    final newPdfDoc = pw.Document();
-    for (final bytes in processed) {
-      final imgPdf = pw.MemoryImage(bytes);
-      newPdfDoc.addPage(pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        margin: pw.EdgeInsets.zero,
-        build: (c) => pw.Center(child: pw.Image(imgPdf, fit: pw.BoxFit.contain)),
-      ));
+    // 4. Process each NEW page in an isolate, writing single-page PDFs to temp files.
+    // Sequential only — concurrent isolates each holding a full-res image spikes memory.
+    final newPagePdfPaths = <String>[];
+    for (int i = 0; i < imagePaths.length; i++) {
+      onProgress?.call(i + 1, imagePaths.length);
+      final path = await compute(
+        processPageToTempPdf,
+        {'imagePath': imagePaths[i], 'index': i},
+      );
+      newPagePdfPaths.add(path);
     }
-    final newPdfBytes = await newPdfDoc.save();
 
-    // 6. Merge PDFs using pdf_combiner (write to temp files)
+    // 5. Write existing PDF to a temp file, then merge it with all new single-page PDFs
+    // directly — skipping the intermediate "build one big new-pages PDF" step.
+    final tempDir = Directory.systemTemp.createTempSync('pdf_merge_temp.');
     Uint8List mergedPdf;
-    final tempDir = Directory.systemTemp.createTempSync('pdf_combiner_temp.');
+    String existingPdfTempPath = '';
     try {
       final existingFile = File('${tempDir.path}/existing.pdf');
       await existingFile.writeAsBytes(existingPdf);
-      final newFile = File('${tempDir.path}/new.pdf');
-      await newFile.writeAsBytes(newPdfBytes);
+      existingPdfTempPath = existingFile.path;
+
       final outputFile = File('${tempDir.path}/merged.pdf');
+      final inputs = <MergeInput>[MergeInput.path(existingPdfTempPath)];
+      inputs.addAll(newPagePdfPaths.map((p) => MergeInput.path(p)));
+
       await PdfCombiner.mergeMultiplePDFs(
-        inputs: [
-          MergeInput.path(existingFile.path),
-          MergeInput.path(newFile.path),
-        ],
+        inputs: inputs,
         outputPath: outputFile.path,
       );
       mergedPdf = await outputFile.readAsBytes();
+
+      // 6. Upload merged PDF to the same object path (overwrite)
+      await _uploadPdf(objectPath: filePath, pdfBytes: mergedPdf);
+
+      // 7. Update document metadata (page count & file size)
+      final newCount = currentCount + newPagePdfPaths.length;
+      await _updateDocument(
+        documentId: documentId,
+        pageCount: newCount,
+        fileSize: mergedPdf.length,
+        filePath: filePath,
+      );
     } finally {
-      // Clean up temp files
+      // Clean up all temp files: existing PDF temp, per-page PDFs, merge temp dir
+      for (final p in newPagePdfPaths) {
+        try {
+          await File(p).delete();
+        } catch (_) {}
+      }
+      if (existingPdfTempPath.isNotEmpty) {
+        try {
+          await File(existingPdfTempPath).delete();
+        } catch (_) {}
+      }
       try {
         await tempDir.delete(recursive: true);
-      } catch (_) {
-        // Ignore cleanup errors
-      }
+      } catch (_) {}
     }
-
-    // 7. Upload merged PDF to the same object path (overwrite)
-    await _uploadPdf(objectPath: filePath, pdfBytes: mergedPdf);
-
-    // 8. Update document metadata (page count & file size)
-    final newCount = currentCount + processed.length;
-    await _updateDocument(
-      documentId: documentId,
-      pageCount: newCount,
-      fileSize: mergedPdf.length,
-      filePath: filePath,
-    );
   }
 }

@@ -67,3 +67,6 @@ cloudflare-worker/.wrangler/
 supabase/.temp/
 # Widget Preview related
 .widget_preview/
+
+#others
+docs

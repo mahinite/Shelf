@@ -13,11 +13,13 @@ class RenameDeleteSheet extends StatelessWidget {
     required this.onDelete,
     required this.itemType,
     this.hasChildren = false,
+    this.onDownload,
   });
 
   final String currentName;
   final Future<void> Function(String newName)? onRename;
   final Future<void> Function()? onDelete;
+  final Future<void> Function()? onDownload;
   final String itemType; // e.g., 'Room', 'Subject', 'Chapter', 'Document'
   final bool hasChildren; // whether deleting cascades to nested items
 
@@ -34,6 +36,15 @@ class RenameDeleteSheet extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context);
                 _showRenameDialog(context);
+              },
+            ),
+          if (onDownload != null)
+            ListTile(
+              leading: const Icon(Icons.download_outlined),
+              title: Text('Download $itemType', style: AppTextStyles.body),
+              onTap: () {
+                Navigator.pop(context);
+                onDownload!();
               },
             ),
           if (onDelete != null)
@@ -135,6 +146,7 @@ Future<void> showRenameDeleteSheet({
   required String currentName,
   Future<void> Function(String newName)? onRename,
   Future<void> Function()? onDelete,
+  Future<void> Function()? onDownload,
   required String itemType,
   bool hasChildren = false,
 }) {
@@ -144,6 +156,7 @@ Future<void> showRenameDeleteSheet({
       currentName: currentName,
       onRename: onRename,
       onDelete: onDelete,
+      onDownload: onDownload,
       itemType: itemType,
       hasChildren: hasChildren,
     ),

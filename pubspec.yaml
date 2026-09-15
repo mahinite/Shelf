@@ -1,7 +1,7 @@
 name: shelf
 description: Shelf — a calm, notebook-inspired study notes app (MVP).
 publish_to: 'none'
-version: 0.1.0
+version: 0.1.2
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -29,6 +29,7 @@ dependencies:
   ota_update: ^7.1.0
   version: ^3.0.2
   http: ^1.2.0
+  file_saver: ^0.4.0
 
 dev_dependencies:
   flutter_test:

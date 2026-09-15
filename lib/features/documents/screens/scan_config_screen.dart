@@ -36,6 +36,7 @@ class _ScanConfigScreenState extends State<ScanConfigScreen> {
   Chapter? _selectedChapter;
   Document? _selectedDocument;
   bool _isSaving = false;
+  String? _progressLabel;
 
 void _selectChapter() async {
     await showModalBottomSheet<void>(
@@ -69,7 +70,10 @@ void _selectDocument() async {
   }
 
   Future<void> _save() async {
-    setState(() => _isSaving = true);
+    setState(() {
+      _isSaving = true;
+      _progressLabel = 'Processing page 1 of ${widget.imagePaths.length}';
+    });
     try {
       if (_mode == _ConfigMode.newDocument) {
         if (_title == null || _title!.isEmpty || _selectedChapter == null) {
@@ -79,6 +83,11 @@ void _selectDocument() async {
           imagePaths: widget.imagePaths,
           title: _title!,
           chapterId: _selectedChapter!.id,
+          onProgress: (current, total) {
+            if (mounted) {
+              setState(() => _progressLabel = 'Processing page $current of $total');
+            }
+          },
         );
       } else {
         if (_selectedDocument == null) {
@@ -87,6 +96,11 @@ void _selectDocument() async {
         await ScanService.uploadToExistingDocument(
           imagePaths: widget.imagePaths,
           documentId: _selectedDocument!.id,
+          onProgress: (current, total) {
+            if (mounted) {
+              setState(() => _progressLabel = 'Processing page $current of $total');
+            }
+          },
         );
       }
       if (!mounted) return;
@@ -100,7 +114,12 @@ void _selectDocument() async {
         SnackBar(content: Text('Save failed: $e')),
       );
     } finally {
-      if (mounted) setState(() => _isSaving = false);
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+          _progressLabel = null;
+        });
+      }
     }
   }
 
@@ -163,10 +182,23 @@ void _selectDocument() async {
                   borderRadius: BorderRadius.circular(AppRadius.md),
                 ),
                 child: _isSaving
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.onPrimaryButton),
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.onPrimaryButton),
+                          ),
+                          if (_progressLabel != null) ...[
+                            const SizedBox(width: AppSpacing.md),
+                            Text(
+                              _progressLabel!,
+                              style: AppTextStyles.buttonLabel.copyWith(color: AppColors.onPrimaryButton),
+                            ),
+                          ],
+                        ],
                       )
                     : Text(
                         'Save',
