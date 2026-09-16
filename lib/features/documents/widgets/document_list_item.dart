@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../models/document.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/shelf_colors.dart';
 import '../../../core/widgets/pdf_badge_icon.dart';
 import '../../../core/widgets/tactile.dart';
 
@@ -50,13 +50,13 @@ class DocumentListItem extends StatelessWidget {
             Expanded(
               child: Text(
                 document.title,
-                style: AppTextStyles.body,
+                style: context.textStyles.body(context.colors),
               ),
             ),
-            const Icon(
+            Icon(
               Icons.chevron_right,
               size: 18,
-              color: AppColors.textSecondary,
+              color: context.colors.textSecondary,
             ),
           ],
         ),

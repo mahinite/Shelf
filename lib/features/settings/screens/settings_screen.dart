@@ -6,6 +6,7 @@ import '../../../core/widgets/app_scaffold.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/shelf_colors.dart';
 import '../../../core/services/crash_logger.dart';
 import '../../../core/services/theme_notifier.dart';
 import '../../../core/network/worker_client.dart';
@@ -58,9 +59,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text('Account', style: AppTextStyles.sectionTitle),
+            Text('Account', style: context.textStyles.sectionTitle(context.colors)),
             const SizedBox(height: AppSpacing.sm),
-            Text(email, style: AppTextStyles.bodySecondary),
+            Text(email, style: context.textStyles.bodySecondary(context.colors)),
             const SizedBox(height: AppSpacing.md),
             ListTile(
               leading: const Icon(Icons.lock_outline),
@@ -77,7 +78,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: AppSpacing.xl),
             const Divider(),
             const SizedBox(height: AppSpacing.md),
-            Text('Appearance', style: AppTextStyles.sectionTitle),
+            Text('Appearance', style: context.textStyles.sectionTitle(context.colors)),
             const SizedBox(height: AppSpacing.sm),
             ValueListenableBuilder<ThemeMode>(
               valueListenable: themeNotifier,
@@ -91,7 +92,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   title: const Text('Dark Mode'),
                   subtitle: Text(
                     themeMode == ThemeMode.dark ? 'Dark' : 'Light',
-                    style: AppTextStyles.bodySecondary,
+                    style: context.textStyles.bodySecondary(context.colors),
                   ),
                   value: themeMode == ThemeMode.dark,
                   onChanged: (_) => themeNotifier.toggleTheme(),
@@ -101,7 +102,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: AppSpacing.xl),
             const Divider(),
             const SizedBox(height: AppSpacing.md),
-            Text('Debug', style: AppTextStyles.sectionTitle),
+            Text('Debug', style: context.textStyles.sectionTitle(context.colors)),
             const SizedBox(height: AppSpacing.sm),
             ListTile(
               leading: const Icon(Icons.bug_report_outlined),
@@ -115,7 +116,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: AppSpacing.xl),
             const Divider(),
             const SizedBox(height: AppSpacing.md),
-            Text('About', style: AppTextStyles.sectionTitle),
+            Text('About', style: context.textStyles.sectionTitle(context.colors)),
             const SizedBox(height: AppSpacing.sm),
             ListTile(
               leading: const Icon(Icons.info_outline),
@@ -124,7 +125,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _appVersion.isNotEmpty
                     ? 'Version $_appVersion ($_buildNumber)'
                     : 'Loading...',
-                style: AppTextStyles.bodySecondary,
+                style: context.textStyles.bodySecondary(context.colors),
               ),
             ),
             const SizedBox(height: AppSpacing.xl),
@@ -422,7 +423,7 @@ class _CrashLogsScreenState extends State<CrashLogsScreen> {
                   child: SingleChildScrollView(
                     child: SelectableText(
                       _logs,
-                      style: AppTextStyles.body.copyWith(fontFamily: 'monospace'),
+                      style: context.textStyles.body(context.colors).copyWith(fontFamily: 'monospace'),
                     ),
                   ),
                 ),

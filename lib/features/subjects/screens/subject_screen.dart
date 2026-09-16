@@ -6,6 +6,7 @@ import '../../../core/services/cache_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/shelf_colors.dart';
 import '../../../core/widgets/app_scaffold.dart';
 import '../../../core/widgets/rename_delete_sheet.dart';
 import '../../../core/widgets/tactile.dart';
@@ -255,7 +256,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
               ? Center(
                   child: Text(
                     _error!,
-                    style: AppTextStyles.body,
+                    style: context.textStyles.body(context.colors),
                     textAlign: TextAlign.center,
                   ),
                 )
@@ -306,7 +307,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
                                   Expanded(
                                     child: Text(
                                       chapter.name,
-                                      style: AppTextStyles.body,
+                                      style: context.textStyles.body(context.colors),
                                     ),
                                   ),
                                   const Icon(

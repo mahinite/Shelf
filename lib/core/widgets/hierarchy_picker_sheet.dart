@@ -7,9 +7,9 @@ import '../../features/subjects/models/subject.dart';
 import '../../features/subjects/widgets/subject_list_item.dart';
 import '../../features/chapters/models/chapter.dart';
 import '../../features/documents/models/document.dart';
-import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
+import '../theme/shelf_colors.dart';
 import '../widgets/tactile.dart';
 
 /// Mode determines the final selection type.
@@ -202,11 +202,11 @@ class _HierarchyPickerSheetState extends State<HierarchyPickerSheet> {
         children: [
           if (_level > 0)
             IconButton(
-              icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+              icon: Icon(Icons.arrow_back, color: context.colors.textPrimary),
               onPressed: _goBack,
             ),
           Expanded(
-            child: Text(title, style: AppTextStyles.sectionTitle),
+            child: Text(title, style: context.textStyles.sectionTitle(context.colors)),
           ),
         ],
       ),
@@ -244,17 +244,17 @@ class _HierarchyPickerSheetState extends State<HierarchyPickerSheet> {
                   decoration: BoxDecoration(
 color: ((widget.mode == HierarchyPickerMode.pickChapter && _selectedChapter != null) ||
                              (widget.mode == HierarchyPickerMode.pickDocument && _selectedDocument != null))
-                         ? AppColors.primaryButton
-                         : AppColors.border,
+                         ? context.colors.accent
+                         : context.colors.border,
                     borderRadius: BorderRadius.circular(AppRadius.md),
                   ),
-                  child: Text(
+child: Text(
                     'Select',
-                    style: AppTextStyles.buttonLabel.copyWith(
-color: ((widget.mode == HierarchyPickerMode.pickChapter && _selectedChapter != null) ||
-                               (widget.mode == HierarchyPickerMode.pickDocument && _selectedDocument != null))
-                           ? AppColors.onPrimaryButton
-                           : AppColors.textSecondary,
+                    style: context.textStyles.buttonLabel(context.colors).copyWith(
+                      color: ((widget.mode == HierarchyPickerMode.pickChapter && _selectedChapter != null) ||
+                                  (widget.mode == HierarchyPickerMode.pickDocument && _selectedDocument != null))
+                              ? context.colors.onAccent
+                              : context.colors.textSecondary,
                     ),
                   ),
 ),
@@ -278,7 +278,7 @@ color: ((widget.mode == HierarchyPickerMode.pickChapter && _selectedChapter != n
             children: [
               Text(
                 _errorMessage!,
-                style: AppTextStyles.body.copyWith(color: AppColors.destructive),
+                style: context.textStyles.body(context.colors).copyWith(color: context.colors.destructive),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppSpacing.md),
@@ -300,13 +300,13 @@ color: ((widget.mode == HierarchyPickerMode.pickChapter && _selectedChapter != n
                     vertical: AppSpacing.md,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryButton,
+                    color: context.colors.accent,
                     borderRadius: BorderRadius.circular(AppRadius.md),
                   ),
                   child: Text(
                     'Retry',
-                    style: AppTextStyles.buttonLabel.copyWith(
-                      color: AppColors.onPrimaryButton,
+                    style: context.textStyles.buttonLabel(context.colors).copyWith(
+                      color: context.colors.onAccent,
                     ),
                   ),
                 ),
@@ -355,12 +355,12 @@ color: ((widget.mode == HierarchyPickerMode.pickChapter && _selectedChapter != n
           itemBuilder: (c, i) {
             final chapter = _chapters[i];
             return ListTile(
-              title: Text(chapter.name, style: AppTextStyles.body),
+              title: Text(chapter.name, style: context.textStyles.body(context.colors)),
               trailing: _selectedChapter == chapter
-                  ? const Icon(Icons.check, color: AppColors.primaryButton)
-                  : const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+                  ? Icon(Icons.check, color: context.colors.accent)
+                  : Icon(Icons.chevron_right, color: context.colors.textSecondary),
               selected: _selectedChapter == chapter,
-              selectedTileColor: AppColors.surfaceCard,
+              selectedTileColor: context.colors.surface,
               onTap: () async {
                 setState(() => _selectedChapter = chapter);
                 if (widget.mode == HierarchyPickerMode.pickChapter) {
@@ -381,12 +381,12 @@ color: ((widget.mode == HierarchyPickerMode.pickChapter && _selectedChapter != n
           itemBuilder: (c, i) {
             final doc = _documents[i];
             return ListTile(
-              title: Text(doc.title, style: AppTextStyles.body),
+              title: Text(doc.title, style: context.textStyles.body(context.colors)),
               trailing: _selectedDocument == doc
-                  ? const Icon(Icons.check, color: AppColors.primaryButton)
-                  : const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+                  ? Icon(Icons.check, color: context.colors.accent)
+                  : Icon(Icons.chevron_right, color: context.colors.textSecondary),
               selected: _selectedDocument == doc,
-              selectedTileColor: AppColors.surfaceCard,
+              selectedTileColor: context.colors.surface,
               onTap: () {
                 setState(() => _selectedDocument = doc);
               },

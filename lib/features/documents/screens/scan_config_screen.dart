@@ -5,9 +5,9 @@ import '../../../core/widgets/app_scaffold.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/shelf_colors.dart';
 import '../../../core/widgets/tactile.dart';
 import '../../documents/services/scan_service.dart';
-
 import '../../chapters/models/chapter.dart';
 import '../../documents/models/document.dart';
 import '../../../core/widgets/hierarchy_picker_sheet.dart';
@@ -195,14 +195,14 @@ void _selectDocument() async {
                             const SizedBox(width: AppSpacing.md),
                             Text(
                               _progressLabel!,
-                              style: AppTextStyles.buttonLabel.copyWith(color: AppColors.onPrimaryButton),
+                              style: context.textStyles.buttonLabel(context.colors).copyWith(color: context.colors.onAccent),
                             ),
                           ],
                         ],
                       )
                     : Text(
                         'Save',
-                        style: AppTextStyles.buttonLabel.copyWith(color: canSave ? AppColors.onPrimaryButton : AppColors.textSecondary),
+                        style: context.textStyles.buttonLabel(context.colors).copyWith(color: canSave ? context.colors.onAccent : context.colors.textSecondary),
                       ),
               ),
             ),

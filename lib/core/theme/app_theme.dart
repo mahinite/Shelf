@@ -9,6 +9,7 @@ class AppTheme {
 
   static ThemeData get theme {
     final c = ShelfColors.light;
+    final ts = AppTextStyles.instance;
     return ThemeData(
       useMaterial3: true,
       scaffoldBackgroundColor: AppColors.background,
@@ -21,11 +22,11 @@ class AppTheme {
         brightness: Brightness.light,
       ),
       textTheme: TextTheme(
-        headlineLarge: AppTextStyles.largeTitle,
-        titleLarge: AppTextStyles.sectionTitle,
-        bodyLarge: AppTextStyles.body,
-        bodyMedium: AppTextStyles.bodySecondary,
-        labelMedium: AppTextStyles.metadata,
+        headlineLarge: ts.largeTitle(c),
+        titleLarge: ts.sectionTitle(c),
+        bodyLarge: ts.body(c),
+        bodyMedium: ts.bodySecondary(c),
+        labelMedium: ts.metadata(c),
       ),
       // Minimal shadow, small radius, charcoal-on-cream — no giant
       // rounded cards or elevation drama.
@@ -47,7 +48,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),
-          textStyle: AppTextStyles.buttonLabel,
+          textStyle: ts.buttonLabel(c),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -58,7 +59,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),
-          textStyle: AppTextStyles.buttonLabel,
+          textStyle: ts.buttonLabel(c),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -72,8 +73,8 @@ class AppTheme {
         focusedBorder: const UnderlineInputBorder(
           borderSide: BorderSide(color: AppColors.textPrimary, width: 2),
         ),
-        labelStyle: AppTextStyles.bodySecondary,
-        floatingLabelStyle: AppTextStyles.metadata,
+        labelStyle: ts.bodySecondary(c),
+        floatingLabelStyle: ts.metadata(c),
       ),
       dividerTheme: const DividerThemeData(
         color: AppColors.divider,
@@ -95,15 +96,15 @@ class AppTheme {
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: c.surface,
-        titleTextStyle: AppTextStyles.sectionTitle.copyWith(color: c.textPrimary),
-        contentTextStyle: AppTextStyles.body.copyWith(color: c.textPrimary),
+        titleTextStyle: ts.sectionTitle(c),
+        contentTextStyle: ts.body(c),
       ),
       // Intentional exception: ShelfColors has no "inverse" role, so the
       // snackbar pins the OPPOSITE mode's tokens — dark snackbar on light
       // theme, light snackbar on dark theme (matches M3 inverse behavior).
       snackBarTheme: SnackBarThemeData(
         backgroundColor: ShelfColors.dark.background,
-        contentTextStyle: AppTextStyles.body.copyWith(color: ShelfColors.dark.textPrimary),
+        contentTextStyle: ts.body(ShelfColors.dark),
       ),
       // Only the active state is pinned to the accent; unselected states
       // keep Material's defaults.
@@ -134,6 +135,7 @@ class AppTheme {
 
   static ThemeData get darkTheme {
     final c = ShelfColors.dark;
+    final ts = AppTextStyles.instance;
     return ThemeData(
       useMaterial3: true,
       scaffoldBackgroundColor: AppColors.backgroundDark,
@@ -144,11 +146,11 @@ class AppTheme {
         brightness: Brightness.dark,
       ),
       textTheme: TextTheme(
-        headlineLarge: AppTextStyles.largeTitle.copyWith(color: AppColors.textPrimaryDark),
-        titleLarge: AppTextStyles.sectionTitle.copyWith(color: AppColors.textPrimaryDark),
-        bodyLarge: AppTextStyles.body.copyWith(color: AppColors.textPrimaryDark),
-        bodyMedium: AppTextStyles.bodySecondary.copyWith(color: AppColors.textSecondaryDark),
-        labelMedium: AppTextStyles.metadata.copyWith(color: AppColors.textSecondaryDark),
+        headlineLarge: ts.largeTitle(c),
+        titleLarge: ts.sectionTitle(c),
+        bodyLarge: ts.body(c),
+        bodyMedium: ts.bodySecondary(c),
+        labelMedium: ts.metadata(c),
       ),
       cardTheme: CardThemeData(
         color: AppColors.surfaceCardDark,
@@ -168,7 +170,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),
-          textStyle: AppTextStyles.buttonLabel,
+          textStyle: ts.buttonLabel(c),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -179,7 +181,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.md),
           ),
-          textStyle: AppTextStyles.buttonLabel,
+          textStyle: ts.buttonLabel(c),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -192,8 +194,8 @@ class AppTheme {
         focusedBorder: const UnderlineInputBorder(
           borderSide: BorderSide(color: AppColors.textPrimaryDark, width: 2),
         ),
-        labelStyle: AppTextStyles.bodySecondary.copyWith(color: AppColors.textSecondaryDark),
-        floatingLabelStyle: AppTextStyles.metadata.copyWith(color: AppColors.textSecondaryDark),
+        labelStyle: ts.bodySecondary(c),
+        floatingLabelStyle: ts.metadata(c),
       ),
       dividerTheme: const DividerThemeData(
         color: AppColors.dividerDark,
@@ -213,13 +215,13 @@ class AppTheme {
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: c.surface,
-        titleTextStyle: AppTextStyles.sectionTitle.copyWith(color: c.textPrimary),
-        contentTextStyle: AppTextStyles.body.copyWith(color: c.textPrimary),
+        titleTextStyle: ts.sectionTitle(c),
+        contentTextStyle: ts.body(c),
       ),
       // Snackbar uses the OPPOSITE mode's tokens (see light theme).
       snackBarTheme: SnackBarThemeData(
         backgroundColor: ShelfColors.light.background,
-        contentTextStyle: AppTextStyles.body.copyWith(color: ShelfColors.light.textPrimary),
+        contentTextStyle: ts.body(ShelfColors.light),
       ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith(

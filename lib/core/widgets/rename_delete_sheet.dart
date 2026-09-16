@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../core/theme/shelf_colors.dart';
 
 /// Action sheet shown on long-press with Rename/Delete options.
 /// Caller provides callbacks for rename/delete and the item's current name.
@@ -32,7 +32,7 @@ class RenameDeleteSheet extends StatelessWidget {
           if (onRename != null)
             ListTile(
               leading: const Icon(Icons.edit_outlined),
-              title: Text('Rename $itemType', style: AppTextStyles.body),
+              title: Text('Rename $itemType', style: context.textStyles.body(context.colors)),
               onTap: () {
                 Navigator.pop(context);
                 _showRenameDialog(context);
@@ -41,7 +41,7 @@ class RenameDeleteSheet extends StatelessWidget {
           if (onDownload != null)
             ListTile(
               leading: const Icon(Icons.download_outlined),
-              title: Text('Download $itemType', style: AppTextStyles.body),
+              title: Text('Download $itemType', style: context.textStyles.body(context.colors)),
               onTap: () {
                 Navigator.pop(context);
                 onDownload!();
@@ -49,8 +49,8 @@ class RenameDeleteSheet extends StatelessWidget {
             ),
           if (onDelete != null)
             ListTile(
-              leading: const Icon(Icons.delete_outline, color: AppColors.destructive),
-              title: Text('Delete $itemType', style: AppTextStyles.body.copyWith(color: AppColors.destructive)),
+              leading: Icon(Icons.delete_outline, color: context.colors.destructive),
+              title: Text('Delete $itemType', style: context.textStyles.body(context.colors).copyWith(color: context.colors.destructive)),
               onTap: () {
                 Navigator.pop(context);
                 _showDeleteConfirmation(context);
@@ -119,7 +119,7 @@ class RenameDeleteSheet extends StatelessWidget {
         title: Text('Delete $itemType?'),
         content: Text(
           'Are you sure you want to delete "$currentName"?\n\n$warningText',
-          style: AppTextStyles.body,
+          style: context.textStyles.body(context.colors),
         ),
         actions: [
           TextButton(
@@ -127,7 +127,7 @@ class RenameDeleteSheet extends StatelessWidget {
             child: const Text('Cancel'),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: AppColors.destructive),
+            style: FilledButton.styleFrom(backgroundColor: context.colors.destructive),
             onPressed: () {
               Navigator.of(context).pop();
               onDelete!();

@@ -3,6 +3,7 @@ import '../models/subject.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/shelf_colors.dart';
 import '../../../core/widgets/tactile.dart';
 
 /// A subject's accent color shows up ONLY as a thin 4px left border strip —
@@ -29,9 +30,9 @@ class SubjectListItem extends StatelessWidget {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: AppColors.surfaceCard,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: context.colors.border),
         ),
         child: Row(
           children: [
@@ -55,19 +56,19 @@ class SubjectListItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(subject.name, style: AppTextStyles.sectionTitle),
+                    Text(subject.name, style: context.textStyles.sectionTitle(context.colors)),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
                       '${subject.chapterCount ?? 0} chapter${subject.chapterCount == 1 ? '' : 's'}',
-                      style: AppTextStyles.metadata,
+                      style: context.textStyles.metadata(context.colors),
                     ),
                   ],
                 ),
               ),
             ),
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(right: AppSpacing.md),
-              child: Icon(Icons.chevron_right, color: AppColors.textSecondary),
+              child: Icon(Icons.chevron_right, color: context.colors.textSecondary),
             ),
           ],
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
+
+import 'shelf_colors.dart';
 
 /// A very subtle, static grid — meant to read as paper texture, not
 /// as a visible design element. If you can consciously notice the grid
@@ -15,9 +16,9 @@ class NotebookBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.background,
+      color: context.colors.background,
       child: CustomPaint(
-        painter: _GridPainter(),
+        painter: _GridPainter(gridLineColor: context.colors.gridLine),
         child: child,
       ),
     );
@@ -26,12 +27,15 @@ class NotebookBackground extends StatelessWidget {
 
 class _GridPainter extends CustomPainter {
   static const double _spacing = 24;
+  final Color gridLineColor;
+
+  const _GridPainter({required this.gridLineColor});
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       // Extremely low opacity charcoal — texture, not a visible line.
-      ..color = AppColors.textPrimary.withValues(alpha: 0.035)
+      ..color = gridLineColor.withValues(alpha: 0.035)
       ..strokeWidth = 1;
 
     for (double y = 0; y < size.height; y += _spacing) {

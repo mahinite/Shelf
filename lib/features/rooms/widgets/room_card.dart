@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/room.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/shelf_colors.dart';
 import '../../../core/widgets/tactile.dart';
 
 /// Rooms are intentionally plain — no accent color, no left border strip.
@@ -28,9 +28,9 @@ class RoomCard extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
-          color: AppColors.surfaceCard,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: context.colors.border),
         ),
         child: Row(
           children: [
@@ -38,18 +38,18 @@ class RoomCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(room.name, style: AppTextStyles.sectionTitle),
+                  Text(room.name, style: context.textStyles.sectionTitle(context.colors)),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
                     '${room.subjectCount ?? 0} subject${room.subjectCount == 1 ? '' : 's'}',
-                    style: AppTextStyles.metadata,
+                    style: context.textStyles.metadata(context.colors),
                   ),
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               Icons.chevron_right,
-              color: AppColors.textSecondary,
+              color: context.colors.textSecondary,
             ),
           ],
         ),

@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/notebook_background.dart';
+import '../../../core/theme/shelf_colors.dart';
 import 'signup_screen.dart';
 
 /// Login now authenticates using Supabase email/password.
@@ -116,11 +117,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('Welcome back', style: AppTextStyles.largeTitle),
+                    Text('Welcome back', style: context.textStyles.largeTitle(context.colors)),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
                       'Sign in to your Shelf',
-                      style: AppTextStyles.bodySecondary,
+                      style: context.textStyles.bodySecondary(context.colors),
                     ),
                     const SizedBox(height: AppSpacing.xxl),
                     TextField(
@@ -154,12 +155,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : _handleLogin,
                         child: _isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: Colors.white,
+                                  color: context.colors.onAccent,
                                 ),
                               )
                             : const Text('Log In'),
@@ -172,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         const Expanded(child: Divider()),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                          child: Text('or', style: AppTextStyles.metadata),
+                          child: Text('or', style: context.textStyles.metadata(context.colors)),
                         ),
                         const Expanded(child: Divider()),
                       ],
@@ -188,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(AppRadius.md),
                           ),
-                          textStyle: AppTextStyles.buttonLabel,
+                          textStyle: context.textStyles.buttonLabel(context.colors),
                         ),
                         child: const Text('Continue with Google'),
                       ),
@@ -207,7 +208,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                         child: Text(
                           "Don't have an account? Sign up",
-                          style: AppTextStyles.bodySecondary,
+style: context.textStyles.bodySecondary(context.colors),
                         ),
                       ),
                     ),

@@ -6,6 +6,7 @@ import '../models/room.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/shelf_colors.dart';
 import '../../../core/widgets/app_scaffold.dart';
 
 class RoomMembersScreen extends StatefulWidget {
@@ -60,17 +61,17 @@ Future<void> _leaveRoom() async {
            'You will lose access to this room and all its contents. '
            'You can rejoin later with an invite code.',
          ),
-         actions: [
-           TextButton(
-             onPressed: () => Navigator.of(context).pop(false),
-             child: const Text('Cancel'),
-           ),
-           FilledButton(
-             style: FilledButton.styleFrom(backgroundColor: AppColors.destructive),
-             onPressed: () => Navigator.of(context).pop(true),
-             child: const Text('Leave'),
-           ),
-         ],
+actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: context.colors.destructive),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Leave'),
+            ),
+          ],
        ),
      );
 
@@ -108,17 +109,17 @@ Future<void> _removeMember(RoomMember member) async {
            'This will remove ${member.displayName} from the room. '
            'Their uploaded documents will remain in the room. This cannot be undone.',
          ),
-         actions: [
-           TextButton(
-             onPressed: () => Navigator.of(context).pop(false),
-             child: const Text('Cancel'),
-           ),
-           FilledButton(
-             style: FilledButton.styleFrom(backgroundColor: AppColors.destructive),
-             onPressed: () => Navigator.of(context).pop(true),
-             child: const Text('Remove'),
-           ),
-         ],
+actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: context.colors.destructive),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Remove'),
+            ),
+          ],
        ),
      );
 
@@ -168,7 +169,7 @@ Future<void> _removeMember(RoomMember member) async {
             children: [
               Text(
                 'Invite Members',
-                style: AppTextStyles.sectionTitle,
+                style: context.textStyles.sectionTitle(context.colors),
               ),
               const SizedBox(height: AppSpacing.md),
               Material(
@@ -252,7 +253,7 @@ Future<void> _removeMember(RoomMember member) async {
                   else ...[
                     SelectableText(
                       currentCode ?? '',
-                      style: AppTextStyles.body.copyWith(
+                      style: context.textStyles.body(context.colors).copyWith(
                         fontFamily: 'monospace',
                         fontSize: 16,
                         letterSpacing: 2,
@@ -483,7 +484,7 @@ Future<void> _removeMember(RoomMember member) async {
                     children: [
                       Text(
                         'Could not load members.\n${snapshot.error}',
-                        style: AppTextStyles.body,
+                        style: context.textStyles.body(context.colors),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: AppSpacing.md),
@@ -517,7 +518,7 @@ Future<void> _removeMember(RoomMember member) async {
                         leading: const Icon(Icons.logout, color: AppColors.destructive),
                         title: Text(
                           'Leave Room',
-                          style: AppTextStyles.body.copyWith(color: AppColors.destructive),
+                          style: context.textStyles.body(context.colors).copyWith(color: context.colors.destructive),
                         ),
                         onTap: _leaveRoom,
                       ),
@@ -535,7 +536,7 @@ Future<void> _removeMember(RoomMember member) async {
                             : '?',
                       ),
                     ),
-                    title: Text(member.displayName, style: AppTextStyles.body),
+                    title: Text(member.displayName, style: context.textStyles.body(context.colors)),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -546,14 +547,14 @@ Future<void> _removeMember(RoomMember member) async {
                               vertical: AppSpacing.xs,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.primaryButton.withValues(alpha: 0.1),
+                              color: context.colors.accent.withValues(alpha: 0.1),
                               borderRadius:
                                   BorderRadius.circular(AppRadius.sm),
                             ),
                             child: Text(
                               'Creator',
-                              style: AppTextStyles.metadata.copyWith(
-                                color: AppColors.primaryButton,
+                              style: context.textStyles.metadata(context.colors).copyWith(
+                                color: context.colors.accent,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

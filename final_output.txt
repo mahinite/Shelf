@@ -1,0 +1,1471 @@
+00:00 +0: loading D:/Code/Shelf dart/test/theme_regression_test.dart
+00:00 +0: ShelfColors token values ShelfColors.light matches current DESIGN.md-aligned primitives
+00:00 +1: ShelfColors token values ShelfColors.dark matches current DESIGN.md-aligned primitives
+00:00 +2: Light theme component slots (lazy construction) floatingActionButtonTheme is pinned to light accent
+00:00 +3: Light theme component slots (lazy construction) listTileTheme is pinned to light textPrimary
+00:00 +3: Light theme component slots (lazy construction) floatingActionButtonTheme is pinned to light accent
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+00:00 +2 -1: Light theme component slots (lazy construction) listTileTheme is pinned to light textPrimary
+00:00 +2 -1: Light theme component slots (lazy construction) floatingActionButtonTheme is pinned to light accent [E]
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 147:23             loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 191:20                             main.<fn>.<fn>
+  
+Warning: At least one test in this suite creates an HttpClient. When running a test suite that uses
+TestWidgetsFlutterBinding, all HTTP requests will return status code 400, and no network request
+will actually be made. Any test expecting a real network connection and status code will fail.
+To test code that needs an HttpClient, provide your own HttpClient implementation to the code under
+test, so that your test can consistently provide a testable response to the code under test.
+  This test failed after it had already completed.
+  Make sure to use a matching library which informs the test runner
+  of pending async work.
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 147:23             loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 191:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-SemiBold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 21:61                AppTextStyles.sectionTitle
+  test\theme_regression_test.dart 93:26                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 191:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Regular because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 28:53                AppTextStyles.body
+  test\theme_regression_test.dart 94:25                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 191:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Medium because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 42:57                AppTextStyles.metadata
+  test\theme_regression_test.dart 96:27                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 191:20                             main.<fn>.<fn>
+  
+00:00 +3 -1: Light theme component slots (lazy construction) listTileTheme is pinned to light textPrimary
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+00:00 +2 -2: Light theme component slots (lazy construction) dialogTheme is pinned to light surface and text
+00:00 +2 -2: Light theme component slots (lazy construction) listTileTheme is pinned to light textPrimary [E]
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 198:20                             main.<fn>.<fn>
+  
+  This test failed after it had already completed.
+  Make sure to use a matching library which informs the test runner
+  of pending async work.
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 198:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-SemiBold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 21:61                AppTextStyles.sectionTitle
+  test\theme_regression_test.dart 93:26                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 198:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Regular because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 28:53                AppTextStyles.body
+  test\theme_regression_test.dart 94:25                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 198:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Medium because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 42:57                AppTextStyles.metadata
+  test\theme_regression_test.dart 96:27                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 198:20                             main.<fn>.<fn>
+  
+00:00 +3 -2: Light theme component slots (lazy construction) snackBarTheme uses inverse tokens (dark bg on light theme)
+00:00 +3 -2: Light theme component slots (lazy construction) dialogTheme is pinned to light surface and text
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+00:00 +2 -3: Light theme component slots (lazy construction) snackBarTheme uses inverse tokens (dark bg on light theme)
+00:00 +2 -3: Light theme component slots (lazy construction) dialogTheme is pinned to light surface and text [E]
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 205:20                             main.<fn>.<fn>
+  
+  This test failed after it had already completed.
+  Make sure to use a matching library which informs the test runner
+  of pending async work.
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 205:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-SemiBold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 21:61                AppTextStyles.sectionTitle
+  test\theme_regression_test.dart 93:26                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 205:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Regular because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 28:53                AppTextStyles.body
+  test\theme_regression_test.dart 94:25                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 205:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Medium because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 42:57                AppTextStyles.metadata
+  test\theme_regression_test.dart 96:27                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 205:20                             main.<fn>.<fn>
+  
+00:00 +3 -3: Light theme component slots (lazy construction) snackBarTheme uses inverse tokens (dark bg on light theme)
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+00:00 +3 -3: Light theme component slots (lazy construction) switchTheme active state pinned to light accent
+00:00 +2 -4: Light theme component slots (lazy construction) switchTheme active state pinned to light accent
+00:00 +2 -4: Light theme component slots (lazy construction) snackBarTheme uses inverse tokens (dark bg on light theme) [E]
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 213:20                             main.<fn>.<fn>
+  
+  This test failed after it had already completed.
+  Make sure to use a matching library which informs the test runner
+  of pending async work.
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 213:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-SemiBold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 21:61                AppTextStyles.sectionTitle
+  test\theme_regression_test.dart 93:26                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 213:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Regular because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 28:53                AppTextStyles.body
+  test\theme_regression_test.dart 94:25                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 213:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Medium because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 42:57                AppTextStyles.metadata
+  test\theme_regression_test.dart 96:27                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 213:20                             main.<fn>.<fn>
+  
+00:00 +3 -4: Light theme component slots (lazy construction) filledButtonTheme is pinned to light accent
+00:00 +3 -4: Light theme component slots (lazy construction) switchTheme active state pinned to light accent
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+00:00 +2 -5: Light theme component slots (lazy construction) filledButtonTheme is pinned to light accent
+00:00 +2 -5: Light theme component slots (lazy construction) switchTheme active state pinned to light accent [E]
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 220:20                             main.<fn>.<fn>
+  
+  This test failed after it had already completed.
+  Make sure to use a matching library which informs the test runner
+  of pending async work.
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 220:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-SemiBold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 21:61                AppTextStyles.sectionTitle
+  test\theme_regression_test.dart 93:26                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 220:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Regular because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 28:53                AppTextStyles.body
+  test\theme_regression_test.dart 94:25                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 220:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Medium because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 42:57                AppTextStyles.metadata
+  test\theme_regression_test.dart 96:27                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 220:20                             main.<fn>.<fn>
+  
+00:00 +3 -5: Light theme component slots (lazy construction) progressIndicatorTheme is pinned to light accent
+00:00 +3 -5: Light theme component slots (lazy construction) filledButtonTheme is pinned to light accent
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+00:00 +2 -6: Light theme component slots (lazy construction) progressIndicatorTheme is pinned to light accent
+00:00 +2 -6: Light theme component slots (lazy construction) filledButtonTheme is pinned to light accent [E]
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 227:20                             main.<fn>.<fn>
+  
+  This test failed after it had already completed.
+  Make sure to use a matching library which informs the test runner
+  of pending async work.
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 227:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-SemiBold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 21:61                AppTextStyles.sectionTitle
+  test\theme_regression_test.dart 93:26                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 227:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Regular because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 28:53                AppTextStyles.body
+  test\theme_regression_test.dart 94:25                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 227:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Medium because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 42:57                AppTextStyles.metadata
+  test\theme_regression_test.dart 96:27                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 227:20                             main.<fn>.<fn>
+  
+00:00 +3 -6: Light theme component slots (lazy construction) progressIndicatorTheme is pinned to light accent
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+00:00 +3 -6: Light theme component slots (lazy construction) appBarTheme is pinned to light background and textPrimary
+00:00 +3 -6: Light theme component slots (lazy construction) progressIndicatorTheme is pinned to light accent
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+00:00 +2 -7: Light theme component slots (lazy construction) appBarTheme is pinned to light background and textPrimary
+00:00 +2 -7: Light theme component slots (lazy construction) progressIndicatorTheme is pinned to light accent [E]
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 235:20                             main.<fn>.<fn>
+  
+  This test failed after it had already completed.
+  Make sure to use a matching library which informs the test runner
+  of pending async work.
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 235:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-SemiBold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 21:61                AppTextStyles.sectionTitle
+  test\theme_regression_test.dart 93:26                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 235:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Regular because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 28:53                AppTextStyles.body
+  test\theme_regression_test.dart 94:25                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 235:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Medium because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 42:57                AppTextStyles.metadata
+  test\theme_regression_test.dart 96:27                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 235:20                             main.<fn>.<fn>
+  
+00:00 +3 -7: Light theme component slots (lazy construction) appBarTheme is pinned to light background and textPrimary
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+00:00 +3 -7: Light theme component slots (lazy construction) bottomSheetTheme is pinned to light surface
+00:00 +3 -7: Light theme component slots (lazy construction) appBarTheme is pinned to light background and textPrimary
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+00:00 +2 -8: Light theme component slots (lazy construction) bottomSheetTheme is pinned to light surface
+00:00 +2 -8: Light theme component slots (lazy construction) appBarTheme is pinned to light background and textPrimary [E]
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 241:20                             main.<fn>.<fn>
+  
+  This test failed after it had already completed.
+  Make sure to use a matching library which informs the test runner
+  of pending async work.
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 241:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-SemiBold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 21:61                AppTextStyles.sectionTitle
+  test\theme_regression_test.dart 93:26                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 241:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Regular because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 28:53                AppTextStyles.body
+  test\theme_regression_test.dart 94:25                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 241:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Medium because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 42:57                AppTextStyles.metadata
+  test\theme_regression_test.dart 96:27                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 241:20                             main.<fn>.<fn>
+  
+00:00 +3 -8: Dark theme component slots (lazy construction) floatingActionButtonTheme is pinned to dark accent
+00:00 +3 -8: Light theme component slots (lazy construction) bottomSheetTheme is pinned to light surface
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+00:00 +2 -9: Dark theme component slots (lazy construction) floatingActionButtonTheme is pinned to dark accent
+00:00 +2 -9: Light theme component slots (lazy construction) bottomSheetTheme is pinned to light surface [E]
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 248:20                             main.<fn>.<fn>
+  
+  This test failed after it had already completed.
+  Make sure to use a matching library which informs the test runner
+  of pending async work.
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 92:29                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 248:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-SemiBold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 21:61                AppTextStyles.sectionTitle
+  test\theme_regression_test.dart 93:26                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 248:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Regular because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 28:53                AppTextStyles.body
+  test\theme_regression_test.dart 94:25                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 248:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Medium because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 42:57                AppTextStyles.metadata
+  test\theme_regression_test.dart 96:27                              main.<fn>.lightTheme
+  test\theme_regression_test.dart 248:20                             main.<fn>.<fn>
+  
+00:00 +3 -9: Dark theme component slots (lazy construction) listTileTheme is pinned to dark textPrimary
+00:00 +3 -9: Dark theme component slots (lazy construction) floatingActionButtonTheme is pinned to dark accent
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+00:00 +2 -10: Dark theme component slots (lazy construction) listTileTheme is pinned to dark textPrimary
+00:00 +2 -10: Dark theme component slots (lazy construction) floatingActionButtonTheme is pinned to dark accent [E]
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 268:29                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 367:20                             main.<fn>.<fn>
+  
+  This test failed after it had already completed.
+  Make sure to use a matching library which informs the test runner
+  of pending async work.
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 268:29                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 367:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-SemiBold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 21:61                AppTextStyles.sectionTitle
+  test\theme_regression_test.dart 269:26                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 367:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Regular because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 28:53                AppTextStyles.body
+  test\theme_regression_test.dart 270:25                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 367:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Medium because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 42:57                AppTextStyles.metadata
+  test\theme_regression_test.dart 272:27                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 367:20                             main.<fn>.<fn>
+  
+00:00 +3 -10: Dark theme component slots (lazy construction) dialogTheme is pinned to dark surface and text
+00:00 +3 -10: Dark theme component slots (lazy construction) listTileTheme is pinned to dark textPrimary
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+00:00 +2 -11: Dark theme component slots (lazy construction) dialogTheme is pinned to dark surface and text
+00:00 +2 -11: Dark theme component slots (lazy construction) listTileTheme is pinned to dark textPrimary [E]
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 268:29                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 374:20                             main.<fn>.<fn>
+  
+  This test failed after it had already completed.
+  Make sure to use a matching library which informs the test runner
+  of pending async work.
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 268:29                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 374:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-SemiBold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 21:61                AppTextStyles.sectionTitle
+  test\theme_regression_test.dart 269:26                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 374:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Regular because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 28:53                AppTextStyles.body
+  test\theme_regression_test.dart 270:25                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 374:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Medium because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 42:57                AppTextStyles.metadata
+  test\theme_regression_test.dart 272:27                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 374:20                             main.<fn>.<fn>
+  
+00:00 +3 -11: Dark theme component slots (lazy construction) dialogTheme is pinned to dark surface and text
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+00:00 +2 -12: Dark theme component slots (lazy construction) snackBarTheme uses inverse tokens (light bg on dark theme)
+00:00 +2 -12: Dark theme component slots (lazy construction) dialogTheme is pinned to dark surface and text [E]
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 268:29                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 381:20                             main.<fn>.<fn>
+  
+  This test failed after it had already completed.
+  Make sure to use a matching library which informs the test runner
+  of pending async work.
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 268:29                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 381:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-SemiBold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 21:61                AppTextStyles.sectionTitle
+  test\theme_regression_test.dart 269:26                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 381:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Regular because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 28:53                AppTextStyles.body
+  test\theme_regression_test.dart 270:25                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 381:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Medium because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 42:57                AppTextStyles.metadata
+  test\theme_regression_test.dart 272:27                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 381:20                             main.<fn>.<fn>
+  
+00:00 +3 -12: Dark theme component slots (lazy construction) snackBarTheme uses inverse tokens (light bg on dark theme)
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+00:00 +3 -12: Dark theme component slots (lazy construction) switchTheme active state pinned to dark accent
+00:00 +3 -12: Dark theme component slots (lazy construction) snackBarTheme uses inverse tokens (light bg on dark theme)
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+00:00 +2 -13: Dark theme component slots (lazy construction) switchTheme active state pinned to dark accent
+00:00 +2 -13: Dark theme component slots (lazy construction) snackBarTheme uses inverse tokens (light bg on dark theme) [E]
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 268:29                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 389:20                             main.<fn>.<fn>
+  
+  This test failed after it had already completed.
+  Make sure to use a matching library which informs the test runner
+  of pending async work.
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 268:29                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 389:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-SemiBold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 21:61                AppTextStyles.sectionTitle
+  test\theme_regression_test.dart 269:26                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 389:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Regular because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 28:53                AppTextStyles.body
+  test\theme_regression_test.dart 270:25                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 389:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Medium because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 42:57                AppTextStyles.metadata
+  test\theme_regression_test.dart 272:27                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 389:20                             main.<fn>.<fn>
+  
+00:00 +3 -13: Dark theme component slots (lazy construction) switchTheme active state pinned to dark accent
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+00:00 +3 -13: Dark theme component slots (lazy construction) filledButtonTheme is pinned to dark accent
+00:00 +3 -13: Dark theme component slots (lazy construction) switchTheme active state pinned to dark accent
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+00:00 +2 -14: Dark theme component slots (lazy construction) filledButtonTheme is pinned to dark accent
+00:00 +2 -14: Dark theme component slots (lazy construction) switchTheme active state pinned to dark accent [E]
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 268:29                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 396:20                             main.<fn>.<fn>
+  
+  This test failed after it had already completed.
+  Make sure to use a matching library which informs the test runner
+  of pending async work.
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 268:29                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 396:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-SemiBold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 21:61                AppTextStyles.sectionTitle
+  test\theme_regression_test.dart 269:26                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 396:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Regular because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 28:53                AppTextStyles.body
+  test\theme_regression_test.dart 270:25                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 396:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Medium because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 42:57                AppTextStyles.metadata
+  test\theme_regression_test.dart 272:27                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 396:20                             main.<fn>.<fn>
+  
+00:00 +3 -14: Dark theme component slots (lazy construction) filledButtonTheme is pinned to dark accent
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+00:00 +3 -14: Dark theme component slots (lazy construction) progressIndicatorTheme is pinned to dark accent
+00:00 +2 -15: Dark theme component slots (lazy construction) progressIndicatorTheme is pinned to dark accent
+00:00 +2 -15: Dark theme component slots (lazy construction) filledButtonTheme is pinned to dark accent [E]
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 268:29                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 403:20                             main.<fn>.<fn>
+  
+  This test failed after it had already completed.
+  Make sure to use a matching library which informs the test runner
+  of pending async work.
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 268:29                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 403:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-SemiBold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 21:61                AppTextStyles.sectionTitle
+  test\theme_regression_test.dart 269:26                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 403:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Regular because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 28:53                AppTextStyles.body
+  test\theme_regression_test.dart 270:25                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 403:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Medium because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 42:57                AppTextStyles.metadata
+  test\theme_regression_test.dart 272:27                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 403:20                             main.<fn>.<fn>
+  
+00:00 +3 -15: Dark theme component slots (lazy construction) progressIndicatorTheme is pinned to dark accent
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+00:00 +3 -15: Dark theme component slots (lazy construction) appBarTheme is pinned to dark background and textPrimary
+00:00 +3 -15: Dark theme component slots (lazy construction) progressIndicatorTheme is pinned to dark accent
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+00:00 +2 -16: Dark theme component slots (lazy construction) appBarTheme is pinned to dark background and textPrimary
+00:00 +2 -16: Dark theme component slots (lazy construction) progressIndicatorTheme is pinned to dark accent [E]
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 268:29                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 411:20                             main.<fn>.<fn>
+  
+  This test failed after it had already completed.
+  Make sure to use a matching library which informs the test runner
+  of pending async work.
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 268:29                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 411:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-SemiBold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 21:61                AppTextStyles.sectionTitle
+  test\theme_regression_test.dart 269:26                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 411:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Regular because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 28:53                AppTextStyles.body
+  test\theme_regression_test.dart 270:25                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 411:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Medium because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 42:57                AppTextStyles.metadata
+  test\theme_regression_test.dart 272:27                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 411:20                             main.<fn>.<fn>
+  
+00:00 +3 -16: Dark theme component slots (lazy construction) appBarTheme is pinned to dark background and textPrimary
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+00:00 +3 -16: Dark theme component slots (lazy construction) bottomSheetTheme is pinned to dark surface
+00:00 +3 -16: Dark theme component slots (lazy construction) appBarTheme is pinned to dark background and textPrimary
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+00:00 +2 -17: Dark theme component slots (lazy construction) bottomSheetTheme is pinned to dark surface
+00:00 +2 -17: Dark theme component slots (lazy construction) appBarTheme is pinned to dark background and textPrimary [E]
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 268:29                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 417:20                             main.<fn>.<fn>
+  
+  This test failed after it had already completed.
+  Make sure to use a matching library which informs the test runner
+  of pending async work.
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 14:59                AppTextStyles.largeTitle
+  test\theme_regression_test.dart 268:29                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 417:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-SemiBold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/d7ba633bab7f40576e539a7e934a1301d7618dceea59c743de477c2c493462fc.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 21:61                AppTextStyles.sectionTitle
+  test\theme_regression_test.dart 269:26                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 417:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Regular because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/ecdb53099b1a68cd24c6900ea5beeafec81bd3c8cb9d0f3c51b9986583ba3982.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 28:53                AppTextStyles.body
+  test\theme_regression_test.dart 270:25                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 417:20                             main.<fn>.<fn>
+  
+Error: google_fonts was unable to load font Inter-Medium because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+If troubleshooting doesn't solve the problem, please file an issue at https://github.com/flutter/flutter/issues/new/choose.
+
+  Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/492dec3bc33255f9d81bd5fb18704ad72f96f9b9318e4171bc9f9be9dd4bf44b.ttf
+  package:google_fonts/src/google_fonts_base.dart 288:5              _httpFetchFontAndSaveToDevice
+  ===== asynchronous gap ===========================
+  dart:async                                                         _CustomZone.registerBinaryCallback
+  package:google_fonts/src/google_fonts_base.dart 155:9              loadFontIfNecessary
+  package:google_fonts/src/google_fonts_base.dart 110:38             googleFontsTextStyle
+  package:google_fonts/src/google_fonts_parts/part_i.g.dart 4533:12  PartI.inter
+  package:shelf/core/theme/app_text_styles.dart 42:57                AppTextStyles.metadata
+  test\theme_regression_test.dart 272:27                             main.<fn>.darkTheme
+  test\theme_regression_test.dart 417:20                             main.<fn>.<fn>
+  
+00:00 +3 -17: Dark theme component slots (lazy construction) bottomSheetTheme is pinned to dark surface
+Error: google_fonts was unable to load font Inter-Bold because the following exception occurred:
+Exception: Failed to load font with url: https://fonts.gstatic.com/s/a/b7e339223d56e8c4210c86f1ba87b3d43d6c47e03956ea56f0a7a938ae61b2a3.ttf
+
+There is likely something wrong with your test. Please see https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test for examples of how to test with google_fonts.
+00:00 +3 -17: Some tests failed.
+
+Failing tests:
+  D:/Code/Shelf dart/test/theme_regression_test.dart: Dark theme component slots (lazy construction) appBarTheme is pinned to dark background and textPrimary
+  D:/Code/Shelf dart/test/theme_regression_test.dart: Dark theme component slots (lazy construction) dialogTheme is pinned to dark surface and text
+  D:/Code/Shelf dart/test/theme_regression_test.dart: Dark theme component slots (lazy construction) filledButtonTheme is pinned to dark accent
+  D:/Code/Shelf dart/test/theme_regression_test.dart: Dark theme component slots (lazy construction) floatingActionButtonTheme is pinned to dark accent
+  ... and 13 more

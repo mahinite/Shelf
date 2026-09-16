@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../theme/notebook_background.dart';
+import '../theme/shelf_colors.dart';
 import 'bottom_action_bar.dart';
 import '../../features/settings/screens/settings_screen.dart';
 import 'package:flutter_doc_scanner/flutter_doc_scanner.dart';
@@ -97,14 +97,14 @@ void _handleScanTap(BuildContext context) async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: context.colors.background,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         automaticallyImplyLeading: showBackButton,
-        iconTheme: const IconThemeData(color: AppColors.textPrimary),
-        title: Text(title, style: AppTextStyles.sectionTitle),
+        iconTheme: IconThemeData(color: context.colors.textPrimary),
+        title: Text(title, style: context.textStyles.sectionTitle(context.colors)),
         actions: actions,
       ),
       body: NotebookBackground(child: body),

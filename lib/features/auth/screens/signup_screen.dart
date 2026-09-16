@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/notebook_background.dart';
+import '../../../core/theme/shelf_colors.dart';
+import '../../../core/theme/app_colors.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -145,11 +146,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('Create your Shelf', style: AppTextStyles.largeTitle),
+                    Text('Create your Shelf', style: context.textStyles.largeTitle(context.colors)),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
                       'A quiet place for your notes',
-                      style: AppTextStyles.bodySecondary,
+                      style: context.textStyles.bodySecondary(context.colors),
                     ),
                     const SizedBox(height: AppSpacing.xxl),
                     TextField(
@@ -210,7 +211,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         const Expanded(child: Divider()),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                          child: Text('or', style: AppTextStyles.metadata),
+                          child: Text('or', style: context.textStyles.metadata(context.colors)),
                         ),
                         const Expanded(child: Divider()),
                       ],
@@ -226,7 +227,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(AppRadius.md),
                           ),
-                          textStyle: AppTextStyles.buttonLabel,
+                          textStyle: context.textStyles.buttonLabel(context.colors),
                         ),
                         child: const Text('Continue with Google'),
                       ),
@@ -237,7 +238,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
                         child: Text(
                           'Already have an account? Log in',
-                          style: AppTextStyles.bodySecondary,
+                          style: context.textStyles.bodySecondary(context.colors),
                         ),
                       ),
                     ),

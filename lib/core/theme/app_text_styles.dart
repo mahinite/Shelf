@@ -1,50 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'app_colors.dart';
+
+import 'shelf_colors.dart';
 
 /// Text styles, built on Inter. Only the styles the MVP screens actually
 /// use are defined here (large title, section title, body, small metadata) —
 /// DESIGN.md's full type scale has more steps we don't need yet.
 class AppTextStyles {
-  AppTextStyles._();
+  static const AppTextStyles instance = AppTextStyles._internal();
 
-  static TextStyle get largeTitle => GoogleFonts.inter(
+  const AppTextStyles._internal();
+
+  TextStyle largeTitle(ShelfColors c) => GoogleFonts.inter(
         fontSize: 30,
         fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
+        color: c.textPrimary,
         height: 1.2,
       );
 
-  static TextStyle get sectionTitle => GoogleFonts.inter(
+  TextStyle sectionTitle(ShelfColors c) => GoogleFonts.inter(
         fontSize: 20,
         fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
+        color: c.textPrimary,
         height: 1.3,
       );
 
-  static TextStyle get body => GoogleFonts.inter(
+  TextStyle body(ShelfColors c) => GoogleFonts.inter(
         fontSize: 16,
         fontWeight: FontWeight.w400,
-        color: AppColors.textPrimary,
+        color: c.textPrimary,
         height: 1.4,
       );
 
-  static TextStyle get bodySecondary => GoogleFonts.inter(
+  TextStyle bodySecondary(ShelfColors c) => GoogleFonts.inter(
         fontSize: 16,
         fontWeight: FontWeight.w400,
-        color: AppColors.textSecondary,
+        color: c.textSecondary,
         height: 1.4,
       );
 
-  static TextStyle get metadata => GoogleFonts.inter(
+  TextStyle metadata(ShelfColors c) => GoogleFonts.inter(
         fontSize: 13,
         fontWeight: FontWeight.w500,
-        color: AppColors.textSecondary,
+        color: c.textSecondary,
         letterSpacing: 0.2,
       );
 
-  static TextStyle get buttonLabel => GoogleFonts.inter(
+  TextStyle buttonLabel(ShelfColors c) => GoogleFonts.inter(
         fontSize: 16,
         fontWeight: FontWeight.w500, // medium, not bold — "quiet" emphasis
       );
+}
+
+/// Context accessor for theme-aware text styles.
+/// Usage: `context.textStyles.body(context.colors)`
+extension AppTextStylesX on BuildContext {
+  AppTextStyles get textStyles => AppTextStyles.instance;
 }

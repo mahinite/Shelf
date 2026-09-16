@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/shelf_colors.dart';
 
 /// Reusable Google Sign-In button widget.
 /// Handles the full Google Sign-In flow with Supabase integration.
@@ -73,23 +73,23 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
       child: ElevatedButton(
         onPressed: _isLoading ? null : _handleSignIn,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.surfaceCard,
-          foregroundColor: AppColors.textPrimary,
+          backgroundColor: context.colors.surface,
+          foregroundColor: context.colors.textPrimary,
           elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.md),
-            side: const BorderSide(color: AppColors.border, width: 1),
+            side: BorderSide(color: context.colors.border, width: 1),
           ),
-          textStyle: AppTextStyles.buttonLabel,
+          textStyle: context.textStyles.buttonLabel(context.colors),
         ),
         child: _isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 height: 20,
                 width: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: AppColors.textPrimary,
+                  color: context.colors.textPrimary,
                 ),
               )
             : Row(
@@ -102,12 +102,12 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                     width: 20,
                     errorBuilder: (context, error, stackTrace) {
                       // Fallback: use a simple G icon if asset not found
-                      return const Text(
+return Text(
                         'G',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                          color: context.colors.textPrimary,
                         ),
                       );
                     },

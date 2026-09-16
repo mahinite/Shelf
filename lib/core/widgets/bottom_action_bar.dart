@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_styles.dart';
+import '../theme/shelf_colors.dart';
 import 'tactile.dart';
 
 /// The app's persistent bottom action area: Home on the left, a
@@ -26,9 +26,9 @@ class BottomActionBar extends StatelessWidget {
         horizontal: AppSpacing.lg,
         vertical: AppSpacing.sm,
       ),
-      decoration: const BoxDecoration(
-        color: AppColors.surfaceCard,
-        border: Border(top: BorderSide(color: AppColors.border, width: 1)),
+      decoration: BoxDecoration(
+        color: context.colors.surface,
+        border: Border(top: BorderSide(color: context.colors.border, width: 1)),
       ),
       child: SafeArea(
         top: false,
@@ -40,9 +40,9 @@ class BottomActionBar extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.home_outlined, color: AppColors.textPrimary),
+                  Icon(Icons.home_outlined, color: context.colors.textPrimary),
                   const SizedBox(height: 2),
-                  Text('Home', style: AppTextStyles.metadata),
+                  Text('Home', style: context.textStyles.metadata(context.colors)),
                 ],
               ),
             ),
@@ -53,13 +53,13 @@ class BottomActionBar extends StatelessWidget {
               child: Container(
                 width: 56,
                 height: 56,
-                decoration: const BoxDecoration(
-                  color: AppColors.primaryButton,
+                decoration: BoxDecoration(
+                  color: context.colors.accent,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.camera_alt,
-                  color: AppColors.onPrimaryButton,
+                  color: context.colors.onAccent,
                   size: 28,
                 ),
               ),
@@ -69,9 +69,9 @@ class BottomActionBar extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.settings_outlined, color: AppColors.textPrimary),
+                  Icon(Icons.settings_outlined, color: context.colors.textPrimary),
                   const SizedBox(height: 2),
-                  Text('Settings', style: AppTextStyles.metadata),
+                  Text('Settings', style: context.textStyles.metadata(context.colors)),
                 ],
               ),
             ),

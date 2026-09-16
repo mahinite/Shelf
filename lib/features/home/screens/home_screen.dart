@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/services/cache_service.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/shelf_colors.dart';
 import '../../../core/widgets/app_scaffold.dart';
 import '../../../core/widgets/rename_delete_sheet.dart';
 import '../../rooms/widgets/room_card.dart';
@@ -398,7 +399,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: Text(
                   _error!,
-                  style: AppTextStyles.body,
+                  style: context.textStyles.body(context.colors),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -411,12 +412,12 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text(
                   'Good to see you',
-                  style: AppTextStyles.largeTitle,
+                  style: context.textStyles.largeTitle(context.colors),
                 ),
                 const SizedBox(height: AppSpacing.xl),
                 Text(
                   'Your Study Rooms',
-                  style: AppTextStyles.sectionTitle,
+                  style: context.textStyles.sectionTitle(context.colors),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 if (_rooms.isEmpty)
