@@ -1,10 +1,10 @@
-import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:pdfrx/pdfrx.dart';
 
 import '../models/document.dart';
-import '../../../core/network/worker_client.dart';
+import '../../../core/services/document_cache_manager.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -26,9 +26,12 @@ class DocumentScreen extends StatefulWidget {
 }
 
 class _DocumentScreenState extends State<DocumentScreen> {
-  Uint8List? _pdfBytes;
+  File? _cachedFile;
   bool _isLoading = true;
   String? _errorMessage;
+
+  String get _objectPath =>
+      widget.document.filePath ?? 'documents/${widget.document.id}.pdf';
 
   @override
   void initState() {
@@ -37,27 +40,44 @@ class _DocumentScreenState extends State<DocumentScreen> {
   }
 
   Future<void> _loadDocument() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-      _pdfBytes = null;
-    });
+    if (_cachedFile == null) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+    }
+
+    final cacheKey = DocumentCacheManager.cacheKeyFor(widget.document);
+
+    final cached = await DocumentCacheManager.instance
+        .getFileFromCache(cacheKey);
+    if (!mounted) return;
+    if (cached != null) {
+      setState(() {
+        _cachedFile = cached.file;
+        _isLoading = false;
+        _errorMessage = null;
+      });
+    }
+
     try {
-      final filePath = widget.document.filePath ?? 'documents/${widget.document.id}.pdf';
-      final bytes = await WorkerClient.instance.getBytes(filePath);
-      if (mounted) {
-        setState(() {
-          _pdfBytes = bytes;
-          _isLoading = false;
-        });
-      }
+      final file = await DocumentCacheManager.instance
+          .getSingleFile(_objectPath, key: cacheKey);
+      if (!mounted) return;
+      setState(() {
+        _cachedFile = file;
+        _isLoading = false;
+        _errorMessage = null;
+      });
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          _errorMessage = 'Failed to load document: $e';
-          _isLoading = false;
-        });
+      if (!mounted) return;
+      if (_cachedFile != null) {
+        return;
       }
+      setState(() {
+        _errorMessage = 'Failed to load document: $e';
+        _isLoading = false;
+      });
     }
   }
 
@@ -115,7 +135,7 @@ class _DocumentScreenState extends State<DocumentScreen> {
         ),
       );
     }
-    if (_pdfBytes == null) {
+    if (_cachedFile == null) {
       return Center(
         child: Text(
           'Document is empty',
@@ -124,9 +144,8 @@ class _DocumentScreenState extends State<DocumentScreen> {
       );
     }
 
-    return PdfViewer.data(
-      _pdfBytes!,
-      sourceName: widget.document.id,
+    return PdfViewer.file(
+      _cachedFile!.path,
     );
   }
 }

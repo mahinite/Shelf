@@ -4,7 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ThemeModeNotifier extends ValueNotifier<ThemeMode> {
   static const String _key = 'theme_mode';
 
-  ThemeModeNotifier() : super(ThemeMode.light);
+  /// Single shared instance, created exactly once on first access.
+  /// main() loads the persisted mode before runApp; MaterialApp and the
+  /// Settings dark-mode switch both listen to this same instance.
+  static final ThemeModeNotifier instance = ThemeModeNotifier._();
+
+  ThemeModeNotifier._() : super(ThemeMode.light);
 
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();

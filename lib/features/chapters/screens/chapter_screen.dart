@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/chapter.dart';
 import '../../documents/models/document.dart';
 import '../../../core/network/worker_client.dart';
+import '../../../core/services/cache_service.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_scaffold.dart';
@@ -29,12 +30,52 @@ class ChapterScreen extends StatefulWidget {
 }
 
 class _ChapterScreenState extends State<ChapterScreen> {
-  late Future<List<Document>> _documentsFuture;
+  List<Document> _documents = [];
+  bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
-    _documentsFuture = _loadDocuments();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final cacheKey = 'documents_${widget.chapter.id}';
+
+    final cached = await CacheService.instance.readList(cacheKey);
+    if (!mounted) return;
+
+    if (cached != null) {
+      setState(() {
+        _documents = cached.map((json) => Document.fromJson(json)).toList();
+        _isLoading = false;
+        _error = null;
+      });
+    }
+
+    try {
+      final documents = await _loadDocuments();
+      if (!mounted) return;
+      setState(() {
+        _documents = documents;
+        _isLoading = false;
+        _error = null;
+      });
+      await CacheService.instance.writeList(
+        cacheKey,
+        documents.map((d) => d.toJson()).toList(),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      if (_documents.isNotEmpty) {
+        return;
+      }
+      setState(() {
+        _error = 'Could not load documents.\n$e';
+        _isLoading = false;
+      });
+    }
   }
 
   Future<List<Document>> _loadDocuments() async {
@@ -55,9 +96,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
 
       if (!mounted) return;
 
-      setState(() {
-        _documentsFuture = _loadDocuments();
-      });
+      _load();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -89,9 +128,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
         return;
       }
 
-      setState(() {
-        _documentsFuture = _loadDocuments();
-      });
+      _load();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -166,50 +203,33 @@ class _ChapterScreenState extends State<ChapterScreen> {
     return AppScaffold(
       title: widget.chapter.name,
       showBackButton: true,
-      body: FutureBuilder<List<Document>>(
-        future: _documentsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+              ? Center(
+                  child: Text(
+                    _error!,
+                    style: AppTextStyles.body,
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              : _documents.isEmpty
+                  ? const Center(child: Text('No documents yet.'))
+                  : ListView.separated(
+                      padding: const EdgeInsets.all(AppSpacing.containerMargin),
+                      itemCount: _documents.length,
+                      separatorBuilder: (_, __) => const Divider(),
+                      itemBuilder: (context, index) {
+                        final document = _documents[index];
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                'Could not load documents.\n${snapshot.error}',
-                style: AppTextStyles.body,
-                textAlign: TextAlign.center,
-              ),
-            );
-          }
-
-          final documents = snapshot.data ?? [];
-
-          if (documents.isEmpty) {
-            return const Center(
-              child: Text('No documents yet.'),
-            );
-          }
-
-          return ListView.separated(
-            padding: const EdgeInsets.all(AppSpacing.containerMargin),
-            itemCount: documents.length,
-            separatorBuilder: (_, __) => const Divider(),
-            itemBuilder: (context, index) {
-              final document = documents[index];
-
-              return DocumentListItem(
-                document: document,
-                accent: widget.accent,
-                onTap: () => _openDocument(context, document),
-                onLongPress: () => _showDocumentActions(document),
-              );
-            },
-          );
-        },
-      ),
+                        return DocumentListItem(
+                          document: document,
+                          accent: widget.accent,
+                          onTap: () => _openDocument(context, document),
+                          onLongPress: () => _showDocumentActions(document),
+                        );
+                      },
+                    ),
     );
   }
 

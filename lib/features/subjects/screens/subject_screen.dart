@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/subject.dart';
+import '../../../core/services/cache_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -26,12 +27,52 @@ class SubjectScreen extends StatefulWidget {
 }
 
 class _SubjectScreenState extends State<SubjectScreen> {
-  late Future<List<Chapter>> _chaptersFuture;
+  List<Chapter> _chapters = [];
+  bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
-    _chaptersFuture = _loadChapters();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final cacheKey = 'chapters_${widget.subject.id}';
+
+    final cached = await CacheService.instance.readList(cacheKey);
+    if (!mounted) return;
+
+    if (cached != null) {
+      setState(() {
+        _chapters = cached.map((json) => Chapter.fromJson(json)).toList();
+        _isLoading = false;
+        _error = null;
+      });
+    }
+
+    try {
+      final chapters = await _loadChapters();
+      if (!mounted) return;
+      setState(() {
+        _chapters = chapters;
+        _isLoading = false;
+        _error = null;
+      });
+      await CacheService.instance.writeList(
+        cacheKey,
+        chapters.map((c) => c.toJson()).toList(),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      if (_chapters.isNotEmpty) {
+        return;
+      }
+      setState(() {
+        _error = 'Could not load chapters.\n$e';
+        _isLoading = false;
+      });
+    }
   }
 
   Future<List<Chapter>> _loadChapters() async {
@@ -105,9 +146,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
 
       if (!mounted) return;
 
-      setState(() {
-        _chaptersFuture = _loadChapters();
-      });
+      _load();
     } catch (error) {
       if (!mounted) return;
 
@@ -142,9 +181,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
 
       if (!mounted) return;
 
-      setState(() {
-        _chaptersFuture = _loadChapters();
-      });
+      _load();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -176,9 +213,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
         return;
       }
 
-      setState(() {
-        _chaptersFuture = _loadChapters();
-      });
+      _load();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -214,102 +249,87 @@ class _SubjectScreenState extends State<SubjectScreen> {
     return AppScaffold(
       title: widget.subject.name,
       showBackButton: true,
-      body: FutureBuilder<List<Chapter>>(
-        future: _chaptersFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                'Could not load chapters.\n${snapshot.error}',
-                style: AppTextStyles.body,
-                textAlign: TextAlign.center,
-              ),
-            );
-          }
-
-          final chapters = snapshot.data ?? [];
-
-          return Stack(
-            children: [
-              if (chapters.isEmpty)
-                const Center(
-                  child: Text('No chapters yet.'),
-                )
-              else
-                ListView.separated(
-                  padding: const EdgeInsets.all(
-                    AppSpacing.containerMargin,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+              ? Center(
+                  child: Text(
+                    _error!,
+                    style: AppTextStyles.body,
+                    textAlign: TextAlign.center,
                   ),
-                  itemCount: chapters.length,
-                  separatorBuilder: (_, __) => const Divider(),
-                  itemBuilder: (context, index) {
-                    final chapter = chapters[index];
+                )
+              : Stack(
+                  children: [
+                    if (_chapters.isEmpty)
+                      const Center(child: Text('No chapters yet.'))
+                    else
+                      ListView.separated(
+                        padding: const EdgeInsets.all(
+                          AppSpacing.containerMargin,
+                        ),
+                        itemCount: _chapters.length,
+                        separatorBuilder: (_, __) => const Divider(),
+                        itemBuilder: (context, index) {
+                          final chapter = _chapters[index];
 
-                    return Tactile(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => ChapterScreen(
-                              chapter: chapter,
-                              accent: accent,
-                              roomCreatedBy: widget.roomCreatedBy,
-                            ),
-                          ),
-                        );
-                      },
-                      onLongPress: () => _showChapterActions(chapter),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: AppSpacing.sm,
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 6,
-                              height: 6,
-                              margin: const EdgeInsets.only(
-                                right: AppSpacing.sm,
+                          return Tactile(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => ChapterScreen(
+                                    chapter: chapter,
+                                    accent: accent,
+                                    roomCreatedBy: widget.roomCreatedBy,
+                                  ),
+                                ),
+                              );
+                            },
+                            onLongPress: () => _showChapterActions(chapter),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: AppSpacing.sm,
                               ),
-                              decoration: BoxDecoration(
-                                color: accent,
-                                shape: BoxShape.circle,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 6,
+                                    height: 6,
+                                    margin: const EdgeInsets.only(
+                                      right: AppSpacing.sm,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: accent,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      chapter.name,
+                                      style: AppTextStyles.body,
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.chevron_right,
+                                    size: 18,
+                                    color: AppColors.textSecondary,
+                                  ),
+                                ],
                               ),
                             ),
-                            Expanded(
-                              child: Text(
-                                chapter.name,
-                                style: AppTextStyles.body,
-                              ),
-                            ),
-                            const Icon(
-                              Icons.chevron_right,
-                              size: 18,
-                              color: AppColors.textSecondary,
-                            ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
-                    );
-                  },
+                    Positioned(
+                      right: AppSpacing.containerMargin,
+                      bottom: AppSpacing.containerMargin,
+                      child: FloatingActionButton(
+                        onPressed: _createChapter,
+                        child: const Icon(Icons.add),
+                      ),
+                    ),
+                  ],
                 ),
-              Positioned(
-                right: AppSpacing.containerMargin,
-                bottom: AppSpacing.containerMargin,
-                child: FloatingActionButton(
-                  onPressed: _createChapter,
-                  child: const Icon(Icons.add),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
     );
   }
 }

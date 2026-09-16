@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/services/cache_service.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_scaffold.dart';
@@ -17,12 +18,52 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late Future<List<Room>> _roomsFuture;
+  List<Room> _rooms = [];
+  bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
-    _roomsFuture = _loadRooms();
+    _load();
+  }
+
+  Future<void> _load() async {
+    const cacheKey = 'rooms';
+
+    final cached = await CacheService.instance.readList(cacheKey);
+    if (!mounted) return;
+
+    if (cached != null) {
+      setState(() {
+        _rooms = cached.map((json) => Room.fromJson(json)).toList();
+        _isLoading = false;
+        _error = null;
+      });
+    }
+
+    try {
+      final rooms = await _loadRooms();
+      if (!mounted) return;
+      setState(() {
+        _rooms = rooms;
+        _isLoading = false;
+        _error = null;
+      });
+      await CacheService.instance.writeList(
+        cacheKey,
+        rooms.map((r) => r.toJson()).toList(),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      if (_rooms.isNotEmpty) {
+        return;
+      }
+      setState(() {
+        _error = 'Could not load your study rooms.\n\n$e';
+        _isLoading = false;
+      });
+    }
   }
 
   Future<List<Room>> _loadRooms() async {
@@ -163,9 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (!mounted) return;
 
-      setState(() {
-        _roomsFuture = _loadRooms();
-      });
+      _load();
 
       debugPrint('CREATE ROOM: complete');
     } catch (error) {
@@ -191,9 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (!mounted) return;
 
-      setState(() {
-        _roomsFuture = _loadRooms();
-      });
+      _load();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -221,9 +258,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return;
       }
 
-      setState(() {
-        _roomsFuture = _loadRooms();
-      });
+      _load();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -306,9 +341,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
       final room = Room.fromJson(response as Map<String, dynamic>);
 
-      setState(() {
-        _roomsFuture = _loadRooms();
-      });
+      _load();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -322,9 +355,7 @@ class _HomeScreenState extends State<HomeScreen> {
         );
 
         if (mounted) {
-          setState(() {
-            _roomsFuture = _loadRooms();
-          });
+          _load();
         }
       }
     } catch (e) {
@@ -355,76 +386,64 @@ class _HomeScreenState extends State<HomeScreen> {
       title: 'Shelf',
       body: Stack(
         children: [
-          FutureBuilder<List<Room>>(
-            future: _roomsFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
-              if (snapshot.hasError) {
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(
-                      AppSpacing.containerMargin,
-                    ),
-                    child: Text(
-                      'Could not load your study rooms.\n\n${snapshot.error}',
-                      style: AppTextStyles.body,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                );
-              }
-
-              final rooms = snapshot.data ?? [];
-
-              return ListView(
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(),
+            )
+          else if (_error != null)
+            Center(
+              child: Padding(
                 padding: const EdgeInsets.all(
                   AppSpacing.containerMargin,
                 ),
-                children: [
-                  Text(
-                    'Good to see you',
-                    style: AppTextStyles.largeTitle,
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
-                  Text(
-                    'Your Study Rooms',
-                    style: AppTextStyles.sectionTitle,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  if (rooms.isEmpty)
-                    const Text('No study rooms yet.')
-                  else
-                    for (final room in rooms) ...[
-                      RoomCard(
-                        room: room,
-                        onTap: () async {
-                          await Navigator.of(context).push<bool>(
-                            MaterialPageRoute(
-                              builder: (_) => RoomScreen(
-                                room: room,
-                              ),
+                child: Text(
+                  _error!,
+                  style: AppTextStyles.body,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            )
+          else
+            ListView(
+              padding: const EdgeInsets.all(
+                AppSpacing.containerMargin,
+              ),
+              children: [
+                Text(
+                  'Good to see you',
+                  style: AppTextStyles.largeTitle,
+                ),
+                const SizedBox(height: AppSpacing.xl),
+                Text(
+                  'Your Study Rooms',
+                  style: AppTextStyles.sectionTitle,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                if (_rooms.isEmpty)
+                  const Text('No study rooms yet.')
+                else
+                  for (final room in _rooms) ...[
+                    RoomCard(
+                      room: room,
+                      onTap: () async {
+                        await Navigator.of(context).push<bool>(
+                          MaterialPageRoute(
+                            builder: (_) => RoomScreen(
+                              room: room,
                             ),
-                          );
-                          if (mounted) {
-                            setState(() {
-                              _roomsFuture = _loadRooms();
-                            });
-                          }
-                        },
-                        onLongPress: () => _showRoomActions(room),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                    ],
-                  const SizedBox(height: 80),
-                ],
-              );
-            },
-          ),
+                          ),
+                        );
+                        if (mounted) {
+                          _load();
+                        }
+                      },
+                      onLongPress: () => _showRoomActions(room),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                  ],
+                const SizedBox(height: 80),
+              ],
+            ),
           Positioned(
             right: AppSpacing.containerMargin,
             bottom: AppSpacing.containerMargin,

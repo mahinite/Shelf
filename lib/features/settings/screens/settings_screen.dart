@@ -41,7 +41,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final user = Supabase.instance.client.auth.currentUser;
     final email = user?.email ?? 'No email available';
-    final themeNotifier = ThemeModeNotifier();
+    final themeNotifier = ThemeModeNotifier.instance;
 
     return AppScaffold(
       title: 'Settings',

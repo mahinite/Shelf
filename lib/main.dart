@@ -46,8 +46,9 @@ Future<void> main() async {
     // clientId: iosClientId!,
   );
 
-  final themeNotifier = ThemeModeNotifier();
-  await themeNotifier.load();
+  // Load the persisted theme mode before runApp so MaterialApp's first
+  // frame already uses the saved mode.
+  await ThemeModeNotifier.instance.load();
 
   runApp(const ShelfApp());
 }
@@ -60,12 +61,11 @@ class ShelfApp extends StatefulWidget {
 }
 
 class _ShelfAppState extends State<ShelfApp> {
-  final ThemeModeNotifier _themeNotifier = ThemeModeNotifier();
+  final ThemeModeNotifier _themeNotifier = ThemeModeNotifier.instance;
 
   @override
   void initState() {
     super.initState();
-    _themeNotifier.load();
     // Check for updates after the first frame is rendered.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // We need a BuildContext to show a dialog.

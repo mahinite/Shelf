@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/room.dart';
+import '../../../core/services/cache_service.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_scaffold.dart';
 import '../../../core/widgets/rename_delete_sheet.dart';
@@ -23,12 +24,52 @@ class RoomScreen extends StatefulWidget {
 }
 
 class _RoomScreenState extends State<RoomScreen> {
-  late Future<List<Subject>> _subjectsFuture;
+  List<Subject> _subjects = [];
+  bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
-    _subjectsFuture = _loadSubjects();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final cacheKey = 'subjects_${widget.room.id}';
+
+    final cached = await CacheService.instance.readList(cacheKey);
+    if (!mounted) return;
+
+    if (cached != null) {
+      setState(() {
+        _subjects = cached.map((json) => Subject.fromJson(json)).toList();
+        _isLoading = false;
+        _error = null;
+      });
+    }
+
+    try {
+      final subjects = await _loadSubjects();
+      if (!mounted) return;
+      setState(() {
+        _subjects = subjects;
+        _isLoading = false;
+        _error = null;
+      });
+      await CacheService.instance.writeList(
+        cacheKey,
+        subjects.map((s) => s.toJson()).toList(),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      if (_subjects.isNotEmpty) {
+        return;
+      }
+      setState(() {
+        _error = 'Could not load subjects.\n$e';
+        _isLoading = false;
+      });
+    }
   }
 
   Future<List<Subject>> _loadSubjects() async {
@@ -102,9 +143,7 @@ class _RoomScreenState extends State<RoomScreen> {
 
       if (!mounted) return;
 
-      setState(() {
-        _subjectsFuture = _loadSubjects();
-      });
+      _load();
     } catch (error) {
       if (!mounted) return;
 
@@ -139,9 +178,7 @@ class _RoomScreenState extends State<RoomScreen> {
 
       if (!mounted) return;
 
-      setState(() {
-        _subjectsFuture = _loadSubjects();
-      });
+      _load();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -173,9 +210,7 @@ class _RoomScreenState extends State<RoomScreen> {
         return;
       }
 
-      setState(() {
-        _subjectsFuture = _loadSubjects();
-      });
+      _load();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -226,76 +261,59 @@ class _RoomScreenState extends State<RoomScreen> {
           },
         ),
       ],
-      body: FutureBuilder<List<Subject>>(
-        future: _subjectsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                'Could not load subjects.\n${snapshot.error}',
-                textAlign: TextAlign.center,
-              ),
-            );
-          }
-
-          final subjects = snapshot.data ?? [];
-
-          return Stack(
-            children: [
-              if (subjects.isEmpty)
-                const Center(
-                  child: Text('No subjects yet.'),
-                )
-              else
-                ListView.separated(
-                  padding: const EdgeInsets.all(
-                    AppSpacing.containerMargin,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+              ? Center(
+                  child: Text(
+                    _error!,
+                    textAlign: TextAlign.center,
                   ),
-                  itemCount: subjects.length,
-                  separatorBuilder: (_, __) =>
-                      const SizedBox(height: AppSpacing.md),
-                  itemBuilder: (context, index) {
-                    final subject = subjects[index];
+                )
+              : Stack(
+                  children: [
+                    if (_subjects.isEmpty)
+                      const Center(child: Text('No subjects yet.'))
+                    else
+                      ListView.separated(
+                        padding: const EdgeInsets.all(
+                          AppSpacing.containerMargin,
+                        ),
+                        itemCount: _subjects.length,
+                        separatorBuilder: (_, __) =>
+                            const SizedBox(height: AppSpacing.md),
+                        itemBuilder: (context, index) {
+                          final subject = _subjects[index];
 
-                    return SubjectListItem(
-                      subject: subject,
-                      onTap: () async {
-                        await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => SubjectScreen(
-                              subject: subject,
-                              roomCreatedBy: widget.room.createdBy,
-                            ),
-                          ),
-                        );
-                        if (mounted) {
-                          setState(() {
-                            _subjectsFuture = _loadSubjects();
-                          });
-                        }
-                      },
-                      onLongPress: () => _showSubjectActions(subject),
-                    );
-                  },
+                          return SubjectListItem(
+                            subject: subject,
+                            onTap: () async {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => SubjectScreen(
+                                    subject: subject,
+                                    roomCreatedBy: widget.room.createdBy,
+                                  ),
+                                ),
+                              );
+                              if (mounted) {
+                                _load();
+                              }
+                            },
+                            onLongPress: () => _showSubjectActions(subject),
+                          );
+                        },
+                      ),
+                    Positioned(
+                      right: AppSpacing.containerMargin,
+                      bottom: AppSpacing.containerMargin,
+                      child: FloatingActionButton(
+                        onPressed: _createSubject,
+                        child: const Icon(Icons.add),
+                      ),
+                    ),
+                  ],
                 ),
-              Positioned(
-                right: AppSpacing.containerMargin,
-                bottom: AppSpacing.containerMargin,
-                child: FloatingActionButton(
-                  onPressed: _createSubject,
-                  child: const Icon(Icons.add),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
     );
   }
 }

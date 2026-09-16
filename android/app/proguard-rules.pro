@@ -7,8 +7,12 @@
 -keep class io.flutter.embedding.android.** { *; }
 -keep class io.flutter.plugins.** { *; }
 
-# Play Core (used by Flutter for app updates, dynamic delivery)
+# Play Core (referenced by the Flutter engine embedding for Play Store deferred
+# components. This app doesn't use deferred components, so those classes are
+# never loaded at runtime; -dontwarn suppresses R8 missing-class errors.
+# See build/app/outputs/mapping/release/missing_rules.txt)
 -keep class com.google.android.play.core.** { *; }
+-dontwarn com.google.android.play.core.**
 
 # Supabase - keep all classes in case reflection is used for JSON serialization
 -keep class io.supabase.** { *; }
