@@ -143,35 +143,41 @@ class ScanService {
     // 1. Insert document row first (needed for object path)
     final documentId = await _createDocument(chapterId: chapterId, title: title);
 
-    // 2. Create scan batch
-    await _createScanBatch(documentId: documentId);
-
-    // 3. Compute object path from title + documentId (once)
-    final objectPath = _buildObjectPath(title: title, documentId: documentId);
-
-    // 3b. Stamp file_path on the document row NOW so the Worker's
-    // authorization check (file_path exact match) succeeds at PUT time.
-    await Supabase.instance.client
-        .from('documents')
-        .update({'file_path': objectPath})
-        .eq('id', documentId);
-
-    // 4. Process each page in an isolate, writing single-page PDFs to temp files.
-    // Sequential only — concurrent isolates each holding a full-res image spikes memory.
+    // Variables needed in finally
     final pagePdfPaths = <String>[];
-    for (int i = 0; i < imagePaths.length; i++) {
-      onProgress?.call(i + 1, imagePaths.length);
-      final path = await compute(
-        processPageToTempPdf,
-        {'imagePath': imagePaths[i], 'index': i},
-      );
-      pagePdfPaths.add(path);
-    }
+    Directory? tempDir;
+    bool uploadSucceeded = false;
 
-    // 5. Merge all single-page PDFs into final PDF via PdfCombiner (temp files).
-    final tempDir = Directory.systemTemp.createTempSync('pdf_merge_temp.');
-    Uint8List mergedPdf;
     try {
+      // 2. Create scan batch
+      await _createScanBatch(documentId: documentId);
+
+      // 3. Compute object path from title + documentId (once)
+      final objectPath = _buildObjectPath(title: title, documentId: documentId);
+
+      // 3b. Stamp file_path on the document row NOW so the Worker's
+      // authorization check (file_path exact match) succeeds at PUT time.
+      await Supabase.instance.client
+          .from('documents')
+          .update({'file_path': objectPath})
+          .eq('id', documentId);
+
+      // Create temp dir inside try so finally can clean it up if needed
+      tempDir = Directory.systemTemp.createTempSync('pdf_merge_temp.');
+
+      // 4. Process each page in an isolate, writing single-page PDFs to temp files.
+      // Sequential only — concurrent isolates each holding a full-res image spikes memory.
+      for (int i = 0; i < imagePaths.length; i++) {
+        onProgress?.call(i + 1, imagePaths.length);
+        final path = await compute(
+          processPageToTempPdf,
+          {'imagePath': imagePaths[i], 'index': i},
+        );
+        pagePdfPaths.add(path);
+      }
+
+      // 5. Merge all single-page PDFs into final PDF via PdfCombiner (temp files).
+      Uint8List mergedPdf;
       final outputFile = File('${tempDir.path}/merged.pdf');
       await PdfCombiner.mergeMultiplePDFs(
         inputs: pagePdfPaths.map((p) => MergeInput.path(p)).toList(),
@@ -181,6 +187,7 @@ class ScanService {
 
       // 6. Upload merged PDF
       await _uploadPdf(objectPath: objectPath, pdfBytes: mergedPdf);
+      uploadSucceeded = true;
 
       // 7. Update document metadata
       await _updateDocument(
@@ -189,6 +196,24 @@ class ScanService {
         fileSize: mergedPdf.length,
         filePath: objectPath,
       );
+    } catch (e) {
+      if (!uploadSucceeded) {
+        // Cleanup on upload failure - delete document row only (cascades to scan_batches, scan_pages)
+        final client = Supabase.instance.client;
+        try {
+          final docResult = await client
+              .from('documents')
+              .delete()
+              .eq('id', documentId)
+              .select();
+          if ((docResult as List).isEmpty) {
+            debugPrint('Warning: documents delete returned 0 rows for document $documentId');
+          }
+        } catch (_) {
+          // Ignore cleanup errors, don't mask original
+        }
+      }
+      rethrow; // Preserve original exception
     } finally {
       // Clean up all per-page temp files and merge temp dir
       for (final p in pagePdfPaths) {
@@ -197,7 +222,7 @@ class ScanService {
         } catch (_) {}
       }
       try {
-        await tempDir.delete(recursive: true);
+        await tempDir?.delete(recursive: true);
       } catch (_) {}
     }
   }

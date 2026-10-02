@@ -86,6 +86,7 @@ async function checkDocumentAuthorization(
     console.error('Authorization check error:', error);
     return false;
   }
+  return false;
 }
 
 async function checkDocumentAccess(env: Env, documentId: string, token: string): Promise<boolean> {
@@ -153,8 +154,8 @@ async function handleDeleteAccount(request: Request, env: Env): Promise<Response
       });
     }
 
-    const userData = await userResponse.json();
-    const userId = userData.id as string;
+    const userData = await userResponse.json() as { id: string };
+    const userId = userData.id;
 
     if (!userId) {
       return new Response(JSON.stringify({ error: "Could not determine user ID" }), {
@@ -273,50 +274,141 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
       service: "s3",
     });
 
-    const signedRequest = await awsClient.sign(new Request(virtualHostedUrl, {
-      method,
-      headers: requestHeaders,
-      body: body as BodyInit | null,
-    }));
+    const isMutatingOrRead = ["GET", "HEAD", "PUT", "DELETE"].includes(method);
 
-    const isReadRequest = method === "GET" || method === "HEAD";
-    const response = await fetch(signedRequest, {
-      cf: isReadRequest
-        ? {
-            cacheTtl: 3600,
-            cacheEverything: true,
+    if (!isMutatingOrRead) {
+      const signedRequest = await awsClient.sign(new Request(virtualHostedUrl, {
+        method,
+        headers: requestHeaders,
+        body: body as BodyInit | null,
+      }));
+
+      const isReadRequest = method === "GET" || method === "HEAD";
+      const response = await fetch(signedRequest, {
+        cf: isReadRequest
+          ? {
+              cacheTtl: 3600,
+              cacheEverything: true,
+            }
+          : undefined,
+      });
+
+      const responseHeaders = new Headers(cors);
+
+      const headersToPreserve = [
+        "Content-Type",
+        "Content-Length",
+        "Content-Range",
+        "Accept-Ranges",
+        "ETag",
+        "Last-Modified",
+        "Cache-Control",
+      ];
+
+      for (const header of headersToPreserve) {
+        const value = response.headers.get(header);
+        if (value) {
+          responseHeaders.set(header, value);
+        }
+      }
+
+      if (method === "GET" && response.ok) {
+        responseHeaders.set("Cache-Control", "public, max-age=3600, stale-while-revalidate=86400");
+      }
+
+      const responseBody = method === "HEAD" ? null : response.body;
+      return new Response(responseBody, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: responseHeaders,
+      });
+    }
+
+    const maxAttempts = 4;
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        const signedRequest = await awsClient.sign(new Request(virtualHostedUrl, {
+          method,
+          headers: requestHeaders,
+          body: body as BodyInit | null,
+        }));
+
+        const isReadRequest = method === "GET" || method === "HEAD";
+        const response = await fetch(signedRequest, {
+          cf: isReadRequest
+            ? {
+                cacheTtl: 3600,
+                cacheEverything: true,
+              }
+            : undefined,
+        });
+
+        const responseHeaders = new Headers(cors);
+
+        const headersToPreserve = [
+          "Content-Type",
+          "Content-Length",
+          "Content-Range",
+          "Accept-Ranges",
+          "ETag",
+          "Last-Modified",
+          "Cache-Control",
+        ];
+
+        for (const header of headersToPreserve) {
+          const value = response.headers.get(header);
+          if (value) {
+            responseHeaders.set(header, value);
           }
-        : undefined,
-    });
+        }
 
-    const responseHeaders = new Headers(cors);
+        if (method === "GET" && response.ok) {
+          responseHeaders.set("Cache-Control", "public, max-age=3600, stale-while-revalidate=86400");
+        }
 
-    const headersToPreserve = [
-      "Content-Type",
-      "Content-Length",
-      "Content-Range",
-      "Accept-Ranges",
-      "ETag",
-      "Last-Modified",
-      "Cache-Control",
-    ];
+        const shouldRetry = response.status === 500 || response.status === 502 ||
+                            response.status === 503 || response.status === 504 ||
+                            response.status === 429;
 
-    for (const header of headersToPreserve) {
-      const value = response.headers.get(header);
-      if (value) {
-        responseHeaders.set(header, value);
+        if (!shouldRetry || attempt === maxAttempts) {
+          if (attempt === maxAttempts && shouldRetry) {
+            const bodyText = await response.text();
+            console.error(`B2 upstream error after ${maxAttempts} attempts: ${response.status} ${bodyText.slice(0, 200)}`);
+            return new Response(bodyText, {
+              status: response.status,
+              statusText: response.statusText,
+              headers: responseHeaders,
+            });
+          }
+
+          const responseBody = method === "HEAD" ? null : response.body;
+          return new Response(responseBody, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: responseHeaders,
+          });
+        }
+
+        await response.arrayBuffer();
+        const delay = 300 * Math.pow(2, attempt - 1) + Math.random() * 100;
+        console.warn(`Retrying ${method} to B2: attempt ${attempt + 1}/${maxAttempts}, status ${response.status}`);
+        await new Promise(r => setTimeout(r, delay));
+        continue;
+      } catch (error) {
+        lastError = error as Error;
+        if (attempt === maxAttempts) break;
+        const delay = 300 * Math.pow(2, attempt - 1) + Math.random() * 100;
+        console.warn(`Retrying ${method} to B2: attempt ${attempt + 1}/${maxAttempts}, network error: ${error}`);
+        await new Promise(r => setTimeout(r, delay));
       }
     }
 
-    if (method === "GET" && response.ok) {
-      responseHeaders.set("Cache-Control", "public, max-age=3600, stale-while-revalidate=86400");
-    }
-
-    const responseBody = method === "HEAD" ? null : response.body;
-    return new Response(responseBody, {
-      status: response.status,
-      statusText: response.statusText,
-      headers: responseHeaders,
+    console.error(`B2 proxy network error after ${maxAttempts} attempts: ${lastError?.message}`);
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json", ...cors },
     });
   } catch (error) {
     console.error("B2 proxy error:", error);

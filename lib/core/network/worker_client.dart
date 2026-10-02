@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -30,17 +31,53 @@ class WorkerClient {
     required Uint8List bytes,
     required String contentType,
   }) async {
-    final uri = Uri.parse('$_baseUrl/files/$objectPath');
-    final request = await HttpClient().putUrl(uri);
-    request.headers.set('Authorization', 'Bearer ${_accessToken()}');
-    request.headers.set('Content-Type', contentType);
-    request.add(bytes);
-    final response = await request.close();
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      final body = await response.transform(utf8.decoder).join();
-      throw Exception('Worker PUT failed ${response.statusCode}: $body');
+    const maxAttempts = 3;
+    const backoffs = [Duration(seconds: 1), Duration(seconds: 2)];
+
+    for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+      final client = HttpClient();
+      client.connectionTimeout = const Duration(seconds: 15);
+
+      try {
+        final uri = Uri.parse('$_baseUrl/files/$objectPath');
+        final request = await client.putUrl(uri);
+        request.headers.set('Authorization', 'Bearer ${_accessToken()}');
+        request.headers.set('Content-Type', contentType);
+        request.contentLength = bytes.length;
+        request.add(bytes);
+
+        final response = await request.close().timeout(const Duration(seconds: 180));
+        final body = await response.transform(utf8.decoder).join().timeout(const Duration(seconds: 180));
+
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+          final shouldRetry = response.statusCode == 500 ||
+                             response.statusCode == 502 ||
+                             response.statusCode == 503 ||
+                             response.statusCode == 504 ||
+                             response.statusCode == 429;
+
+          if (!shouldRetry || attempt == maxAttempts) {
+            throw Exception('Worker PUT failed ${response.statusCode}: $body');
+          }
+
+          await Future.delayed(backoffs[attempt - 1]);
+          continue;
+        }
+
+        return;
+      } on SocketException catch (e) {
+        if (attempt == maxAttempts) throw Exception('Worker PUT failed: $e');
+        await Future.delayed(backoffs[attempt - 1]);
+      } on HttpException catch (e) {
+        if (attempt == maxAttempts) throw Exception('Worker PUT failed: $e');
+        await Future.delayed(backoffs[attempt - 1]);
+      } on TimeoutException catch (e) {
+        if (attempt == maxAttempts) throw Exception('Worker PUT failed: $e');
+        await Future.delayed(backoffs[attempt - 1]);
+      } finally {
+        client.close(force: true);
+      }
     }
-    await response.drain();
   }
 
   /// GET bytes from the worker at `$baseUrl/files/<objectPath>`.

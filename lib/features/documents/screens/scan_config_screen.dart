@@ -110,8 +110,22 @@ void _selectDocument() async {
       Navigator.of(context).pop();
     } catch (e) {
       if (!mounted) return;
+
+      debugPrint('Scan save failed: $e');
+
+      final text = e.toString();
+      final isStorageFailure =
+          RegExp(r'Worker PUT failed (5\d\d|429)').hasMatch(text) ||
+          text.contains('SocketException') ||
+          text.contains('HttpException') ||
+          text.contains('TimeoutException');
+
+      final message = isStorageFailure
+          ? "Couldn't reach storage. Nothing was saved. Please try again."
+          : 'Save failed: $e';
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Save failed: $e')),
+        SnackBar(content: Text(message)),
       );
     } finally {
       if (mounted) {
