@@ -67,7 +67,7 @@ class SubjectListItem extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(right: AppSpacing.md),
+              padding: const EdgeInsets.only(right: AppSpacing.md),
               child: Icon(Icons.chevron_right, color: context.colors.textSecondary),
             ),
           ],

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 /// Color tokens for Shelf.
@@ -12,20 +14,28 @@ class AppColors {
   AppColors._();
 
   // Base surface (light)
-  static const background = Color(0xFFFBF9F9); // DESIGN.md 'background' (prose conflicts: cream F9F7F2)
-  static const surfaceCard = Color(0xFFFFFFFF); // DESIGN.md 'surface-container-lowest' — Level 1 pure white
+  static const background = Color(
+      0xFFFBF9F9); // DESIGN.md 'background' (prose conflicts: cream F9F7F2)
+  static const surfaceCard = Color(
+      0xFFFFFFFF); // DESIGN.md 'surface-container-lowest' — Level 1 pure white
 
   // Text (light)
-  static const textPrimary = Color(0xFF1B1C1C); // DESIGN.md 'on-surface' (prose conflicts: charcoal 2D2D2D)
-  static const textSecondary = Color(0xFF444748); // DESIGN.md 'on-surface-variant' (prose conflicts: grey 717171)
+  static const textPrimary = Color(
+      0xFF1B1C1C); // DESIGN.md 'on-surface' (prose conflicts: charcoal 2D2D2D)
+  static const textSecondary = Color(
+      0xFF444748); // DESIGN.md 'on-surface-variant' (prose conflicts: grey 717171)
 
   // Structure (light)
-  static const border = Color(0xFFC4C7C7); // DESIGN.md 'outline-variant' (prose conflicts: EAE7E0)
-  static const divider = Color(0xFFC4C7C7); // DESIGN.md 'outline-variant' (prose conflicts: EAE7E0)
+  static const border = Color(
+      0xFFC4C7C7); // DESIGN.md 'outline-variant' (prose conflicts: EAE7E0)
+  static const divider = Color(
+      0xFFC4C7C7); // DESIGN.md 'outline-variant' (prose conflicts: EAE7E0)
 
   // Primary action (buttons) — same for both themes
-  static const primaryButton = Color(0xFF181919); // DESIGN.md 'primary' (prose conflicts: charcoal 2D2D2D)
-  static const onPrimaryButton = Color(0xFFFFFFFF); // DESIGN.md 'on-primary' (prose conflicts: cream text)
+  static const primaryButton = Color(
+      0xFF181919); // DESIGN.md 'primary' (prose conflicts: charcoal 2D2D2D)
+  static const onPrimaryButton =
+      Color(0xFFFFFFFF); // DESIGN.md 'on-primary' (prose conflicts: cream text)
   // Destructive (delete) color — DESIGN.md 'error'
   static const destructive = Color(0xFFBA1A1A);
 
