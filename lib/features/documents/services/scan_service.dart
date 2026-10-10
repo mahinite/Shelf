@@ -168,7 +168,8 @@ class ScanService {
       final maxDim = srcWidth > srcHeight ? srcWidth : srcHeight;
       if (maxDim <= maxDimension) {
         final srcBytes = await File(resolvedPath).length();
-        debugPrint('SHELF_PERF page=$index skip_native src_w=$srcWidth src_h=$srcHeight src_bytes=$srcBytes');
+        final scheme = imagePath.startsWith('file://') ? 'file' : imagePath.startsWith('content://') ? 'content' : 'plain';
+        debugPrint('SHELF_PERF page=$index scheme=$scheme skip_native src_w=$srcWidth src_h=$srcHeight src_bytes=$srcBytes');
         // Use original path unchanged; let processPageToTempPdf handle it
         return compute(processPageToTempPdf, {'imagePath': resolvedPath, 'index': index});
       }
@@ -190,6 +191,7 @@ class ScanService {
     // f. Call native compression
     final nativeSw = Stopwatch()..start();
     String? compressedPath;
+    String? nativeErrorType;
     try {
       final result = await FlutterImageCompress.compressAndGetFile(
         resolvedPath,
@@ -204,7 +206,7 @@ class ScanService {
       );
       compressedPath = result?.path;
     } catch (e) {
-      // Native compression threw — fall through to unified null/throw handler
+      nativeErrorType = e.runtimeType.toString();
     }
     final nativeMs = nativeSw.elapsedMilliseconds;
 
@@ -214,7 +216,11 @@ class ScanService {
       if (srcBytes > _fallbackMaxBytes) {
         throw Exception('Couldn\'t process page ${index + 1}: image too large for this device');
       }
-      debugPrint('SHELF_PERF page=$index native_null fallback src_bytes=$srcBytes');
+      if (nativeErrorType != null) {
+        debugPrint('SHELF_PERF page=$index native_error_type=$nativeErrorType fallback src_bytes=$srcBytes');
+      } else {
+        debugPrint('SHELF_PERF page=$index native_null fallback src_bytes=$srcBytes');
+      }
     }
 
     String chosenPath;
@@ -425,7 +431,7 @@ class ScanService {
         outputPath: outputFile.path,
       );
       final mergeMs = mergeSw.elapsedMilliseconds;
-      mergedPdf = await outputFile.readAsBytes();
+      final mergedPdf = await outputFile.readAsBytes();
       debugPrint('SHELF_PERF merge_ms=$mergeMs merged_bytes=${mergedPdf.length}');
 
       // 6. Upload merged PDF to the same object path (overwrite)
