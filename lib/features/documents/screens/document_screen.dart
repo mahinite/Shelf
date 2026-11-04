@@ -11,6 +11,15 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/shelf_colors.dart';
 import '../../../core/widgets/app_scaffold.dart';
 import '../../../core/widgets/tactile.dart';
+import '../widgets/pdf_fast_scroll.dart';
+
+/// Factor applied to the initial/fit zoom on double-tap.
+/// Tunable: adjust on device for preferred double-tap zoom level.
+const double kDoubleTapZoomFactor = 2.5;
+
+/// Alternative [interactionEndFrictionCoefficient] for a longer, Drive-like coast.
+/// Default in pdfrx is 0.0000135 (very short coast). Uncomment to use.
+/// const double kAlternativeInteractionEndFrictionCoefficient = 0.1;
 
 class DocumentScreen extends StatefulWidget {
   const DocumentScreen({
@@ -30,6 +39,7 @@ class _DocumentScreenState extends State<DocumentScreen> {
   File? _cachedFile;
   bool _isLoading = true;
   String? _errorMessage;
+  late final PdfViewerController _pdfController;
 
   String get _objectPath =>
       widget.document.filePath ?? 'documents/${widget.document.id}.pdf';
@@ -37,7 +47,13 @@ class _DocumentScreenState extends State<DocumentScreen> {
   @override
   void initState() {
     super.initState();
+    _pdfController = PdfViewerController();
     _loadDocument();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   Future<void> _loadDocument() async {
@@ -147,6 +163,67 @@ class _DocumentScreenState extends State<DocumentScreen> {
 
     return PdfViewer.file(
       _cachedFile!.path,
+      controller: _pdfController,
+      params: PdfViewerParams(
+        textSelectionParams: const PdfTextSelectionParams(enabled: false),
+        buildContextMenu: (context, params) => null,
+        onGeneralTap: (context, controller, details) {
+          switch (details.type) {
+            case PdfViewerGeneralTapType.longPress:
+            case PdfViewerGeneralTapType.secondaryTap:
+              return true; // consume, no context menu
+            case PdfViewerGeneralTapType.doubleTap: {
+              final docPos = controller.localToDocument(details.localPosition);
+              controller.zoomUp(loop: true, zoomCenter: docPos);
+              return true; // consume
+            }
+            case PdfViewerGeneralTapType.tap:
+              return false; // let default handling (clears selection, etc.)
+          }
+        },
+        zoomStepsDelegateProvider: const _TwoStopZoomStepsProvider(),
+        scrollPhysics: const ClampingScrollPhysics(),
+        viewerOverlayBuilder: (context, size, handleLinkTap) {
+          final pageCount = _pdfController.pageCount;
+          if (pageCount <= 1) return <Widget>[];
+          return <Widget>[
+            PdfFastScroll(controller: _pdfController),
+          ];
+        },
+      ),
     );
+  }
+}
+
+/// Zoom steps provider that returns exactly two stops:
+/// 1. The initial/fit zoom (coverScale from metrics)
+/// 2. min(coverScale * kDoubleTapZoomFactor, metrics.maxScale)
+/// Sorted ascending, no duplicates.
+class _TwoStopZoomStepsProvider extends PdfViewerZoomStepsDelegateProvider {
+  const _TwoStopZoomStepsProvider();
+
+  @override
+  PdfViewerZoomStepsDelegate create() => _TwoStopZoomStepsDelegate();
+
+  @override
+  bool operator ==(Object other) => other is _TwoStopZoomStepsProvider;
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+}
+
+class _TwoStopZoomStepsDelegate implements PdfViewerZoomStepsDelegate {
+  @override
+  void dispose() {}
+
+  @override
+  List<double> generateZoomStops(PdfViewerLayoutMetrics metrics) {
+    final fitZoom = metrics.coverScale;
+    final double targetZoom = (fitZoom * kDoubleTapZoomFactor).clamp(fitZoom, metrics.maxScale);
+    final stops = <double>[fitZoom];
+    if (targetZoom > fitZoom + 0.01) {
+      stops.add(targetZoom);
+    }
+    return stops;
   }
 }
