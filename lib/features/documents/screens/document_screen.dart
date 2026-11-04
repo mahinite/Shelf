@@ -11,6 +11,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/shelf_colors.dart';
 import '../../../core/widgets/app_scaffold.dart';
 import '../../../core/widgets/tactile.dart';
+import '../widgets/pdf_fast_scroll.dart';
 
 /// Factor applied to the initial/fit zoom on double-tap.
 /// Tunable: adjust on device for preferred double-tap zoom level.
@@ -188,31 +189,7 @@ class _DocumentScreenState extends State<DocumentScreen> {
           final pageCount = _pdfController.pageCount;
           if (pageCount <= 1) return <Widget>[];
           return <Widget>[
-            PdfViewerScrollThumb(
-              controller: _pdfController,
-              orientation: ScrollbarOrientation.right,
-              thumbBuilder: (context, thumbSize, pageNumber, controller) {
-                final colors = Theme.of(context).extension<ShelfColors>()!;
-                final currentPage = pageNumber ?? controller.pageNumber ?? 1;
-                return Container(
-                  decoration: BoxDecoration(
-                    color: colors.surfaceSubtle,
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: colors.border, width: 1),
-                  ),
-                  child: Center(
-                    child: Text(
-                      '$currentPage / $pageCount',
-                      style: TextStyle(
-                        color: colors.textPrimary,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
+            PdfFastScroll(controller: _pdfController),
           ];
         },
       ),
