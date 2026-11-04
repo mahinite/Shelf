@@ -53,8 +53,6 @@ class _PdfFastScrollState extends State<PdfFastScroll> with SingleTickerProvider
   bool _isDragging = false;
   double _startFraction = 0.0;
   double? _currentFraction;
-  bool _isReady = false;
-  int _lastNotifiedPage = 1;
 
   @override
   void initState() {
