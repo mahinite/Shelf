@@ -174,16 +174,14 @@ class _DocumentScreenState extends State<DocumentScreen> {
               return true; // consume, no context menu
             case PdfViewerGeneralTapType.doubleTap: {
               final docPos = controller.localToDocument(details.localPosition);
-              if (docPos != null) {
-                controller.zoomUp(loop: true, zoomCenter: docPos);
-              }
+              controller.zoomUp(loop: true, zoomCenter: docPos);
               return true; // consume
             }
             case PdfViewerGeneralTapType.tap:
               return false; // let default handling (clears selection, etc.)
           }
         },
-        zoomStepsDelegateProvider: _TwoStopZoomStepsProvider(),
+        zoomStepsDelegateProvider: const _TwoStopZoomStepsProvider(),
         scrollPhysics: const ClampingScrollPhysics(),
         viewerOverlayBuilder: (context, size, handleLinkTap) {
           final pageCount = _pdfController.pageCount;
