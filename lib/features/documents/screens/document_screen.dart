@@ -52,7 +52,6 @@ class _DocumentScreenState extends State<DocumentScreen> {
 
   @override
   void dispose() {
-    _pdfController._attach(null);
     super.dispose();
   }
 
@@ -173,8 +172,10 @@ class _DocumentScreenState extends State<DocumentScreen> {
             case PdfViewerGeneralTapType.secondaryTap:
               return true; // consume, no context menu
             case PdfViewerGeneralTapType.doubleTap: {
-              final localPos = details.localPosition;
-              controller.zoomUp(loop: true, zoomCenter: localPos);
+              final docPos = controller.localToDocument(details.localPosition);
+              if (docPos != null) {
+                controller.zoomUp(loop: true, zoomCenter: docPos);
+              }
               return true; // consume
             }
             case PdfViewerGeneralTapType.tap:
