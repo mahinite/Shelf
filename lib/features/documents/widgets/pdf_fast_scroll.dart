@@ -141,9 +141,10 @@ class _PdfFastScrollState extends State<PdfFastScroll> with SingleTickerProvider
     if (_currentFraction == null) return;
     final trackLength = _trackLength;
     if (trackLength <= 0) return;
-    // Accumulate delta: drag down (positive dy) moves handle down -> scroll down -> fraction increases
-    final deltaFraction = details.delta.dy / trackLength;
-    _currentFraction = (_startFraction + deltaFraction).clamp(0.0, 1.0);
+    // Accumulate delta from current fraction (not startFraction) using primaryDelta
+    final delta = details.primaryDelta ?? details.delta.dy;
+    final deltaFraction = delta / trackLength;
+    _currentFraction = (_currentFraction! + deltaFraction).clamp(0.0, 1.0);
     setState(() {});
     _jumpToFraction(_currentFraction!);
     if (_kLogFastScroll) {
@@ -203,12 +204,20 @@ class _PdfFastScrollState extends State<PdfFastScroll> with SingleTickerProvider
       return;
     }
     final targetTop = fraction * denom;
-    final targetY = -targetTop / c.currentZoom;
+    final currentTop = c.visibleRect.top;
+    final dTop = targetTop - currentTop;
+    if (dTop.abs() < 0.5) {
+      if (_kLogFastScroll) debugPrint('SHELF_FS jump SKIP dTop=${dTop.toStringAsFixed(2)} below threshold');
+      return;
+    }
+    // relative: matrix y is in scaled view pixels; visibleRect.top = -matrix.y / zoom
+    // so Δmatrix.y = -dTop * zoom
+    final dy = -dTop * c.currentZoom;
     final m = c.value.clone();
-    m.y = targetY;
-    c.value = c.makeMatrixInSafeRange(m, forceClamp: true);
+    m.y += dy;
+    c.value = m; // setter already clamps
     if (_kLogFastScroll) {
-      debugPrint('SHELF_FS jump fraction=${fraction.toStringAsFixed(3)} targetTop=${targetTop.toStringAsFixed(1)} targetY=${targetY.toStringAsFixed(1)} zoom=${c.currentZoom.toStringAsFixed(3)}');
+      debugPrint('SHELF_FS jump fraction=${fraction.toStringAsFixed(3)} targetTop=${targetTop.toStringAsFixed(1)} dTop=${dTop.toStringAsFixed(1)} zoom=${c.currentZoom.toStringAsFixed(3)} beforeTop=${currentTop.toStringAsFixed(1)} afterTop=${c.visibleRect.top.toStringAsFixed(1)}');
     }
   }
 
@@ -251,8 +260,8 @@ class _PdfFastScrollState extends State<PdfFastScroll> with SingleTickerProvider
         final denom = docHeight - viewHeightDoc;
         if (denom <= 0) return const SizedBox.shrink();
 
-        // Compute current fraction from matrix
-        final currentFraction = _computeCurrentFraction() ?? 0.0;
+        // Compute current fraction from matrix (used when not dragging)
+        final controllerFraction = _computeCurrentFraction() ?? 0.0;
 
         // Determine current page for the pill
         final currentPage = _isDragging && _currentFraction != null
@@ -266,7 +275,12 @@ class _PdfFastScrollState extends State<PdfFastScroll> with SingleTickerProvider
               final trackLength = constraints.maxHeight - _kHandleDiameter - 2 * _kTrackMargin;
               if (trackLength <= 0) return const SizedBox.shrink();
 
-              final handleTop = _kTrackMargin + currentFraction * trackLength;
+              // Use drag fraction while dragging, controller fraction otherwise
+              final activeFraction = (_isDragging && _currentFraction != null)
+                  ? _currentFraction!
+                  : controllerFraction;
+
+              final handleTop = _kTrackMargin + activeFraction * trackLength;
 
               // Log first layout
               if (_kLogFastScroll && _lastLoggedConstraints != constraints) {
