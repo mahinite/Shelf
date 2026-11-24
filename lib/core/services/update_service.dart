@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:ota_update/ota_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:version/version.dart';
+
+import '../../core/platform/platform_support.dart';
 
 /// Service for checking and applying updates via GitHub Releases and ota_update.
 class UpdateService {
@@ -35,8 +35,8 @@ class UpdateService {
     bool force = false,
   }) async {
     try {
-      // Ignore if the platform is not Android.
-      if (!kIsWeb && Platform.isAndroid) {
+      // Ignore if the platform does not support OTA updates (Android only).
+      if (PlatformSupport.supportsOtaUpdate) {
         // Throttle: skip the network call if an attempt was made within the
         // last 24 hours. First-ever launches (no stored timestamp) still check.
         if (!force) {

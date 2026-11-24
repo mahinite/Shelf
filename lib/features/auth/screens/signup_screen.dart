@@ -6,6 +6,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/notebook_background.dart';
 import '../../../core/theme/shelf_colors.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/platform/platform_support.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -205,34 +206,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.lg),
-                    // Divider with "or"
-                    Row(
-                      children: [
-                        const Expanded(child: Divider()),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                          child: Text('or', style: context.textStyles.metadata(context.colors)),
-                        ),
-                        const Expanded(child: Divider()),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    // Google Sign-In button
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton(
-                        onPressed: _isLoading ? null : _signInWithGoogle,
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.md),
+                    // Divider with "or" and Google Sign-In (Android only)
+                    if (PlatformSupport.supportsNativeGoogleSignIn) ...[
+                      Row(
+                        children: [
+                          const Expanded(child: Divider()),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                            child: Text('or', style: context.textStyles.metadata(context.colors)),
                           ),
-                          textStyle: context.textStyles.buttonLabel(context.colors),
-                        ),
-                        child: const Text('Continue with Google'),
+                          const Expanded(child: Divider()),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
+                      const SizedBox(height: AppSpacing.lg),
+                      // Google Sign-In button
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton(
+                          onPressed: _isLoading ? null : _signInWithGoogle,
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(AppRadius.md),
+                            ),
+                            textStyle: context.textStyles.buttonLabel(context.colors),
+                          ),
+                          child: const Text('Continue with Google'),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                    ],
                     Center(
                       child: TextButton(
                         onPressed: _isLoading ? null : () => Navigator.of(context).pop(),

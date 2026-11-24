@@ -7,6 +7,7 @@ import '../../features/settings/screens/settings_screen.dart';
 import 'package:flutter_doc_scanner/flutter_doc_scanner.dart';
 import 'package:flutter/services.dart';
 import '../../features/documents/screens/scan_config_screen.dart';
+import '../../core/platform/platform_support.dart';
 
 /// Shared scaffold for every screen past login: subtle grid background,
 /// a plain back-enabled app bar, and the persistent bottom action bar.
@@ -96,6 +97,7 @@ void _handleScanTap(BuildContext context) async {
 
   @override
   Widget build(BuildContext context) {
+    final bool canScan = PlatformSupport.supportsScan;
     return Scaffold(
       backgroundColor: context.colors.background,
       appBar: AppBar(
@@ -110,8 +112,9 @@ void _handleScanTap(BuildContext context) async {
       body: NotebookBackground(child: body),
       bottomNavigationBar: BottomActionBar(
         onHomeTap: () => _goHome(context),
-        onScanTap: () => _handleScanTap(context),
+        onScanTap: canScan ? () => _handleScanTap(context) : () {},
         onSettingsTap: () => _goToSettings(context),
+        showScan: canScan,
       ),
     );
   }

@@ -11,6 +11,7 @@ import 'core/theme/app_theme.dart';
 import 'core/services/crash_logger.dart';
 import 'core/services/theme_notifier.dart';
 import 'core/services/update_service.dart';
+import 'core/platform/platform_support.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,19 +33,22 @@ Future<void> main() async {
     publishableKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
-  // Initialize Google Sign-In
-  final webClientId = dotenv.env['GOOGLE_WEB_CLIENT_ID']!;
-  final androidClientId = dotenv.env['GOOGLE_ANDROID_CLIENT_ID']!;
-  // iOS client ID (optional, if targeting iOS):
-  // final iosClientId = dotenv.env['GOOGLE_IOS_CLIENT_ID'];
+  // Initialize Google Sign-In only on platforms that support native flow.
+  // On Windows (and other non-Android platforms) the env keys must not be read.
+  if (PlatformSupport.supportsNativeGoogleSignIn) {
+    final webClientId = dotenv.env['GOOGLE_WEB_CLIENT_ID']!;
+    final androidClientId = dotenv.env['GOOGLE_ANDROID_CLIENT_ID']!;
+    // iOS client ID (optional, if targeting iOS):
+    // final iosClientId = dotenv.env['GOOGLE_IOS_CLIENT_ID'];
 
-  await GoogleSignIn.instance.initialize(
-    serverClientId: webClientId,
-    clientId: androidClientId,
-    // iOS client ID is optional — omit if not targeting iOS
-    // If iOS is added later, uncomment and add GOOGLE_IOS_CLIENT_ID to .env:
-    // clientId: iosClientId!,
-  );
+    await GoogleSignIn.instance.initialize(
+      serverClientId: webClientId,
+      clientId: androidClientId,
+      // iOS client ID is optional — omit if not targeting iOS
+      // If iOS is added later, uncomment and add GOOGLE_IOS_CLIENT_ID to .env:
+      // clientId: iosClientId!,
+    );
+  }
 
   // Load the persisted theme mode before runApp so MaterialApp's first
   // frame already uses the saved mode.

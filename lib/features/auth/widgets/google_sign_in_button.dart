@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/shelf_colors.dart';
+import '../../../core/platform/platform_support.dart';
 
 /// Reusable Google Sign-In button widget.
 /// Handles the full Google Sign-In flow with Supabase integration.
@@ -66,8 +67,14 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
     }
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
+    // Hide the button entirely on platforms that don't support native Google Sign-In.
+    // Phase 3 will provide a Windows-compatible alternative.
+    if (!PlatformSupport.supportsNativeGoogleSignIn) {
+      return const SizedBox.shrink();
+    }
+
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
@@ -102,7 +109,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                     width: 20,
                     errorBuilder: (context, error, stackTrace) {
                       // Fallback: use a simple G icon if asset not found
-return Text(
+                      return Text(
                         'G',
                         style: TextStyle(
                           fontSize: 18,
