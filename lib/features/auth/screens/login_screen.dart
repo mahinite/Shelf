@@ -5,6 +5,8 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/notebook_background.dart';
 import '../../../core/theme/shelf_colors.dart';
+import '../../../core/platform/platform_support.dart';
+import '../services/windows_google_auth.dart';
 import 'signup_screen.dart';
 
 /// Login now authenticates using Supabase email/password.
@@ -65,6 +67,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _signInWithGoogle() async {
+    if (PlatformSupport.isWindows) {
+      await _signInWithGoogleWindows();
+      return;
+    }
+
     try {
       final signIn = GoogleSignIn.instance;
       final googleAccount = await signIn.authenticate();
@@ -99,6 +106,17 @@ class _LoginScreenState extends State<LoginScreen> {
           const SnackBar(content: Text('Could not sign in with Google.')),
         );
       }
+    }
+  }
+
+  Future<void> _signInWithGoogleWindows() async {
+    try {
+      await WindowsGoogleAuth.signIn();
+    } on Exception catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
     }
   }
 
@@ -166,52 +184,55 @@ class _LoginScreenState extends State<LoginScreen> {
                             : const Text('Log In'),
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.lg),
-                    // Divider with "or"
-                    Row(
-                      children: [
-                        const Expanded(child: Divider()),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                          child: Text('or', style: context.textStyles.metadata(context.colors)),
-                        ),
-                        const Expanded(child: Divider()),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    // Google Sign-In button
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton(
-                        onPressed: _isLoading ? null : _signInWithGoogle,
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.md),
+const SizedBox(height: AppSpacing.lg),
+                    // Divider with "or" and Google Sign-In (Android + Windows)
+                    if (PlatformSupport.supportsNativeGoogleSignIn || PlatformSupport.isWindows) ...[
+                      Row(
+                        children: [
+                          const Expanded(child: Divider()),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                            child: Text('or', style: context.textStyles.metadata(context.colors)),
                           ),
-                          textStyle: context.textStyles.buttonLabel(context.colors),
-                        ),
-                        child: const Text('Continue with Google'),
+                          const Expanded(child: Divider()),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    Center(
-                      child: TextButton(
-                        onPressed: _isLoading
-                            ? null
-                            : () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const SignUpScreen(),
-                                  ),
-                                );
-                              },
-                        child: Text(
-                          "Don't have an account? Sign up",
-style: context.textStyles.bodySecondary(context.colors),
+                      const SizedBox(height: AppSpacing.lg),
+                      // Google Sign-In button
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton(
+                          onPressed: _isLoading ? null : _signInWithGoogle,
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(AppRadius.md),
+                            ),
+                            textStyle: context.textStyles.buttonLabel(context.colors),
+                          ),
+                          child: const Text('Continue with Google'),
                         ),
                       ),
-                    ),
+                      const SizedBox(height: AppSpacing.lg),
+                    ],
+                    if (!PlatformSupport.isWindows)
+                      Center(
+                        child: TextButton(
+                          onPressed: _isLoading
+                              ? null
+                              : () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => const SignUpScreen(),
+                                    ),
+                                  );
+                                },
+                          child: Text(
+                            "Don't have an account? Sign up",
+                            style: context.textStyles.bodySecondary(context.colors),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
