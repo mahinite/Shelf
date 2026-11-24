@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pdfrx/pdfrx.dart';
 
 import '../models/document.dart';
@@ -180,6 +181,20 @@ class _DocumentScreenState extends State<DocumentScreen> {
             case PdfViewerGeneralTapType.tap:
               return false; // let default handling (clears selection, etc.)
           }
+        },
+        onKey: (params, key, isRealKeyPress) {
+          final isCommandPressed =
+              HardwareKeyboard.instance.isControlPressed || HardwareKeyboard.instance.isMetaPressed;
+          if (key == LogicalKeyboardKey.digit0 && isCommandPressed) {
+            final fitZoom = _pdfController.coverScale;
+            _pdfController.setZoom(
+              _pdfController.centerPosition,
+              fitZoom,
+              duration: const Duration(milliseconds: 200),
+            );
+            return true;
+          }
+          return false;
         },
         zoomStepsDelegateProvider: const _TwoStopZoomStepsProvider(),
         scrollPhysics: const ClampingScrollPhysics(),

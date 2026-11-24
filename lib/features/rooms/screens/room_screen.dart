@@ -301,6 +301,7 @@ class _RoomScreenState extends State<RoomScreen> {
                               }
                             },
                             onLongPress: () => _showSubjectActions(subject),
+                            onSecondaryTap: () => _showSubjectActions(subject),
                           );
                         },
                       ),

@@ -228,6 +228,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
                           accent: widget.accent,
                           onTap: () => _openDocument(context, document),
                           onLongPress: () => _showDocumentActions(document),
+                          onSecondaryTap: () => _showDocumentActions(document),
                         );
                       },
                     ),

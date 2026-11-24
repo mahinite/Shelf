@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../theme/app_text_styles.dart';
 import '../theme/notebook_background.dart';
 import '../theme/shelf_colors.dart';
@@ -34,7 +35,7 @@ void _handleScanTap(BuildContext context) async {
   debugPrint('[scan] _handleScanTap ENTERED, context.mounted=${context.mounted}');
   final scanner = ScannerImpl();
   final imagePaths = await scanner.scanDocument(pageLimit: 100);
-  debugPrint('[scan] scanner returned. imagePaths==null? ${imagePaths == null}. count=${imagePaths?.length}');
+  debugPrint('[scan] scanner returned. imagePaths==null? ${imagePaths == null}.count=${imagePaths?.length}');
   if (imagePaths == null || imagePaths.isEmpty) {
     debugPrint('[scan] no images -> user cancelled or unsupported, returning');
     return;
@@ -60,9 +61,41 @@ void _handleScanTap(BuildContext context) async {
     );
   }
 
+  bool _canGoBack(BuildContext context) {
+    final route = ModalRoute.of(context);
+    return route != null && route.isCurrent && Navigator.of(context).canPop();
+  }
+
+  void _handleBack(BuildContext context) {
+    if (_canGoBack(context)) {
+      Navigator.of(context).maybePop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool canScan = PlatformSupport.supportsScan;
+    final bool isDesktop = PlatformSupport.isDesktop;
+    final bool enableBackShortcuts = showBackButton && isDesktop;
+
+    Widget child = NotebookBackground(child: body);
+
+    if (enableBackShortcuts) {
+      child = Focus(
+        autofocus: false,
+        canRequestFocus: false,
+        descendantsAreFocusable: true,
+        descendantsAreTraversable: true,
+        child: CallbackShortcuts(
+          bindings: {
+            const SingleActivator(LogicalKeyboardKey.escape): () => _handleBack(context),
+            const SingleActivator(LogicalKeyboardKey.arrowLeft, alt: true): () => _handleBack(context),
+          },
+          child: child,
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: context.colors.background,
       appBar: AppBar(
@@ -74,7 +107,7 @@ void _handleScanTap(BuildContext context) async {
         title: Text(title, style: context.textStyles.sectionTitle(context.colors)),
         actions: actions,
       ),
-      body: NotebookBackground(child: body),
+      body: child,
       bottomNavigationBar: BottomActionBar(
         onHomeTap: () => _goHome(context),
         onScanTap: canScan ? () => _handleScanTap(context) : () {},

@@ -15,18 +15,21 @@ class DocumentListItem extends StatelessWidget {
     required this.onTap,
     this.accent,
     this.onLongPress,
+    this.onSecondaryTap,
   });
 
   final Document document;
   final VoidCallback onTap;
   final Color? accent;
   final VoidCallback? onLongPress;
+  final VoidCallback? onSecondaryTap;
 
   @override
   Widget build(BuildContext context) {
     return Tactile(
       onTap: onTap,
       onLongPress: onLongPress,
+      onSecondaryTap: onSecondaryTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(
           vertical: AppSpacing.sm,

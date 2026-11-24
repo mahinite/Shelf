@@ -9,10 +9,12 @@ class Tactile extends StatefulWidget {
     required this.onTap,
     required this.child,
     this.onLongPress,
+    this.onSecondaryTap,
   });
 
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
+  final VoidCallback? onSecondaryTap;
   final Widget child;
 
   @override
@@ -29,9 +31,10 @@ class _TactileState extends State<Tactile> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    final child = GestureDetector(
       onTap: widget.onTap,
       onLongPress: widget.onLongPress,
+      onSecondaryTap: widget.onSecondaryTap,
       onTapDown: (_) => _setPressed(true),
       onTapUp: (_) => _setPressed(false),
       onTapCancel: () => _setPressed(false),
@@ -42,5 +45,13 @@ class _TactileState extends State<Tactile> {
         child: widget.child,
       ),
     );
+
+    if (widget.onTap != null) {
+      return MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: child,
+      );
+    }
+    return child;
   }
 }

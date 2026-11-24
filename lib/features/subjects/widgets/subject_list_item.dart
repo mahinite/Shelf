@@ -14,11 +14,13 @@ class SubjectListItem extends StatelessWidget {
     required this.subject,
     required this.onTap,
     this.onLongPress,
+    this.onSecondaryTap,
   });
 
   final Subject subject;
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
+  final VoidCallback? onSecondaryTap;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +29,7 @@ class SubjectListItem extends StatelessWidget {
     return Tactile(
       onTap: onTap,
       onLongPress: onLongPress,
+      onSecondaryTap: onSecondaryTap,
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(

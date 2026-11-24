@@ -13,17 +13,20 @@ class RoomCard extends StatelessWidget {
     required this.room,
     required this.onTap,
     this.onLongPress,
+    this.onSecondaryTap,
   });
 
   final Room room;
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
+  final VoidCallback? onSecondaryTap;
 
   @override
   Widget build(BuildContext context) {
     return Tactile(
       onTap: onTap,
       onLongPress: onLongPress,
+      onSecondaryTap: onSecondaryTap,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),

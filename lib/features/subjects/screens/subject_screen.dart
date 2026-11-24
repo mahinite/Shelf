@@ -287,6 +287,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
                               );
                             },
                             onLongPress: () => _showChapterActions(chapter),
+                            onSecondaryTap: () => _showChapterActions(chapter),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                 vertical: AppSpacing.sm,

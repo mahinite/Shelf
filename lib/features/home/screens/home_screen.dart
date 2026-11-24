@@ -439,6 +439,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
                       },
                       onLongPress: () => _showRoomActions(room),
+                      onSecondaryTap: () => _showRoomActions(room),
                     ),
                     const SizedBox(height: AppSpacing.md),
                   ],
