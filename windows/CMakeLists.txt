@@ -57,6 +57,11 @@ add_subdirectory("runner")
 # them to the application.
 include(flutter/generated_plugins.cmake)
 
+# Exclude plugins that don't support Windows or have broken native assets.
+# These plugins are Android/iOS only or have build issues on Windows.
+list(FILTER FLUTTER_PLUGIN_LIST EXCLUDE REGEX "^(flutter_doc_scanner|pdfium_dart)$")
+list(FILTER FLUTTER_FFI_PLUGIN_LIST EXCLUDE REGEX "^(pdfium_dart)$")
+
 
 # === Installation ===
 # Support files are copied into place next to the executable, so that it can
