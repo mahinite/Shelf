@@ -196,6 +196,7 @@ class _DocumentScreenState extends State<DocumentScreen> {
           }
           return false;
         },
+        keyHandlerParams: const PdfViewerKeyHandlerParams(autofocus: true),
         zoomStepsDelegateProvider: const _TwoStopZoomStepsProvider(),
         scrollPhysics: const ClampingScrollPhysics(),
         viewerOverlayBuilder: (context, size, handleLinkTap) {
