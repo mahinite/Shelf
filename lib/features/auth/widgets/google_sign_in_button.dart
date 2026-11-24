@@ -6,6 +6,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/shelf_colors.dart';
 import '../../../core/platform/platform_support.dart';
+import '../services/windows_google_auth.dart';
 
 /// Reusable Google Sign-In button widget.
 /// Handles the full Google Sign-In flow with Supabase integration.
@@ -21,6 +22,11 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 
   Future<void> _handleSignIn() async {
+    if (PlatformSupport.isWindows) {
+      await _handleWindowsSignIn();
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {
@@ -67,11 +73,26 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
     }
   }
 
-@override
+  Future<void> _handleWindowsSignIn() async {
+    setState(() => _isLoading = true);
+
+    try {
+      await WindowsGoogleAuth.signIn();
+    } on Exception catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Hide the button entirely on platforms that don't support native Google Sign-In.
-    // Phase 3 will provide a Windows-compatible alternative.
-    if (!PlatformSupport.supportsNativeGoogleSignIn) {
+    if (!PlatformSupport.supportsNativeGoogleSignIn && !PlatformSupport.isWindows) {
       return const SizedBox.shrink();
     }
 

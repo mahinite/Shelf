@@ -6,6 +6,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/notebook_background.dart';
 import '../../../core/theme/shelf_colors.dart';
 import '../../../core/platform/platform_support.dart';
+import '../services/windows_google_auth.dart';
 import 'signup_screen.dart';
 
 /// Login now authenticates using Supabase email/password.
@@ -66,6 +67,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _signInWithGoogle() async {
+    if (PlatformSupport.isWindows) {
+      await _signInWithGoogleWindows();
+      return;
+    }
+
     try {
       final signIn = GoogleSignIn.instance;
       final googleAccount = await signIn.authenticate();
@@ -100,6 +106,17 @@ class _LoginScreenState extends State<LoginScreen> {
           const SnackBar(content: Text('Could not sign in with Google.')),
         );
       }
+    }
+  }
+
+  Future<void> _signInWithGoogleWindows() async {
+    try {
+      await WindowsGoogleAuth.signIn();
+    } on Exception catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
     }
   }
 
@@ -168,8 +185,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
 const SizedBox(height: AppSpacing.lg),
-                    // Divider with "or" and Google Sign-In (Android only)
-                    if (PlatformSupport.supportsNativeGoogleSignIn) ...[
+                    // Divider with "or" and Google Sign-In (Android + Windows)
+                    if (PlatformSupport.supportsNativeGoogleSignIn || PlatformSupport.isWindows) ...[
                       Row(
                         children: [
                           const Expanded(child: Divider()),
@@ -198,23 +215,24 @@ const SizedBox(height: AppSpacing.lg),
                       ),
                       const SizedBox(height: AppSpacing.lg),
                     ],
-                    Center(
-                      child: TextButton(
-                        onPressed: _isLoading
-                            ? null
-                            : () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const SignUpScreen(),
-                                  ),
-                                );
-                              },
-                        child: Text(
-                          "Don't have an account? Sign up",
-                          style: context.textStyles.bodySecondary(context.colors),
+                    if (!PlatformSupport.isWindows)
+                      Center(
+                        child: TextButton(
+                          onPressed: _isLoading
+                              ? null
+                              : () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => const SignUpScreen(),
+                                    ),
+                                  );
+                                },
+                          child: Text(
+                            "Don't have an account? Sign up",
+                            style: context.textStyles.bodySecondary(context.colors),
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
