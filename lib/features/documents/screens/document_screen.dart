@@ -3,9 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdfrx/pdfrx.dart';
+import 'package:printing/printing.dart';
 
 import '../models/document.dart';
+import '../services/document_download_service.dart';
 import '../../../core/services/document_cache_manager.dart';
+import '../../../core/platform/platform_support.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -103,12 +106,68 @@ class _DocumentScreenState extends State<DocumentScreen> {
     _loadDocument();
   }
 
+  Future<void> _download() async {
+    if (_cachedFile == null) return;
+    final bytes = await _cachedFile!.readAsBytes();
+    await DocumentDownloadService.instance.downloadDocument(
+      context,
+      widget.document,
+      bytes: bytes,
+    );
+  }
+
+  Future<void> _print() async {
+    if (_cachedFile == null) return;
+    final bytes = await _cachedFile!.readAsBytes();
+    try {
+      await Printing.layoutPdf(onLayout: (_) async => bytes);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not print: $e')),
+      );
+    }
+  }
+
+  List<Widget> _buildDesktopActions() {
+    if (!PlatformSupport.isDesktop) return [];
+    return [
+      IconButton(
+        icon: const Icon(Icons.download_outlined),
+        tooltip: 'Download (Ctrl+S)',
+        onPressed: _download,
+      ),
+      IconButton(
+        icon: const Icon(Icons.print_outlined),
+        tooltip: 'Print (Ctrl+P)',
+        onPressed: _print,
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isDesktop = PlatformSupport.isDesktop;
+    Widget child = _buildBody();
+
+    if (isDesktop) {
+      child = Focus(
+        autofocus: true,
+        child: CallbackShortcuts(
+          bindings: {
+            const SingleActivator(LogicalKeyboardKey.keyS, control: true): _download,
+            const SingleActivator(LogicalKeyboardKey.keyP, control: true): _print,
+          },
+          child: child,
+        ),
+      );
+    }
+
     return AppScaffold(
       title: widget.document.title,
       showBackButton: true,
-      body: _buildBody(),
+      actions: _buildDesktopActions(),
+      body: child,
     );
   }
 

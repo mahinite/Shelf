@@ -11,6 +11,7 @@
 #include <file_selector_windows/file_selector_windows.h>
 #include <flutter_doc_scanner/flutter_doc_scanner_plugin_c_api.h>
 #include <pdf_combiner/pdf_combiner_plugin_c_api.h>
+#include <printing/printing_plugin.h>
 #include <share_plus/share_plus_windows_plugin_c_api.h>
 #include <url_launcher_windows/url_launcher_windows.h>
 
@@ -25,6 +26,8 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("FlutterDocScannerPluginCApi"));
   PdfCombinerPluginCApiRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("PdfCombinerPluginCApi"));
+  PrintingPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("PrintingPlugin"));
   SharePlusWindowsPluginCApiRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("SharePlusWindowsPluginCApi"));
   UrlLauncherWindowsRegisterWithRegistrar(

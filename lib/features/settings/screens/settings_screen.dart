@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:file_saver/file_saver.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../../core/widgets/app_scaffold.dart';
 import '../../../core/theme/app_colors.dart';
@@ -10,6 +11,7 @@ import '../../../core/theme/shelf_colors.dart';
 import '../../../core/services/crash_logger.dart';
 import '../../../core/services/theme_notifier.dart';
 import '../../../core/network/worker_client.dart';
+import '../../../core/platform/platform_support.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -394,17 +396,35 @@ class _CrashLogsScreenState extends State<CrashLogsScreen> {
 
   Future<void> _shareLogs() async {
     final file = await CrashLogger.getLogFile();
-    if (await file.exists()) {
-      await Share.shareXFiles(
-        [XFile(file.path)],
-        text: 'Shelf Crash Logs',
-      );
-    } else {
+    if (!await file.exists()) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('No crash log file to share')),
         );
       }
+      return;
+    }
+
+    if (PlatformSupport.isWindows) {
+      final bytes = await file.readAsBytes();
+      final savedPath = await FileSaver.instance.saveAs(
+        name: 'crash_log',
+        bytes: bytes,
+        fileExtension: 'txt',
+        mimeType: MimeType.text,
+      );
+      if (!mounted) return;
+      if (savedPath == null) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Saved crash log to $savedPath')),
+      );
+    } else {
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        text: 'Shelf Crash Logs',
+      );
     }
   }
 
