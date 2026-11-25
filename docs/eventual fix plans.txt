@@ -1,0 +1,1 @@
+subrequest-level caching (cf: {cacheTtl, cacheEverything}) doesn't appear to be taking effect on signed B2 requests, and Nemotron's Option 1 (cache the worker's response via the Cache API, after the auth check, using caches.default) is the likely fix whenever you circle back. That way it doesn't get rediscovered from scratch later.
