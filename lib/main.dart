@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:window_manager/window_manager.dart';
 
 import 'features/auth/screens/login_screen.dart';
 import 'features/home/screens/home_screen.dart';
@@ -15,6 +17,42 @@ import 'core/platform/platform_support.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Windows-only window setup before runApp
+  if (PlatformSupport.isWindows) {
+    await windowManager.ensureInitialized();
+    const windowOptions = WindowOptions(
+      title: 'Shelf',
+      minimumSize: Size(420, 640),
+      size: Size(1100, 760),
+      center: true,
+      titleBarStyle: TitleBarStyle.normal,
+      windowButtonVisibility: true,
+      skipTaskbar: false,
+    );
+    await windowManager.waitUntilReadyToShow(windowOptions, () async {
+      final prefs = await SharedPreferences.getInstance();
+      final savedWidth = prefs.getDouble('window_width');
+      final savedHeight = prefs.getDouble('window_height');
+      final savedMaximized = prefs.getBool('window_maximized') ?? false;
+
+      if (savedWidth != null && savedHeight != null) {
+        final clampedWidth = savedWidth.clamp(420.0, double.infinity);
+        final clampedHeight = savedHeight.clamp(640.0, double.infinity);
+        await windowManager.setSize(Size(clampedWidth, clampedHeight));
+        await windowManager.center();
+      }
+
+      if (savedMaximized) {
+        await windowManager.maximize();
+      } else {
+        await windowManager.show();
+      }
+    });
+
+    // Debounced persistence of window size and maximized state
+    windowManager.addListener(_WindowSizeListener());
+  }
 
   // Set up crash logging before runApp
   FlutterError.onError = (details) {
@@ -55,6 +93,37 @@ Future<void> main() async {
   await ThemeModeNotifier.instance.load();
 
   runApp(const ShelfApp());
+}
+
+class _WindowSizeListener with WindowListener {
+  static const _debounceMs = 300;
+  Timer? _debounceTimer;
+
+  @override
+  void onWindowResize() {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: _debounceMs), () async {
+      final prefs = await SharedPreferences.getInstance();
+      final size = await windowManager.getSize();
+      await prefs.setDouble('window_width', size.width);
+      await prefs.setDouble('window_height', size.height);
+    });
+  }
+
+  @override
+  void onWindowMaximize() {
+    _saveMaximized(true);
+  }
+
+  @override
+  void onWindowUnmaximize() {
+    _saveMaximized(false);
+  }
+
+  Future<void> _saveMaximized(bool maximized) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('window_maximized', maximized);
+  }
 }
 
 class ShelfApp extends StatefulWidget {

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:file_saver/file_saver.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/chapter.dart';
 import '../../documents/models/document.dart';
-import '../../../core/network/worker_client.dart';
+import '../../documents/services/document_download_service.dart';
 import '../../../core/services/cache_service.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -145,41 +144,7 @@ class _ChapterScreenState extends State<ChapterScreen> {
   }
 
   Future<void> _downloadDocument(Document document) async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Downloading...')),
-    );
-    try {
-      final objectPath = document.filePath ?? 'documents/${document.id}.pdf';
-      final bytes = await WorkerClient.instance.getBytes(objectPath);
-      final fileName = _sanitizeFilename(document.title);
-      final savedPath = await FileSaver.instance.saveAs(
-        name: fileName,
-        bytes: bytes,
-        fileExtension: 'pdf',
-        mimeType: MimeType.pdf,
-      );
-      if (!mounted) return;
-      if (savedPath == null) {
-        // User cancelled the system save dialog.
-        return;
-      }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Saved "$fileName.pdf"')),
-      );
-    } catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not download document.\n$error')),
-      );
-    }
-  }
-
-  String _sanitizeFilename(String title) {
-    final sanitized = title
-        .replaceAll(RegExp(r'[\\/:*?"<>|]'), '_')
-        .trim()
-        .replaceAll(RegExp(r'^\.+|\.+$'), '');
-    return sanitized.isEmpty ? 'document' : sanitized;
+    await DocumentDownloadService.instance.downloadDocument(context, document);
   }
 
   void _showDocumentActions(Document document) {
