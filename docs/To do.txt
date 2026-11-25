@@ -1,0 +1,7 @@
+1. Backblaze B2+ Cloudflare CDN
+2. A way to add members to rooms.
+3. Scan mechanism
+4. Add logo
+5. Auto Update feature
+6. User profiles
+7. Themes
